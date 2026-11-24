@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="fil">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0f1320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Hari ng Kalsada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="vignette"></div>
+
+<div id="hud" class="hidden">
+  <div id="topleft">
+    <div id="objective" class="hidden"></div>
+    <div id="sidejob" class="hidden"></div>
+  </div>
+  <div id="wanted">
+    <div id="stars"></div>
+    <div id="clues" class="hidden"></div>
+    <div id="wanted-note"></div>
+  </div>
+  <div id="topright">
+    <div id="money">₱0</div>
+    <div id="vehname"></div>
+    <button id="btn-map" class="iconbtn" title="Mapa (M)">🗺</button>
+    <button id="btn-pause" class="iconbtn" title="Pause (Esc)">☰</button>
+  </div>
+  <div id="status">
+    <canvas id="minimap" width="200" height="200"></canvas>
+    <div class="bars">
+      <div class="bar"><div id="hpbar"></div></div>
+      <div class="bar car hidden" id="carbarwrap"><div id="carbar"></div></div>
+    </div>
+  </div>
+  <div id="speedo" class="hidden"><span id="kmh">0</span><small>km/h</small></div>
+  <div id="arrest" class="hidden"><div id="arrestbar"></div><span>HINUHULI KA!</span></div>
+  <div id="prompt" class="hidden"></div>
+  <div id="subtitle" class="hidden"><b id="sub-name"></b><span id="sub-text"></span><small id="sub-skip">tap / E ▸</small></div>
+  <div id="toasts"></div>
+  <div id="bigmsg" class="hidden"><h1 id="big-title"></h1><p id="big-sub"></p></div>
+</div>
+
+<div id="touch" class="hidden">
+  <div id="joyzone"><div id="joybase"><div id="joyknob"></div></div></div>
+  <div id="tbtns">
+    <button id="tb-act" class="tbtn big">SAKAY</button>
+    <button id="tb-b" class="tbtn">SUNTOK</button>
+    <button id="tb-horn" class="tbtn small hidden">BUSINA</button>
+  </div>
+</div>
+
+<div id="title" class="screen">
+  <div class="title-bg"></div>
+  <div class="title-inner">
+    <div class="logo">
+      <div class="stars-deco">★★★★★★</div>
+      <h1>HARI NG<br><span>KALSADA</span></h1>
+      <div class="sub">MAYNILA</div>
+    </div>
+    <div class="menu">
+      <button id="btn-new" class="mbtn primary">BAGONG LARO</button>
+      <button id="btn-continue" class="mbtn hidden">ITULOY</button>
+      <button id="btn-howto" class="mbtn">PAANO LARUIN</button>
+    </div>
+    <p class="foot">Isang orihinal na open-world laro · Gawang-Pinoy na ideya</p>
+  </div>
+</div>
+
+<div id="pause" class="screen hidden">
+  <div class="panel">
+    <h2>NAKAHINTO</h2>
+    <div id="pause-stats"></div>
+    <div class="suspect" id="suspect-board"></div>
+    <div class="menu">
+      <button id="btn-resume" class="mbtn primary">ITULOY</button>
+      <button id="btn-pmap" class="mbtn">MAPA</button>
+      <button id="btn-missions" class="mbtn">MGA MISYON</button>
+      <button id="btn-phelp" class="mbtn">PAANO LARUIN</button>
+      <button id="btn-sound" class="mbtn">TUNOG: ON</button>
+      <button id="btn-quit" class="mbtn danger">BUMALIK SA MENU</button>
+    </div>
+  </div>
+</div>
+
+<div id="mapscreen" class="screen hidden">
+  <canvas id="bigmap"></canvas>
+  <div class="maplegend">
+    <span>🟡 Misyon</span><span>🏠 Bahay</span><span>👕 Ukay</span><span>💈 Barberya</span><span>🎨 Pintura</span><span>🔧 Talyer</span><span>🏪 Sari-sari</span><span>🏥 Ospital</span><span>🚓 Presinto</span><span style="color:#ffd23f">● Gintong Tsinelas</span>
+  </div>
+  <button id="btn-mapclose" class="mbtn closebtn">ISARA ✕</button>
+</div>
+
+<div id="missions" class="screen hidden">
+  <div class="panel wide">
+    <h2>MGA MISYON</h2>
+    <div id="mission-list"></div>
+    <button id="btn-mclose" class="mbtn primary">ISARA</button>
+  </div>
+</div>
+
+<div id="help" class="screen hidden">
+  <div class="panel wide">
+    <h2>PAANO LARUIN</h2>
+    <div class="helpgrid">
+      <div>
+        <h3>🎯 Layunin</h3>
+        <p>Ikaw si <b>Nonoy</b>, probinsyanong dumating sa Maynila para bawiin ang lupa ng pamilya mula kay <b>Boss Tikboy</b> at sa kurakot na <b>Mayor Kurakot</b>. Tapusin ang <b>8 misyon</b>. Hanapin din ang <b>20 Gintong Tsinelas</b>!</p>
+        <h3>⭐ Wanted (6 Bituin)</h3>
+        <p>Ang krimeng <b>nakita</b> ng pulis o ng <b>CCTV</b> ay nagdadagdag ng bituin. Kilala ka nila sa 4 na clue: <b>CCTV · Damit · Mukha · Sasakyan</b>.</p>
+        <p><b>Puting bituin</b> = hinahabol ka. <b>Outline</b> = nawala ka sa paningin nila (may <b>search zone</b>). <b>Pula</b> = nakalabas ka sa zone, unti-unti kang nakakalimutan.</p>
+        <p>Magpalit ng damit (👕 Ukay-Ukay), gupit (💈 Barberya), kulay ng kotse (🎨 Pintura) o ng sasakyan para <b>hindi ka makilala</b>.</p>
+      </div>
+      <div>
+        <h3>⌨️ Keyboard</h3>
+        <p><b>WASD / Arrows</b> — lakad / maneho<br><b>Shift</b> — takbo<br><b>E / F</b> — sumakay, bumaba, gamitin<br><b>Space</b> — suntok / handbrake<br><b>H</b> — busina<br><b>M</b> — mapa · <b>Esc</b> — pause</p>
+        <h3>📱 Touch</h3>
+        <p><b>Kaliwang joystick</b> — lakad. Sa sasakyan, ituro kung saan pupunta (sa likod = atras).<br><b>SAKAY</b> — sumakay/bumaba/gamitin<br><b>SUNTOK / PRENO</b> — suntok o handbrake<br><b>BUSINA</b> — busina</p>
+        <h3>💰 Kita</h3>
+        <p>Misyon · <b>Pasada</b> sa kahit anong jeepney · Ibenta ang kotse kay <b>Mang Ben</b> · Pera ng mga nasuntok</p>
+      </div>
+    </div>
+    <button id="btn-hclose" class="mbtn primary">SIGE!</button>
+  </div>
+</div>
+
+<div id="ending" class="screen hidden">
+  <div class="panel wide endpanel">
+    <div class="stars-deco">★★★★★★</div>
+    <h2>IKAW ANG HARI NG KALSADA!</h2>
+    <p>Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Nabawi ang lupa ng pamilya Dela Cruz sa Samar.</p>
+    <div id="end-stats"></div>
+    <p class="credits">Salamat sa paglalaro!<br>Pwede ka pang mag-free roam: pasada, karera sa kalye, at hanapin ang lahat ng Gintong Tsinelas.</p>
+    <button id="btn-endclose" class="mbtn primary">MAG-FREE ROAM</button>
+  </div>
+</div>
+
+<div id="fade"></div>
+<div id="loading" class="hidden">Ginagawa ang Maynila...</div>
+
+<script src="js/util.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/map.js"></script>
+<script src="js/vehicles.js"></script>
+<script src="js/people.js"></script>
+<script src="js/traffic.js"></script>
+<script src="js/police.js"></script>
+<script src="js/missions.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
