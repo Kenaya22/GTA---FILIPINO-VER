@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila
+# 👑 HARI NG KALSADA: Maynila — v1.1
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -58,7 +58,7 @@ Failed a mission? Tap **ULITIN** within 20 seconds to restart from the checkpoin
 
 Side activities: jeepney **pasada**, selling cars to Mang Ben, and **20 Gintong Tsinelas** to collect.
 
-See **[DESIGN.md](DESIGN.md)** for the full design document: research, game flow, districts, systems.
+See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DESIGN.md](DESIGN.md)** for the full design document: research, game flow, districts, systems.
 
 ## 🗂 Code
 | File | What |

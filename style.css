@@ -218,3 +218,10 @@ body.lefty #joyzone { left: auto; right: 0; }
 body.lefty #tbtns { right: auto; left: max(14px, env(safe-area-inset-left)); }
 body.lefty .tbtn { transform-origin: bottom left; }
 body.lefty.touch #status { left: auto; right: max(12px, env(safe-area-inset-right)); top: calc(max(10px, env(safe-area-inset-top)) + 100px); }
+
+/* ===== Version / changelog ===== */
+.version { border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: var(--accent2); font-weight: 900; font-size: 12px; padding: 6px 12px; border-radius: 20px; }
+.changelog { width: 100%; font-size: 14px; line-height: 1.5; }
+.changelog h3 { margin: 6px 0 4px; color: var(--accent2); font-size: 16px; }
+.changelog h3 small { color: var(--muted); font-size: 11px; margin-left: 6px; }
+.changelog ul { margin: 0 0 10px; padding-left: 20px; }

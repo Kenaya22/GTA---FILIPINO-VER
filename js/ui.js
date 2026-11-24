@@ -25,6 +25,9 @@ const UI = {
     $('btn-new').onclick = () => { AUD.init(); AUD.resume(); if (G.hasSave() && !confirm('Magsisimula ng bagong laro. Mabubura ang lumang save. Sigurado ka?')) return; G.newGame(); };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };
     $('btn-howto').onclick = () => this.show('help');
+    $('btn-version').onclick = () => this.show('whatsnew');
+    $('btn-wnclose').onclick = () => { this.hide('whatsnew'); try { localStorage.setItem('harinkalsada_seenver', GAME_VERSION); } catch (e) { } };
+    try { if (G.hasSave() && localStorage.getItem('harinkalsada_seenver') !== GAME_VERSION) this.show('whatsnew'); } catch (e) { }
     $('btn-settings').onclick = () => this.openSettings();
     $('btn-psettings').onclick = () => this.openSettings();
     $('btn-setclose').onclick = () => { this.hide('settings'); SETTINGS.save(); };
