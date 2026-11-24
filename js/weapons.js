@@ -17,13 +17,17 @@ const ARMS = {
     AUD.click(); UI.toast(`${WEAPONS[P.weapon].icon} ${WEAPONS[P.weapon].name}`);
   },
   label() {
+    const gl = GUNS.label(); if (gl) return gl;
     const P = G.player, w = WEAPONS[P.weapon || 'fists'];
     const ammo = typeof P.weapons[P.weapon] === 'number' ? ` ×${P.weapons[P.weapon]}` : '';
     return `${w.icon} ${w.name}${ammo}`;
   },
   attack() {
     const P = G.player;
-    if (P.vehicle || P.downed) return;
+    if (P.downed) return;
+    const gw = WEAPONS[P.weapon];
+    if (gw && (gw.gun || gw.throw)) return GUNS.trigger(false);
+    if (P.vehicle) return;
     switch (P.weapon) {
       case 'pamalo': return this.melee(36, 30, 240, 0.55, 'swing');
       case 'tirador': return this.shoot();
@@ -50,6 +54,7 @@ const ARMS = {
   },
   crimeOn(p) {
     if (p.kind === 'cop') WANTED.crime(3, p.x, p.y, true);
+    else if (p.kind === 'goon') p.hostile = true;
     else if (!p.npc) { WANTED.crime(1, G.player.x, G.player.y); G.panic(p.x, p.y, 260); }
   },
   aim(range, cone) {
@@ -125,9 +130,9 @@ const ARMS = {
     }
     G.projectiles = G.projectiles.filter(b => b.life > 0);
   },
-  // cops fire rubber pellets at 5+ stars
+  // cops fire rubber pellets at high stars (real bullets from D().copGuns)
   copFire(cop, dt) {
-    if (WANTED.stars < D().pellet || WANTED.mode !== 'chase') return;
+    if (WANTED.stars < Math.min(D().pellet, D().copGuns) || WANTED.mode !== 'chase') return;
     cop.shootCd = (cop.shootCd || U.rand(0.5, 1.5)) - dt;
     if (cop.shootCd > 0) return;
     const P = G.player, tg = P.vehicle || P;
@@ -136,6 +141,14 @@ const ARMS = {
     cop.shootCd = U.rand(1.1, 1.8);
     const a = Math.atan2(tg.y + (tg.vy || 0) * 0.3 - cop.y, tg.x + (tg.vx || 0) * 0.3 - cop.x) + U.rand(-0.12, 0.12);
     cop.a = a; cop.punchT = 0.15;
+    // at high stars (depends on difficulty) cops switch from rubber pellets to real guns
+    if (WANTED.stars >= D().copGuns) {
+      cop.shootCd = U.rand(0.9, 1.5);
+      const sx = cop.x + Math.cos(a) * 14, sy = cop.y + Math.sin(a) * 14;
+      GUNS.bullet(sx, sy, a + U.rand(-0.06, 0.06), { dmg: 14, range: 460, pellets: 1 }, 'cop', cop);
+      GUNS.flash(sx, sy, a); AUD.gun('pistola', Math.max(0.15, 1 - d / 700));
+      return;
+    }
     G.projectiles.push({ x: cop.x + Math.cos(a) * 14, y: cop.y + Math.sin(a) * 14, vx: Math.cos(a) * 650, vy: Math.sin(a) * 650, life: 0.8, type: 'pellet', owner: 'cop' });
     AUD.tone(500, 0.05, 'square', 0.05, 150);
   },

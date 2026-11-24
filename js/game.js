@@ -16,6 +16,18 @@ const G = {
     this.canvas = document.getElementById('game');
     this.ctx = this.canvas.getContext('2d');
     addEventListener('resize', () => this.resize());
+    // desktop mouse aiming / shooting
+    const cv = this.canvas;
+    cv.addEventListener('mousemove', (e) => { GUNS.mouse.x = e.clientX; GUNS.mouse.y = e.clientY; GUNS.mouse.t = this.time; });
+    cv.addEventListener('mousedown', (e) => {
+      if (e.button !== 0 || !this.started || this.paused || INPUT.touch) return;
+      GUNS.mouse.x = e.clientX; GUNS.mouse.y = e.clientY; GUNS.mouse.t = this.time; GUNS.mouse.down = true;
+      GUNS.update(0);
+      if (UI.talking) { UI.nextLine(); return; }
+      const w = WEAPONS[GUNS.cur()];
+      if (w && (w.gun || w.throw)) GUNS.trigger(false); else if (!this.player.vehicle) ARMS.attack();
+    });
+    addEventListener('mouseup', () => { GUNS.mouse.down = false; });
     this.resize();
     MAP.gen();
     this.copField = new Uint16Array(MW * MH);
@@ -61,7 +73,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); G.flags = {};
+    PROV.reset(); G.flags = {}; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = [];
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -136,6 +148,8 @@ const G = {
     else if (code === 'KeyH') this.horn();
     else if (code === 'KeyR') MUSIC.nextStation();
     else if (code === 'KeyQ') { if (!this.player.vehicle) ARMS.cycle(); }
+    else if (code === 'KeyX') { if (!UI.talking) GUNS.trigger(false); }
+    else if (code === 'KeyG') GUNS.reload();
     else if (code === 'KeyJ') JOBS.toggle();
   },
   action() {
@@ -264,6 +278,7 @@ const G = {
     else if (type === 'splash') { p.life = p.max = 0.5; p.size = U.rand(4, 9); p.vx = U.rand(-60, 60); p.vy = U.rand(-60, 60); }
     else if (type === 'wake') { p.life = p.max = 1.6; p.size = U.rand(5, 9); p.vx *= 0.3; p.vy *= 0.3; }
     else if (type === 'drip') { p.life = p.max = 0.4; p.size = U.rand(3, 6); p.vx = 0; p.vy = 0; }
+    else if (type === 'shell') { p.life = p.max = 0.5; p.size = 2; p.vx = U.rand(-90, 90); p.vy = U.rand(-90, 90); }
     else if (type === 'cash') { p.life = p.max = 1; p.size = 14; p.vx = 0; p.vy = -40; }
     this.particles.push(p);
   },
@@ -409,6 +424,7 @@ const G = {
     TUT.update(dt);
     PROV.update(dt);
     ARMS.update(dt);
+    GUNS.update(dt);
     ACH.update(dt);
     SAVE.update(dt);
     this.updateGPS(dt);
@@ -514,7 +530,7 @@ const G = {
             P.vx = v.vx * 0.8; P.vy = v.vy * 0.8;
           } else {
             p.knock(v.x - v.vx, v.y - v.vy, Math.min(500, sp * 0.9));
-            if (v.driver === 'player') { WANTED.crime(p.kind === 'cop' ? 3 : 1, p.x, p.y); this.panic(p.x, p.y, 260); }
+            if (v.driver === 'player' && p.kind !== 'goon') { WANTED.crime(p.kind === 'cop' ? 3 : 1, p.x, p.y); this.panic(p.x, p.y, 260); }
           }
           v.vx *= 0.9; v.vy *= 0.9;
           AUD.punch();
@@ -673,6 +689,7 @@ const G = {
       g.restore(); g.globalAlpha = 1;
     }
     ARMS.draw(g, inV);
+    GUNS.draw(g, inV);
     // particles
     for (const p of this.particles) {
       if (!inV(p.x, p.y, 40)) continue;
@@ -682,6 +699,8 @@ const G = {
       else if (p.type === 'hit') { g.strokeStyle = `rgba(255,255,255,${t})`; g.lineWidth = 3; g.beginPath(); g.arc(p.x, p.y, p.size * (1.5 - t), 0, TAU); g.stroke(); }
       else if (p.type === 'splash' || p.type === 'drip') { g.strokeStyle = `rgba(190,215,240,${0.6 * t})`; g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, p.size * (1.6 - t), 0, TAU); g.stroke(); }
       else if (p.type === 'wake') { g.fillStyle = `rgba(220,235,245,${0.35 * t})`; g.beginPath(); g.arc(p.x, p.y, p.size * (2 - t), 0, TAU); g.fill(); }
+      else if (p.type === 'shell') { g.fillStyle = `rgba(230,190,80,${t})`; g.fillRect(p.x, p.y, 3, 1.6); }
+      else if (p.type === 'flash') { g.fillStyle = `rgba(255,240,170,${t})`; g.beginPath(); g.arc(p.x, p.y, 7, 0, TAU); g.fill(); g.fillStyle = `rgba(255,170,60,${t * 0.6})`; g.beginPath(); g.arc(p.x, p.y, 12, 0, TAU); g.fill(); }
       else if (p.type === 'cash') { g.fillStyle = `rgba(125,255,155,${t})`; g.font = 'bold 14px sans-serif'; g.textAlign = 'center'; g.fillText('+₱', p.x, p.y); }
     }
     WORLD.drawOverlay(g, x0 - 40, y0 - 40, x1 - x0 + 80, y1 - y0 + 80);

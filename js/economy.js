@@ -175,7 +175,12 @@ const ACH_LIST = [
   ['vigil3', '🦸', 'Bayani ng Bayan', 'Mahuli ang 3 carnapper', () => G.stats.vigil >= 3],
   ['vehicles8', '🚗', 'Kolektor', 'Mag-drive ng 8 klase ng sasakyan', () => ACH.drove.size >= 8],
   ['maxcar', '⚙️', 'Full Upgrade', 'I-max ang makina at armor ng isang sasakyan', () => { const v = G.player.vehicle; return !!(v && v.upg && v.upg.eng >= 3 && v.upg.arm >= 3); }],
-  ['armed', '🎯', 'Armado', 'Magkaroon ng lahat ng armas', () => ['pamalo', 'tirador', 'watergun'].every(w => G.player.weapons && G.player.weapons[w] !== undefined)],
+  ['armed', '🎯', 'Armado', 'Magkaroon ng lahat ng armas sa Hardware', () => ['pamalo', 'tirador', 'watergun'].every(w => G.player.weapons && G.player.weapons[w] !== undefined)],
+  ['gun1', '🔫', 'Kasa Na', 'Bumili ng unang baril sa Armas ni Kabo', () => GUN_IDS.some(w => GUNS.owned(w))],
+  ['arsenal', '🧰', 'Arsenal', 'Magkaroon ng lahat ng baril at granada', () => GUN_IDS.concat('granada').every(w => GUNS.owned(w))],
+  ['kuta1', '☠️', 'Unang Kuta', 'Linisin ang isang kuta ng sindikato', () => !!(G.flags.kuta && Object.keys(G.flags.kuta).length >= 1)],
+  ['kutaall', '🛡', 'Linis-Bayan', 'Linisin ang lahat ng 3 kuta ng sindikato', () => !!(G.flags.kuta && Object.keys(G.flags.kuta).length >= 3)],
+  ['range25', '🥫', 'Asintado', '25+ tama sa Barilan ng Lata', () => (G.stats.rangeBest || 0) >= 25],
   ['rich', '💰', 'Milyonaryo (Halos)', 'Kumita ng ₱100,000 sa kabuuan', () => (G.stats.earned || 0) >= 100000],
 ];
 const ACH = {

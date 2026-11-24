@@ -32,11 +32,11 @@ const SETTINGS = {
 // heliMin/roadblock/spikes/pellet: minimum stars before each kind of response
 const DIFFS = {
   madali: { name: 'Madali', icon: '😎', desc: 'Para mag-enjoy. Mabagal at kaunti ang pulis, madaling tumakas, mas matibay ka.',
-    copSpeed: 0.8, units: 0.5, arrest: 2.5, dmg: 0.5, carDmg: 0.6, decay: 0.5, timer: 1.4, vision: 0.7, lost: 1.8, zone: 0.65, heat: 0.65, inZone: 0.55, heliMin: 6, roadblock: 4, spikes: 6, pellet: 6, boxIn: 2, ramMin: 230, stopSpd: 20 },
+    copSpeed: 0.8, units: 0.5, arrest: 2.5, dmg: 0.5, carDmg: 0.6, decay: 0.5, timer: 1.4, vision: 0.7, lost: 1.8, zone: 0.65, heat: 0.65, inZone: 0.55, heliMin: 6, roadblock: 4, spikes: 6, pellet: 6, copGuns: 7, boxIn: 2, ramMin: 230, stopSpd: 20 },
   normal: { name: 'Normal', icon: '🙂', desc: 'Balanse. Kaya mong tumakas kung magtatago ka at magpapalit ng itsura.',
-    copSpeed: 0.94, units: 0.85, arrest: 1.2, dmg: 0.9, carDmg: 0.9, decay: 0.8, timer: 1.1, vision: 0.88, lost: 2.5, zone: 0.85, heat: 0.9, inZone: 0.3, heliMin: 5, roadblock: 3, spikes: 5, pellet: 5 },
+    copSpeed: 0.94, units: 0.85, arrest: 1.2, dmg: 0.9, carDmg: 0.9, decay: 0.8, timer: 1.1, vision: 0.88, lost: 2.5, zone: 0.85, heat: 0.9, inZone: 0.3, heliMin: 5, roadblock: 3, spikes: 5, pellet: 5, copGuns: 5 },
   mahirap: { name: 'Mahirap', icon: '🔥', desc: 'Para sa mga beterano. Mabilis, marami at matalas ang mata ng pulis.',
-    copSpeed: 1.06, units: 1.3, arrest: 0.8, dmg: 1.3, carDmg: 1.25, decay: 1.3, timer: 0.85, vision: 1.1, lost: 3.6, zone: 1.1, heat: 1.2, inZone: 0.15, heliMin: 5, roadblock: 3, spikes: 5, pellet: 5 },
+    copSpeed: 1.06, units: 1.3, arrest: 0.8, dmg: 1.3, carDmg: 1.25, decay: 1.3, timer: 0.85, vision: 1.1, lost: 3.6, zone: 1.1, heat: 1.2, inZone: 0.15, heliMin: 5, roadblock: 3, spikes: 5, pellet: 5, copGuns: 4 },
 };
 const D = () => DIFFS[SETTINGS.diff] || DIFFS.normal;
 
@@ -61,6 +61,8 @@ const TIPS = {
   daynight: () => ['🌅 Araw at Gabi', 'Umiikot ang oras (tingnan ang orasan sa itaas). May rush hour (7–9 AM, 5–7 PM) na mas trapik, at iba-iba ang tao sa kalye depende sa oras.'],
   save: () => ['💾 Save at Load', 'Awtomatikong nase-save ang laro kapag umalis ka. Pwede ring mag-save sa 3 slot: ☰ → I-SAVE. Ang mga ari-arian mo ay safehouse din.'],
   jobs: () => ['💼 Side Jobs', 'Sa taxi, police car, delivery motor (🛵 Rider Hub) o tow truck (🛻 Impound), pindutin ang J / 💼 para kumita. Sa gabi, may 🏁 underground race sa Baywalk.'],
+  guns: () => ['🔫 Baril', 'Kaliwang click / Space para bumaril (hawakan para sa SMG at Riple), G para mag-reload. Sa sasakyan: click, X o 🔫 para sa drive-by (Pistola o SMG). Sa phone, kusang tumututok. Mag-ingat — naririnig ng pulis ang putok!'],
+  kuta: () => ['☠️ Kuta ng Sindikato', 'May mga kuta ng armadong sindikato (☠️ sa mapa). Talunin silang lahat para sa ₱3,000 — hindi krimen ang labanan sila, pero huwag tamaan ang inosente!'],
   weapons: () => ['🔨 Armas', 'Sa Hardware may pamalo, tirador at water gun. Q / 🔄 para magpalit. Krimen pa rin ang pagtama sa tao!'],
   property: () => ['🔑 Ari-arian', 'May mga ibinebentang lugar (🔑). Kapag nabili mo, may kita ka tuwing 6 AM, at nagiging safehouse ito.'],
   retry: () => ['🔁 Checkpoint', 'Nabigo ang misyon? Pindutin ang ULITIN para bumalik sa checkpoint — hindi na kailangang ulitin ang usapan.'],
@@ -104,6 +106,8 @@ const TIP = {
       if (G.frame > 600) this.show('save');
       if (JOBS.avail()) this.show('jobs');
       if (sh && sh.type === 'weapon') this.show('weapons');
+      if (sh && sh.type === 'gunshop' && GUNS.unlocked()) this.show('guns');
+      if (GUNS.unlocked() && KUTA.near()) this.show('kuta');
       if (sh && sh.type === 'property') this.show('property');
       if (WORLD.nearVendor() || WORLD.vendors.some(v => U.d2(v.x, v.y, P.x, P.y) < 250 * 250)) this.show('vendor');
       for (const c of MAP.cctv) if (U.d2(c.x, c.y, P.x, P.y) < 300 * 300) { this.show('cctv'); break; }

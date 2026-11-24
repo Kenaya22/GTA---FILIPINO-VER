@@ -42,6 +42,7 @@ class Person {
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.vx = Math.cos(a) * force; this.vy = Math.sin(a) * force;
     this.state = 'down'; this.downT = U.rand(4, 7); this.a = a;
+    if (this.kind === 'goon') { this.hostile = true; this.hits = (this.hits || 0) + 1; if (this.hits >= 2) { this.ko = true; this.downT = 999; } }
     if (Math.random() < 0.55 && this.kind === 'ped') G.dropCash(this.x, this.y, U.randi(10, 80));
   }
   move(dt) {
@@ -86,6 +87,7 @@ class Person {
       if (this.downT <= 0) { this.state = this.kind === 'cop' ? 'chase' : 'flee'; this.fleeT = 4; this.tx = G.player.x; this.ty = G.player.y; }
       return;
     }
+    if (this.kind === 'goon') { updateGoon(this, dt); return; }
     if (this.kind === 'cop') { this.updateCop(dt); this.phase += dt * this.moveAmt * 12; this.move(dt); return; }
     if (this.state === 'hoop') {
       const c = this.court;
@@ -189,11 +191,14 @@ class Player extends Person {
     this.hp = 100; this.vehicle = null; this.punchCd = 0; this.arrest = 0; this.money = 0; this.r = 9;
     this.state = 'player'; this.outT = 0; this.hurtT = 0; this.downed = false;
     this.weapons = { fists: true }; this.weapon = 'fists'; this.swingT = 0;
+    this.mags = {}; this.armor = 0; this.reloadT = 0; this.fireCd = 0;
   }
   faceId() { return this.look.hair; }
   hurt(n, fx, fy) {
     if (this.downed || G.cutscene || DEV.god) return;
-    this.hp -= n * D().dmg; this.hurtT = 0.3;
+    n *= D().dmg;
+    if (this.armor > 0) { const soak = Math.min(this.armor, n * 0.7); this.armor -= soak; n -= soak; }
+    this.hp -= n; this.hurtT = 0.3;
     G.shake(3);
     if (this.hp <= 0) this.knockout('hp');
   }
@@ -291,6 +296,7 @@ class Player extends Person {
         if (p.hp <= 0 || p.kind !== 'cop' || Math.random() < 0.5) { p.knock(this.x, this.y, 160); p.hp = 100; }
         else { p.vx = Math.cos(this.a) * 120; p.vy = Math.sin(this.a) * 120; }
         if (p.kind === 'cop') WANTED.crime(3, p.x, p.y, true);
+        else if (p.kind === 'goon') p.hostile = true;
         else if (!p.npc) { WANTED.crime(1, this.x, this.y); G.panic(this.x, this.y, 260); }
         G.particle('hit', hx, hy);
       }
@@ -328,7 +334,20 @@ function drawPerson(g, p, now) {
   g.beginPath(); g.arc(-sw * 0.7, -9.5, 3.6, 0, TAU); g.arc(sw * 0.7 + pt * 12, 9.5 - pt * 3, 3.6, 0, TAU); g.fill();
   g.fillStyle = L.skin;
   g.beginPath(); g.arc(-sw * 0.7 + 2, -10, 2.4, 0, TAU); g.arc(sw * 0.7 + 2 + pt * 12, 10 - pt * 3, 2.4, 0, TAU); g.fill();
-  if (p.weapon && p.weapon !== 'fists') {
+  const wpn = p.weapon || (p.kind === 'cop' && p.state === 'chase' && WANTED.stars >= D().copGuns ? 'pistola' : null);
+  if (wpn && WEAPONS[wpn] && (WEAPONS[wpn].gun || WEAPONS[wpn].throw)) {
+    const hx = sw * 0.7 + 3 + pt * 4, hy = 10 - pt * 3;
+    g.save(); g.translate(hx, hy); g.rotate(-0.35);
+    if (wpn === 'granada') { g.fillStyle = '#4b5a32'; g.beginPath(); g.arc(3, 0, 3.6, 0, TAU); g.fill(); }
+    else {
+      const len = { pistola: 11, shotgun: 21, smg: 15, riple: 25 }[wpn], th = wpn === 'shotgun' ? 4 : 3.4;
+      g.fillStyle = wpn === 'shotgun' ? '#6b4a2b' : '#23262c'; U.rr(g, -2, -th / 2, len, th, 1.2); g.fill();
+      g.fillStyle = '#3a3f48'; g.fillRect(len - 8, -1, 8, 2);
+      if (wpn === 'smg') { g.fillStyle = '#16181c'; g.fillRect(4, th / 2, 3, 5); }
+      if (wpn === 'riple') { g.fillStyle = '#111'; g.fillRect(6, -th / 2 - 2.5, 8, 2.5); }
+    }
+    g.restore();
+  } else if (p.weapon && p.weapon !== 'fists') {
     const hx = sw * 0.7 + 3 + pt * 10, hy = 10 - pt * 3;
     g.save(); g.translate(hx, hy);
     if (p.weapon === 'pamalo') { g.rotate(p.swingT > 0 ? -1.4 + (0.25 - p.swingT) * 9 : -0.5); g.fillStyle = '#8a5a2b'; U.rr(g, 0, -2, 22, 4, 2); g.fill(); }
@@ -389,6 +408,12 @@ function drawPerson(g, p, now) {
     g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 1;
     for (let k = 0; k < 6; k++) { const a = k * TAU / 6; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * 15, Math.sin(a) * 15); g.stroke(); }
     g.restore();
+  }
+  // armed gang member marker
+  if (p.kind === 'goon' && !p.ko) {
+    g.strokeStyle = p.hostile ? 'rgba(255,60,60,0.85)' : 'rgba(255,170,60,0.55)'; g.lineWidth = 2.5;
+    g.beginPath(); g.arc(p.x, p.y, 16, 0, TAU); g.stroke();
+    if (p.hostile) { g.fillStyle = '#ff3c3c'; g.font = 'bold 12px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('☠', p.x, p.y - 24); }
   }
   // name / suspicion marker
   if (p.susp > 0.05) {

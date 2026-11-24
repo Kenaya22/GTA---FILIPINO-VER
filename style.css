@@ -404,3 +404,15 @@ body.touch #sub-face { width: 52px; height: 52px; flex-basis: 52px; }
 .bk-code { width: 100%; height: 130px; background: #0d111b; color: #9fe8b0; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; font: 11px/1.4 ui-monospace, monospace; resize: vertical; word-break: break-all; }
 .bk-file { display: flex; align-items: center; justify-content: center; flex: 1; }
 #backup { z-index: 13; }
+
+/* ===== v1.7 Guns ===== */
+.bar.armor { margin-top: 3px; height: 6px; }
+#armorbar { height: 100%; width: 0; background: linear-gradient(90deg, #2e86c1, #7cc4ff); transition: width .2s; }
+#tb-fire { grid-column: 1; grid-row: 1; background: rgba(160, 30, 30, 0.78); border-color: #ff9a8a; font-size: 11px; }
+.gunrow .stats { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 4px 0 2px; }
+.gunrow .stats span { font-size: 10px; font-weight: 800; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.sbar { display: inline-block; width: 54px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+.sbar i { display: block; height: 100%; background: var(--accent); }
+.mg-panel { max-width: 900px; width: 100%; align-items: center; }
+.mg-help { margin: 0; color: var(--muted); font-weight: 700; font-size: 13px; text-align: center; }
+#mg-canvas { width: 100%; aspect-ratio: 16 / 10; max-height: 62vh; border-radius: 12px; background: #000; touch-action: none; cursor: crosshair; }

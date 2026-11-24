@@ -48,6 +48,7 @@
     <canvas id="minimap" width="200" height="200"></canvas>
     <div class="bars">
       <div class="bar"><div id="hpbar"></div></div>
+      <div class="bar armor hidden" id="armorwrap"><div id="armorbar"></div></div>
       <div class="bar car hidden" id="carbarwrap"><div id="carbar"></div></div>
       <div id="weapon"></div>
     </div>
@@ -72,6 +73,7 @@
     <button id="tb-radio" class="tbtn small hidden">📻</button>
     <button id="tb-weap" class="tbtn small hidden">🔄</button>
     <button id="tb-job" class="tbtn small hidden">💼</button>
+    <button id="tb-fire" class="tbtn hidden">🔫 BARIL</button>
   </div>
 </div>
 
@@ -216,6 +218,15 @@
   </div>
 </div>
 
+<div id="minigame" class="screen hidden">
+  <div class="panel wide mg-panel">
+    <h2 id="mg-title">MINI-GAME</h2>
+    <p id="mg-help" class="mg-help"></p>
+    <canvas id="mg-canvas"></canvas>
+    <button id="mg-quit" class="mbtn small">✕ UMALIS</button>
+  </div>
+</div>
+
 <div id="achievements" class="screen hidden">
   <div class="panel wide">
     <h2>MGA TAGUMPAY</h2>
@@ -314,6 +325,7 @@
 <script src="js/police.js"></script>
 <script src="js/world.js"></script>
 <script src="js/weapons.js"></script>
+<script src="js/guns.js"></script>
 <script src="js/economy.js"></script>
 <script src="js/jobs.js"></script>
 <script src="js/save.js"></script>

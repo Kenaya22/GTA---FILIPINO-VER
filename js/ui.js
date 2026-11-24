@@ -83,7 +83,7 @@ const UI = {
   talking: false, lines: [], lineT: 0, toasts: [], bigT: 0, last: {},
   init() {
     this.el = {};
-    for (const id of ['weapon', 'tb-weap', 'tb-job', 'radio', 'tip', 'tip-title', 'tip-body', 'tb-radio', 'hud', 'objective', 'sidejob', 'stars', 'clues', 'wanted-note', 'money', 'vehname', 'minimap', 'hpbar', 'carbar', 'carbarwrap', 'speedo', 'kmh', 'arrest', 'arrestbar', 'prompt', 'subtitle', 'sub-name', 'sub-text', 'toasts', 'bigmsg', 'big-title', 'big-sub', 'touch', 'tb-b', 'tb-horn', 'tb-act'])
+    for (const id of ['weapon', 'tb-weap', 'tb-job', 'radio', 'tip', 'tip-title', 'tip-body', 'tb-radio', 'hud', 'objective', 'sidejob', 'stars', 'clues', 'wanted-note', 'money', 'vehname', 'minimap', 'hpbar', 'carbar', 'carbarwrap', 'speedo', 'kmh', 'arrest', 'arrestbar', 'prompt', 'subtitle', 'sub-name', 'sub-text', 'toasts', 'bigmsg', 'big-title', 'big-sub', 'touch', 'tb-b', 'tb-horn', 'tb-act', 'tb-fire', 'armorbar', 'armorwrap'])
       this.el[id] = $(id);
     this.el.stars.innerHTML = STAR_SVG.repeat(6);
     this.starEls = [...this.el.stars.querySelectorAll('.star')];
@@ -314,7 +314,9 @@ const UI = {
     const obj = MS.objText();
     this.el.objective.classList.toggle('hidden', !obj);
     this.set('obj', this.el.objective, 'textContent', obj);
-    this.set('weap', this.el.weapon, 'textContent', v ? '' : ARMS.label());
+    this.set('weap', this.el.weapon, 'textContent', v ? (GUNS.driveGun() ? ARMS.label() : '') : ARMS.label());
+    this.el.armorwrap.classList.toggle('hidden', !(P.armor > 0));
+    if (P.armor > 0) this.el.armorbar.style.width = P.armor + '%';
     let side = JOBS.objText() || PASADA.objText();
     if (!side && JOBS.avail()) side = `💼 Pindutin ang ${INPUT.touch ? '💼' : 'J'} para sa side job: ${JOB_NAMES[JOBS.avail()]}`;
     if (!MS.active && !side && MS.idx < MISSIONS.length) side = `Susunod na misyon: ${MISSIONS[MS.idx].title} — puntahan si ${CHARS[MISSIONS[MS.idx].giver].name} (${CHARS[MISSIONS[MS.idx].giver].name[0]} sa mapa)`;
@@ -329,8 +331,9 @@ const UI = {
     if (pr) this.set('prompt', this.el.prompt, 'innerHTML', (INPUT.touch ? '' : '<kbd>E</kbd>') + pr);
     // touch button labels
     if (INPUT.touch) {
-      this.set('tbb', this.el['tb-b'], 'textContent', v ? 'PRENO' : ({ fists: 'SUNTOK', pamalo: 'PALO', tirador: 'TIRA', watergun: 'BASA' })[P.weapon] || 'SUNTOK');
+      this.set('tbb', this.el['tb-b'], 'textContent', v ? 'PRENO' : ({ fists: 'SUNTOK', pamalo: 'PALO', tirador: 'TIRA', watergun: 'BASA', pistola: 'BARIL', shotgun: 'BARIL', smg: 'BARIL', riple: 'BARIL', granada: 'HAGIS' })[P.weapon] || 'SUNTOK');
       this.el['tb-horn'].classList.toggle('hidden', !v);
+      this.el['tb-fire'].classList.toggle('hidden', !(v && GUNS.driveGun()));
       this.el['tb-radio'].classList.toggle('hidden', !v);
       const owned = Object.keys(P.weapons || {}).length;
       this.el['tb-weap'].classList.toggle('hidden', !!v || owned < 2);
@@ -372,6 +375,15 @@ const UI = {
       if (x * x + y * y > (R - 8) * (R - 8)) continue;
       if (MS.freeShops && !['ukay', 'barber', 'paint'].includes(p.type)) continue;
       g.fillText(p.icon, x, y);
+    }
+    if (GUNS.unlocked()) for (const kt of KUTA.defs()) {
+      if (KUTA.cleared(kt.key)) continue;
+      const x = (kt.x - P.x) * k, y = (kt.y - P.y) * k;
+      if (x * x + y * y < (R - 8) * (R - 8)) g.fillText('☠️', x, y);
+    }
+    for (const p of G.peds) if (p.kind === 'goon' && !p.ko && p.hostile) {
+      const x = (p.x - P.x) * k, y = (p.y - P.y) * k;
+      if (x * x + y * y < (R - 6) * (R - 6)) { g.fillStyle = '#ff4040'; g.beginPath(); g.arc(x, y, 3, 0, TAU); g.fill(); }
     }
     // cops
     const blink = Math.floor(G.time * 4) % 2;
@@ -421,6 +433,7 @@ const UI = {
     }
     g.font = `${Math.round(sz / 36)}px sans-serif`;
     for (const key in MAP.pois) { const p = MAP.pois[key]; if (p.type === 'npc' || p.type === 'spot') continue; g.fillText(p.icon, p.x * k, p.y * k); }
+    if (GUNS.unlocked()) for (const kt of KUTA.defs()) if (!KUTA.cleared(kt.key)) g.fillText('☠️', kt.x * k, kt.y * k);
     for (const s of MAP.tsinelas) if (!G.tsinelas.has(s.id)) {
       g.fillStyle = '#ffd23f'; g.strokeStyle = '#5a4300'; g.lineWidth = 1.5;
       g.beginPath(); g.ellipse(s.x * k, s.y * k, sz / 260, sz / 150, 0.4, 0, TAU); g.fill(); g.stroke();
@@ -549,6 +562,7 @@ const INPUT = {
     btn('tb-act', () => G.action());
     btn('tb-b', () => { this.bHeld = true; if (!G.player.vehicle) ARMS.attack(); }, () => { this.bHeld = false; });
     btn('tb-horn', () => G.horn());
+    btn('tb-fire', () => { this.fireHeld = true; GUNS.trigger(false); }, () => { this.fireHeld = false; });
     btn('tb-radio', () => MUSIC.nextStation());
     btn('tb-weap', () => ARMS.cycle());
     btn('tb-job', () => JOBS.toggle());

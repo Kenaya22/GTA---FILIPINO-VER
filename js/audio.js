@@ -112,6 +112,13 @@ const AUD = {
   },
   crash(i) { this.noise(0.25 + i * 0.3, Math.min(0.6, 0.15 + i * 0.5), 900 + i * 1200); this.tone(90, 0.2, 'sine', 0.2 * i, 40); },
   punch() { this.noise(0.08, 0.35, 1800); this.tone(120, 0.12, 'sine', 0.3, 60); },
+  gun(id, vol = 1) {
+    if (vol <= 0.02) return;
+    if (id === 'shotgun') { this.noise(0.35, 0.55 * vol, 900); this.tone(70, 0.25, 'sine', 0.35 * vol, 30); }
+    else if (id === 'riple') { this.noise(0.22, 0.5 * vol, 2200); this.tone(110, 0.15, 'sawtooth', 0.15 * vol, 40); }
+    else if (id === 'smg') { this.noise(0.07, 0.32 * vol, 2600); this.tone(160, 0.05, 'square', 0.08 * vol, 60); }
+    else { this.noise(0.12, 0.4 * vol, 1900); this.tone(140, 0.09, 'square', 0.12 * vol, 50); }
+  },
   whoosh() { this.noise(0.12, 0.1, 2500, 0, 'bandpass'); },
   coin() { this.tone(988, 0.08, 'square', 0.08); this.tone(1319, 0.25, 'square', 0.08, 0, 0.08); },
   cash() { [784, 988, 1175, 1568].forEach((f, i) => this.tone(f, 0.12, 'square', 0.07, 0, i * 0.06)); },

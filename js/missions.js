@@ -843,7 +843,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'weapon', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'weapon', 'gunshop', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -859,6 +859,7 @@ const SHOP = {
       case 'barber': return P.vehicle ? null : `Barberya — Bagong gupit (${c(100)})`;
       case 'paint': return P.vehicle ? `Pintura — kulay, makina, armor, sticker, busina` : null;
       case 'weapon': return P.vehicle ? null : ARMS.shopLabel();
+      case 'gunshop': return P.vehicle ? null : (GUNS.unlocked() ? 'Armas ni Kabo — baril, bala, vest at shooting range' : '🔒 Armas — bukas pagkatapos ng Misyon 2');
       case 'property': return ECON.propLabel(p);
       case 'garage': return P.vehicle ? 'I-park ang sasakyan sa garahe' : `Buksan ang garahe (${ECON.garage.length} sasakyan)`;
       case 'rider': return P.vehicle ? null : 'Food Rider — kumuha ng delivery motor at magsimula';
@@ -905,6 +906,7 @@ const SHOP = {
       }
       case 'paint': { if (P.vehicle) ECON.openCustom(); break; }
       case 'weapon': ARMS.openShop(); break;
+      case 'gunshop': GUNS.openShop(); break;
       case 'property': ECON.propUse(p); break;
       case 'garage': if (P.vehicle) ECON.store(P.vehicle); else ECON.openGarage(p); break;
       case 'race': JOBS.raceStart(); break;
