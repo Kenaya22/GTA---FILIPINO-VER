@@ -1,10 +1,12 @@
-# 👑 HARI NG KALSADA: Maynila — v1.5
+# 👑 HARI NG KALSADA: Maynila — v1.6
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
 corrupt Mayor Kurakot.
 
-![Gameplay](screenshot.png)
+![Gameplay trailer](media/trailer.gif)
+
+🌐 **Filipino & English** · 📲 **Installable & works offline** · 📱 **Phone & PC**
 
 Runs in any modern browser on **phone or PC**. There's no install and no build step.
 
@@ -13,6 +15,9 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 * **On your phone:** turn on GitHub Pages (repo → Settings → Pages → Deploy from branch →
   this branch, root `/`), then open the Pages link on your phone. You can also "Add to Home Screen".
 * Or run a local server: `python3 -m http.server` and open `http://localhost:8000`.
+
+## 📲 Install it like an app
+Open the game link on your phone and tap **📲 I-INSTALL ANG APP** on the home page (Android/Chrome), or **Share → Add to Home Screen** (iPhone). It opens fullscreen and works without internet. Back up your saves anytime: ☰ → I-SAVE → **📤 I-EXPORT**.
 
 ## 🌾 Chapter 2: Probinsya (v1.5)
 After the Manila story, drive the highway east to **San Isidro** and help Lola Isyang against the land-grabbing **Don Severo**. 6 missions, a stealth mission, and a **choice with two endings**.
@@ -96,5 +101,12 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/weapons.js` | Weapons, projectiles, hardware shop |
 | `js/economy.js` | Properties, garage, car customization, achievements |
 | `js/jobs.js` | Side jobs: rider, taxi, tow, vigilante, race |
+| `js/i18n.js`, `js/lang_en.js` | English language option |
+| `js/portraits.js` | Character portraits |
+| `js/pwa.js`, `sw.js`, `manifest.json` | Installable offline app |
 | `js/tutorial.js` | New-player tutorial, developer mode |
 | `js/world.js` | Day/night, weather, floods, traffic lights, street life, police boats |
+
+
+## 🚀 Publishing
+See **[ITCH.md](ITCH.md)** for the itch.io guide, store text and release checklist.

@@ -588,7 +588,7 @@ const MAP = {
     if (!allowNew) return null;
     c = this.renderChunk(cx, cy);
     this.chunks.set(key, c);
-    if (this.chunks.size > 70) { const first = this.chunks.keys().next().value; this.chunks.delete(first); }
+    if (this.chunks.size > (SETTINGS.quality === 'low' ? 36 : 70)) { const first = this.chunks.keys().next().value; this.chunks.delete(first); }
     return c;
   },
   renderChunk(cx, cy) {

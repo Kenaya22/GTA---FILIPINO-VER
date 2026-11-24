@@ -90,7 +90,7 @@ class Vehicle {
     this.vx = ca * vf - sa * vr; this.vy = sa * vf + ca * vr;
     // skid marks
     if (t.boat) { if (Math.abs(vf) > 80 && Math.random() < 0.6) G.particle('wake', this.x - Math.cos(this.a) * this.L * 0.5, this.y - Math.sin(this.a) * this.L * 0.5); }
-    else if (Math.abs(vr) > 140 && G.frame % 2 === 0) G.addSkid(this);
+    else if (Math.abs(vr) > 140 && G.frame % 2 === 0 && SETTINGS.quality !== 'low') G.addSkid(this);
     this.x += this.vx * dt; this.y += this.vy * dt;
     this.collideTiles();
     if (this.lastImpact > 0) this.lastImpact -= dt;
@@ -377,7 +377,7 @@ function drawVehicleLights(g, v, now, sprites) {
   if (v.burnt) return;
   const on = v.driver || v.mission;
   const ca = Math.cos(v.a), sa = Math.sin(v.a);
-  if (on) {
+  if (on && SETTINGS.quality !== 'low') {
     g.save(); g.translate(v.x + ca * v.L * 0.5, v.y + sa * v.L * 0.5); g.rotate(v.a);
     g.globalAlpha = (v.W < 20 ? 0.35 : 0.55) * G.lightMul;
     const s = v.W < 20 ? 0.6 : 1;

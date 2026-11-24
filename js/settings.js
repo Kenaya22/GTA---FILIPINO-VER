@@ -2,15 +2,15 @@
 // ===== Settings, difficulty & tutorial tips =====
 const SETTINGS_KEY = 'harinkalsada_settings_v1';
 const SETTINGS = {
-  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', touchCtl: 'joystick', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {},
+  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', touchCtl: 'joystick', lang: 'fil', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {},
   load() {
     try { Object.assign(this, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch (e) { }
     if (!this.seen) this.seen = {};
   },
   save() {
     try {
-      const { music, sfx, walkMusic, diff, drive, touchCtl, quality, joy, lefty, tipsOn, seen } = this;
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ music, sfx, walkMusic, diff, drive, touchCtl, quality, joy, lefty, tipsOn, seen }));
+      const { autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen } = this;
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen }));
     } catch (e) { }
   },
   apply() {

@@ -25,6 +25,8 @@ const G = {
     this.player = new Player(MAP.pois.busterm.x, MAP.pois.busterm.y);
     this.cam.x = this.player.x; this.cam.y = this.player.y;
     UI.init();
+    I18N.init();
+    PWA.init();
     SETTINGS.apply();
     this.last = performance.now();
     requestAnimationFrame((t) => this.loop(t));
@@ -72,7 +74,8 @@ const G = {
     this.cam.x = this.player.x; this.cam.y = this.player.y;
     // pre-render chunks around player
     const cs = MAP.CH, cx = Math.floor(this.player.x / cs), cy = Math.floor(this.player.y / cs);
-    for (let y = cy - 2; y <= cy + 2; y++) for (let x = cx - 2; x <= cx + 2; x++) MAP.getChunk(x, y, true);
+    const pre = SETTINGS.quality === 'low' ? 1 : 2;
+    for (let y = cy - pre; y <= cy + pre; y++) for (let x = cx - pre; x <= cx + pre; x++) MAP.getChunk(x, y, true);
     this.cam.vw = innerWidth; this.cam.vh = innerHeight;
     for (let k = 0; k < 40; k++) { TRAFFIC.spawnCar(); TRAFFIC.spawnPed(); }
   },
@@ -250,7 +253,8 @@ const G = {
   shake(n) { this.cam.shake = Math.max(this.cam.shake, n); },
   fadeFlash() { const f = document.getElementById('fade'); f.classList.add('flash', 'on'); setTimeout(() => f.classList.remove('on'), 120); setTimeout(() => f.classList.remove('flash'), 500); },
   particle(type, x, y) {
-    if (this.particles.length > 500) return;
+    if (this.particles.length > (SETTINGS.quality === 'low' ? 150 : 500)) return;
+    if (SETTINGS.quality === 'low' && (type === 'smoke' || type === 'wake' || type === 'drip') && Math.random() < 0.6) return;
     const p = { type, x, y, vx: U.rand(-20, 20), vy: U.rand(-20, 20), life: 1, max: 1, size: 8 };
     if (type === 'smoke') { p.life = p.max = U.rand(1, 1.8); p.size = U.rand(8, 14); p.vx *= 0.6; p.vy = U.rand(-30, -10); }
     else if (type === 'fire') { p.life = p.max = U.rand(0.4, 0.8); p.size = U.rand(8, 16); p.vy = U.rand(-50, -20); }
@@ -324,6 +328,20 @@ const G = {
   },
 
   // ---------- main loop ----------
+  // switch to fast graphics automatically if the device struggles
+  perfCheck(dt) {
+    if (!this.started || this.paused || SETTINGS.quality === 'low' || SETTINGS.autoLowDone) return;
+    this.pf = this.pf || { t: 0, n: 0, sum: 0 };
+    this.pf.t += dt; this.pf.n++; this.pf.sum += dt;
+    if (this.pf.t > 6) {
+      const fps = this.pf.n / this.pf.sum;
+      this.pf = { t: 0, n: 0, sum: 0 };
+      if (fps < 28) {
+        SETTINGS.quality = 'low'; SETTINGS.autoLowDone = true; SETTINGS.apply(); SETTINGS.save();
+        UI.toast('Mabagal ang laro sa device na ito — lilipat sa MABILIS na graphics para gumaan.');
+      }
+    }
+  },
   loop(t) {
     let dt = (t - this.last) / 1000; this.last = t;
     if (dt > 0.1) dt = 0.1;
@@ -336,6 +354,10 @@ const G = {
       TIP.check(dt); TIP.update(dt);
     }
     MUSIC.update(dt, this.player);
+    this.perfCheck(dt);
+    // fast mode: draw at ~30 fps to save battery on low-end phones
+    this.rf = !this.rf;
+    if (SETTINGS.quality === 'low' && this.rf && this.started) { requestAnimationFrame((tt) => this.loop(tt)); return; }
     if (this.started) this.render(); else this.renderTitle(dt);
     requestAnimationFrame((tt) => this.loop(tt));
   },
@@ -693,10 +715,11 @@ const G = {
     // names
     g.font = 'bold 12px Nunito, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'bottom';
     for (const p of this.peds) if (p.sayT > 0 && p.say && inV(p.x, p.y, 40)) {
-      g.font = 'bold 12px Nunito, sans-serif'; const w = g.measureText(p.say).width + 12;
+      const say = I18N.t(p.say);
+      g.font = 'bold 12px Nunito, sans-serif'; const w = g.measureText(say).width + 12;
       g.fillStyle = 'rgba(255,255,255,0.92)'; U.rr(g, p.x - w / 2, p.y - 46, w, 20, 8); g.fill();
       g.beginPath(); g.moveTo(p.x - 4, p.y - 27); g.lineTo(p.x + 4, p.y - 27); g.lineTo(p.x, p.y - 21); g.fill();
-      g.fillStyle = '#1a2030'; g.fillText(p.say, p.x, p.y - 30);
+      g.fillStyle = '#1a2030'; g.fillText(say, p.x, p.y - 30);
     }
     g.font = 'bold 12px Nunito, sans-serif';
     for (const p of this.peds) if (p.name && inV(p.x, p.y, 20)) { g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillText(p.name, p.x + 1, p.y - 17); g.fillStyle = '#ffd23f'; g.fillText(p.name, p.x, p.y - 18); }
@@ -728,7 +751,7 @@ const G = {
         g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(0, -52, 15, 0, TAU); g.fill();
         g.fillStyle = '#1a1205'; g.font = 'bold 18px Lilita One, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t.letter, 0, -51);
       }
-      if (t.stop) { g.fillStyle = '#ffd23f'; g.font = 'bold 13px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText('PARA', 0, 0); }
+      if (t.stop) { g.fillStyle = '#ffd23f'; g.font = 'bold 13px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText(I18N.t('PARA'), 0, 0); }
     }
     g.restore();
   },

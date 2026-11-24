@@ -3,7 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0f1320">
+<meta name="theme-color" content="#0d111b">
+<meta name="description" content="Hari ng Kalsada: Maynila — isang orihinal na open-world na laro sa Maynila. Jeepney, tricycle, 6-star na habulan, Isla Maligaya at probinsya. Libre sa browser at phone.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-32.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hari ng Kalsada">
+<meta property="og:title" content="Hari ng Kalsada: Maynila">
+<meta property="og:description" content="Open-world na laro sa kalye ng Maynila — magpasada, tumakas sa pulis, at bawiin ang lupa ng pamilya mo.">
+<meta property="og:image" content="media/preview.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Hari ng Kalsada</title>
@@ -44,7 +55,7 @@
   <div id="speedo" class="hidden"><span id="kmh">0</span><small>km/h</small></div>
   <div id="arrest" class="hidden"><div id="arrestbar"></div><span>HINUHULI KA!</span></div>
   <div id="prompt" class="hidden"></div>
-  <div id="subtitle" class="hidden"><b id="sub-name"></b><span id="sub-text"></span><small id="sub-skip">tap / E ▸</small></div>
+  <div id="subtitle" class="hidden"><img id="sub-face" alt=""><div class="sub-body"><b id="sub-name"></b><span id="sub-text"></span><small id="sub-skip">tap / E ▸</small></div></div>
   <div id="toasts"></div>
   <div id="tut" class="hidden"><div class="tut-top"><span class="tut-badge">🎓 TUTORIAL</span><span id="tut-n"></span><button id="tut-skip">Laktawan ✕</button></div><div id="tut-text"></div><div class="tut-bot"><span id="tut-wait">⏳ Gawin ito para magpatuloy...</span><button id="tut-ok">SIGE ▶</button></div></div>
   <div id="tip" class="hidden"><b id="tip-title"></b><span id="tip-body"></span><button id="tip-ok">OK ✓</button></div>
@@ -66,6 +77,7 @@
 
 <div id="title" class="screen">
   <div class="t-shade"></div>
+  <button id="t-lang" class="t-lang">🌐 English</button>
   <div class="t-wrap">
     <div class="t-hero">
       <div class="t-badge"><span class="t-dot"></span> OPEN-WORLD · MAYNILA</div>
@@ -83,6 +95,7 @@
       <button id="btn-continue" class="mbtn primary t-big hidden">▶&nbsp; ITULOY</button>
       <button id="btn-new" class="mbtn t-new">✚&nbsp; BAGONG LARO</button>
       <button id="btn-load" class="mbtn hidden">📂&nbsp; I-LOAD ANG SAVE</button>
+      <button id="btn-install" class="mbtn t-install hidden">📲&nbsp; I-INSTALL ANG APP</button>
       <div class="t-row">
         <button id="btn-settings" class="mbtn t-sm">⚙️<small>SETTING</small></button>
         <button id="btn-howto" class="mbtn t-sm">❓<small>PAANO</small></button>
@@ -179,7 +192,19 @@
     <h2 id="slot-title">I-SAVE</h2>
     <p class="note">Pwede kang umalis anumang oras — awtomatikong nase-save ang laro sa Auto-save.</p>
     <div id="slot-list" class="slotlist"></div>
+    <div class="menurow" style="width:100%"><button id="btn-export" class="mbtn small">📤 I-EXPORT</button><button id="btn-import" class="mbtn small">📥 I-IMPORT</button></div>
     <button id="btn-slotclose" class="mbtn primary">BUMALIK</button>
+  </div>
+</div>
+
+<div id="backup" class="screen hidden">
+  <div class="panel">
+    <h2 id="bk-title">BACKUP</h2>
+    <p class="note" id="bk-note"></p>
+    <textarea id="bk-code" class="bk-code" spellcheck="false"></textarea>
+    <div class="menurow" id="bk-exp" style="width:100%"><button id="bk-copy" class="mbtn small">Kopyahin</button><button id="bk-dl" class="mbtn small">I-download bilang file</button></div>
+    <div class="menurow hidden" id="bk-imp" style="width:100%"><label class="mbtn small bk-file">Pumili ng file<input type="file" id="bk-file" accept=".txt,.json,text/plain" hidden></label><button id="bk-go" class="mbtn small primary">📥 I-IMPORT</button></div>
+    <button id="bk-close" class="mbtn primary">BUMALIK</button>
   </div>
 </div>
 
@@ -235,6 +260,7 @@
   <div class="panel">
     <h2>MGA SETTING</h2>
     <div class="setlist">
+      <div class="setrow"><span>🌐 Wika / Language</span><div class="seg" data-key="lang"><button data-v="fil">FILIPINO</button><button data-v="en">ENGLISH</button></div></div>
       <label class="setrow"><span>🎵 Musika</span><input type="range" id="set-music" min="0" max="100"></label>
       <label class="setrow"><span>🔊 Sound effects</span><input type="range" id="set-sfx" min="0" max="100"></label>
       <div class="setrow"><span>🚶 Musika habang naglalakad</span><div class="seg" data-key="walkMusic"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
@@ -277,6 +303,8 @@
 
 <script src="js/util.js"></script>
 <script src="js/settings.js"></script>
+<script src="js/lang_en.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/music.js"></script>
 <script src="js/map.js"></script>
@@ -290,6 +318,8 @@
 <script src="js/jobs.js"></script>
 <script src="js/save.js"></script>
 <script src="js/tutorial.js"></script>
+<script src="js/portraits.js"></script>
+<script src="js/pwa.js"></script>
 <script src="js/missions.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/game.js"></script>

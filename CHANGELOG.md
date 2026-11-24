@@ -1,5 +1,13 @@
 # Changelog — Hari ng Kalsada
 
+## v1.6: Polish & Release (2026-11-24)
+- 🌐 **English language option** (home page 🌐 button or Settings). All dialogue, missions, menus, tips and the tutorial are translated
+- 🖼 **Character portraits** in every dialogue box
+- 📲 **Installable app (PWA)**: install button on the home page, works offline, fullscreen, auto-updates
+- 💾 **Save backup**: export every slot as a code or file and import it on another device
+- ⚡ **Low-end phones**: auto-switches to fast graphics when the frame rate is low; fast mode draws at 30 fps, skips heavy effects and uses less memory
+- 🎬 **Release kit**: trailer GIF, screenshots, link-preview image, itch.io guide (`ITCH.md`), `tools/update-sw.py`
+
 ## v1.5: Kabanata 2 — Probinsya (2026-11-24)
 - 🌾 **Chapter 2**: a new province east of Manila, the town of **San Isidro**. A highway out of the city, rice paddies, dirt farm roads, a town plaza with church and municipal hall, a rice mill, and the walled **Hacienda Severo**
 - 📖 **6 new missions**: Pauwi sa Probinsya, Ani ng Bayan, Karera ng Kuliglig, Mga Bantay ni Don Severo, Ang Titulo (stealth), Lupa ng Bayan

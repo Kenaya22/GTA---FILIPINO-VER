@@ -92,8 +92,45 @@ const SAVE = {
     const pct = ACH.percentOf(d);
     return { line1: `Misyon ${mis}/${MISSIONS.length} · ${U.money(d.money || 0)} · ${pct}%`, line2: `${d.active >= 0 && MISSIONS[d.active] ? '▶ ' + MISSIONS[d.active].title + ' · ' : ''}na-save ${when}` };
   },
+  // ----- backup: export / import every slot as a text code -----
+  exportCode() {
+    const slots = {};
+    for (const s of this.slots) { const d = localStorage.getItem(this.key(s)); if (d) slots[s] = JSON.parse(d); }
+    const json = JSON.stringify({ app: 'hari-ng-kalsada', v: 1, at: Date.now(), slots });
+    return 'HNK1:' + btoa(unescape(encodeURIComponent(json)));
+  },
+  importCode(code) {
+    try {
+      code = (code || '').trim();
+      const json = code.startsWith('HNK1:') ? decodeURIComponent(escape(atob(code.slice(5)))) : code;
+      const o = JSON.parse(json);
+      if (!o || o.app !== 'hari-ng-kalsada' || !o.slots) throw new Error('bad');
+      const n = Object.keys(o.slots).length;
+      if (!n || !confirm(`I-import ang ${n} save? Papalitan nito ang mga kaparehong slot sa device na ito.`)) return false;
+      for (const s in o.slots) if (this.slots.includes(s)) localStorage.setItem(this.key(s), JSON.stringify(o.slots[s]));
+      UI.toast(`✅ Na-import ang ${n} save!`); AUD.success(); UI.refreshTitle();
+      return true;
+    } catch (e) { alert('Mali o sirang save code.'); AUD.fail(); return false; }
+  },
+  openBackup(mode) {
+    const $ = (id) => document.getElementById(id);
+    const exp = mode === 'export';
+    $('bk-title').textContent = exp ? '📤 I-EXPORT ANG SAVE' : '📥 I-IMPORT ANG SAVE';
+    $('bk-note').textContent = exp ? 'Kopyahin ang code na ito at itago. Gamitin sa I-IMPORT para ibalik ang save mo sa ibang phone o browser.' : 'I-paste ang save code dito:';
+    $('bk-code').value = exp ? this.exportCode() : ''; $('bk-code').readOnly = exp;
+    $('bk-exp').classList.toggle('hidden', !exp); $('bk-imp').classList.toggle('hidden', exp);
+    $('bk-copy').onclick = async () => { try { await navigator.clipboard.writeText($('bk-code').value); } catch (e) { $('bk-code').select(); document.execCommand('copy'); } UI.toast('Na-kopya ang save code!'); AUD.click(); };
+    $('bk-dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([$('bk-code').value], { type: 'text/plain' })); a.download = 'hari-ng-kalsada-save.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
+    $('bk-file').onchange = (e) => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { $('bk-code').value = t; }); };
+    $('bk-go').onclick = () => { if (this.importCode($('bk-code').value)) { UI.hide('backup'); if (!document.getElementById('slots').classList.contains('hidden')) this.open(this.mode || 'load'); } };
+    $('bk-close').onclick = () => UI.hide('backup');
+    UI.show('backup');
+  },
   // screen: mode = 'save' | 'load'
   open(mode) {
+    this.mode = mode;
+    document.getElementById('btn-export').onclick = () => this.openBackup('export');
+    document.getElementById('btn-import').onclick = () => this.openBackup('import');
     const el = document.getElementById('slot-list');
     document.getElementById('slot-title').textContent = mode === 'save' ? 'I-SAVE ANG LARO' : 'I-LOAD ANG LARO';
     el.innerHTML = this.list().map(({ slot, data }) => {

@@ -11,6 +11,14 @@ const ICONS = {
 
 // what's new in each version (newest first)
 const CHANGES = [
+  { v: '1.6', title: 'Polish at Release', date: 'Nobyembre 2026', items: [
+    '🌐 <b>English</b> — pwede nang laruin sa English (🌐 sa home page o sa Settings)',
+    '🖼 <b>Mukha ng mga tauhan</b> sa bawat usapan — si Nonoy, Tito Boy, Lola Isyang, Don Severo at iba pa',
+    '📲 <b>I-install bilang app</b> — gumagana kahit walang internet at full screen',
+    '💾 <b>Backup ng save</b> — I-EXPORT / I-IMPORT para ilipat ang save sa ibang phone',
+    '⚡ <b>Mas magaan sa lumang phone</b> — kusang lilipat sa MABILIS na graphics kapag mabagal; mas tipid sa baterya',
+    '🎬 Trailer, screenshots at gabay sa pag-publish sa itch.io',
+  ] },
   { v: '1.5', title: 'Kabanata 2: Probinsya', date: 'Nobyembre 2026', items: [
     '🌾 <b>KABANATA 2</b> — bagong lugar: ang bayan ng <b>San Isidro</b> sa silangan (highway, palayan, plaza, hacienda)',
     '📖 <b>6 na bagong misyon</b>: Pauwi sa Probinsya, Ani ng Bayan, Karera ng Kuliglig, Mga Bantay ni Don Severo, Ang Titulo, Lupa ng Bayan',
@@ -99,6 +107,8 @@ const UI = {
     $('btn-shopclose').onclick = () => { this.hide('shop'); if ($('pause').classList.contains('hidden')) G.paused = false; };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };
     $('btn-howto').onclick = () => this.show('help');
+    $('t-lang').textContent = SETTINGS.lang === 'en' ? '🌐 Filipino' : '🌐 English';
+    $('t-lang').onclick = () => I18N.set(SETTINGS.lang === 'en' ? 'fil' : 'en');
     $('set-dev').onclick = () => DEV.open();
     $('tut-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.next(); });
     $('tut-skip').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.end(true); });
@@ -118,6 +128,7 @@ const UI = {
     document.querySelectorAll('#settings .seg').forEach(seg => {
       seg.querySelectorAll('button').forEach(b => b.onclick = () => {
         const key = seg.dataset.key; let v = b.dataset.v;
+        if (key === 'lang') { I18N.set(v); this.syncSettings(); return; }
         if (key === 'walkMusic' || key === 'lefty' || key === 'tipsOn') v = v === '1';
         else if (key === 'joy') v = parseFloat(v);
         SETTINGS[key] = v; SETTINGS.apply(); SETTINGS.save(); AUD.click(); this.syncSettings();
@@ -225,6 +236,7 @@ const UI = {
     if (!this.lines.length) { this.talking = false; this.el.subtitle.classList.add('hidden'); return; }
     const [n, t] = this.lines[0];
     this.el['sub-name'].textContent = n; this.el['sub-text'].textContent = t;
+    try { $('sub-face').src = PORTRAIT.get(n); $('sub-face').classList.remove('hidden'); } catch (e) { $('sub-face').classList.add('hidden'); }
     this.el.subtitle.classList.remove('hidden');
     this.lineT = 2.2 + t.length * 0.05;
   },

@@ -1,0 +1,19 @@
+{
+  "name": "Hari ng Kalsada: Maynila",
+  "short_name": "Hari ng Kalsada",
+  "description": "Isang open-world na laro sa kalye ng Maynila — jeepney, habulan, 6 na bituin.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#0d111b",
+  "theme_color": "#0d111b",
+  "lang": "fil",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
