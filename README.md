@@ -4,6 +4,8 @@ An original top-down open-world action/driving game set in a Manila-inspired cit
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
 corrupt Mayor Kurakot.
 
+![Gameplay](screenshot.png)
+
 Runs in any modern browser on **phone or PC**. There's no install and no build step.
 
 ## ▶️ How to play
