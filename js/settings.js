@@ -61,6 +61,7 @@ const TIPS = {
   daynight: () => ['🌅 Araw at Gabi', 'Umiikot ang oras (tingnan ang orasan sa itaas). May rush hour (7–9 AM, 5–7 PM) na mas trapik, at iba-iba ang tao sa kalye depende sa oras.'],
   save: () => ['💾 Save at Load', 'Awtomatikong nase-save ang laro kapag umalis ka. Pwede ring mag-save sa 3 slot: ☰ → I-SAVE. Ang mga ari-arian mo ay safehouse din.'],
   jobs: () => ['💼 Side Jobs', 'Sa taxi, police car, ambulansya (🚑), fire truck (🚒), trak ng basura (🗑), delivery motor (🛵 Rider Hub) o tow truck (🛻 Impound), pindutin ang J / 💼 para kumita. Sa gabi, may 🏁 underground race sa Baywalk.'],
+  minigames: () => ['🎤 Mini-games', 'May 🎤 Videoke (₱20 kada kanta, premyo sa 90+) at 🏀 3-Point Shootout sa mga basketball court. May 🥫 shooting range din sa Armas ni Kabo.'],
   typhoon: () => ['🌀 Bagyo!', 'Itutulak ng hangin ang sasakyan mo at may lumilipad na yero — ingat! Maraming kalye ang baha. Sumakay sa jeepney, van, bus o bangka at pindutin ang J / 💼 para sa 🌀 Rescue: dalhin ang mga tao sa ⛺ Evacuation Center.'],
   guns: () => ['🔫 Baril', 'Kaliwang click / Space para bumaril (hawakan para sa SMG at Riple), G para mag-reload. Sa sasakyan: click, X o 🔫 para sa drive-by (Pistola o SMG). Sa phone, kusang tumututok. Mag-ingat — naririnig ng pulis ang putok!'],
   kuta: () => ['☠️ Kuta ng Sindikato', 'May mga kuta ng armadong sindikato (☠️ sa mapa). Talunin silang lahat para sa ₱3,000 — hindi krimen ang labanan sila, pero huwag tamaan ang inosente!'],
@@ -110,6 +111,7 @@ const TIP = {
       if (sh && sh.type === 'gunshop' && GUNS.unlocked()) this.show('guns');
       if (GUNS.unlocked() && KUTA.near()) this.show('kuta');
       if (sh && sh.type === 'property') this.show('property');
+      if (sh && (sh.type === 'videoke' || sh.type === 'court')) this.show('minigames');
       if (WORLD.nearVendor() || WORLD.vendors.some(v => U.d2(v.x, v.y, P.x, P.y) < 250 * 250)) this.show('vendor');
       for (const c of MAP.cctv) if (U.d2(c.x, c.y, P.x, P.y) < 300 * 300) { this.show('cctv'); break; }
       for (const s of MAP.tsinelas) if (!G.tsinelas.has(s.id) && U.d2(s.x, s.y, P.x, P.y) < 450 * 450) { this.show('tsinelas'); break; }

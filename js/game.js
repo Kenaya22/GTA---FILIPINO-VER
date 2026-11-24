@@ -132,7 +132,7 @@ const G = {
 
   // ---------- input actions ----------
   onKey(code) {
-    if (!this.started) return;
+    if (!this.started || MG.cur || RANGE.active) return;
     if (code === 'Escape' || code === 'KeyP') {
       if (!document.getElementById('mapscreen').classList.contains('hidden') && document.getElementById('pause').classList.contains('hidden')) { UI.hide('mapscreen'); this.paused = false; return; }
       return this.pause(!this.paused);

@@ -148,6 +148,7 @@ const MAP = {
     this.makePOIs();
     this.makeTsinelas(R);
     this.makeCourts();
+    this.makeDepots();
     this.makeLights();
     this.makeFloods();
     this.makeProvince();
@@ -362,6 +363,21 @@ const MAP = {
       this.courts.push({ x: l.x * T, y: l.y * T, w: l.w * T, h: l.h * T, px, py, horiz: l.w >= l.h });
     }
   },
+  makeDepots() {
+    // depots: a parking spot reserved for city vehicles (they respawn there)
+    const depot = (key, pt, label, icon) => {
+      let best = null, bd = 1e18;
+      for (const s of this.spots) { if (s.type !== 'car' || s.depot) continue; const d = U.d2(s.x, s.y, pt.x, pt.y); if (d < bd) { bd = d; best = s; } }
+      if (!best) return;
+      for (const s of this.spots) if (U.d2(s.x, s.y, best.x, best.y) < 60 * 60) s.depot = true;
+      this.pois[key] = { key, x: best.x, y: best.y, type: 'depot', label, icon, vx: best.x, vy: best.y, va: best.a };
+    };
+    depot('depot_amb', this.pois.hospital, 'Ambulansya', '🚑');
+    depot('depot_fire', this.door(6, 2, 'S'), 'Istasyon ng Bumbero', '🚒');
+    depot('dump', this.door(4, 6, 'N'), 'Tambakan ng Basura', '🗑');
+    // basketball courts open for the 3-point shootout + videoke bar
+    this.courts.slice(0, 4).forEach((c, k) => { this.pois['court' + k] = { key: 'court' + k, x: c.horiz ? c.x + 40 : c.x + c.w / 2, y: c.horiz ? c.y + c.h / 2 : c.y + 40, type: 'court', label: 'Basketball Court', icon: '🏀', court: c }; });
+  },
   makeLights() {
     for (let i = 0; i < NR; i++) for (let j = 0; j < NR; j++) {
       if (!this.nodeExists(i, j)) continue;
@@ -518,17 +534,7 @@ const MAP = {
     add('gunshop1', this.door(2, 2, 'N'), 'gunshop', 'Armas ni Kabo', '🔫');
     add('gunshop2', this.door(6, 5, 'S'), 'gunshop', 'Armas ni Kabo', '🔫');
     add('evac', this.door(6, 1, 'S'), 'evac', 'Evacuation Center', '⛺');
-    // depots: a parking spot reserved for city vehicles (they respawn there)
-    const depot = (key, pt, label, icon) => {
-      let best = null, bd = 1e18;
-      for (const s of this.spots) { if (s.type !== 'car' || s.depot) continue; const d = U.d2(s.x, s.y, pt.x, pt.y); if (d < bd) { bd = d; best = s; } }
-      if (!best) return;
-      for (const s of this.spots) if (U.d2(s.x, s.y, best.x, best.y) < 60 * 60) s.depot = true;
-      add(key, { x: best.x, y: best.y }, 'depot', label, icon, { vx: best.x, vy: best.y, va: best.a });
-    };
-    depot('depot_amb', this.pois.hospital, 'Ambulansya', '🚑');
-    depot('depot_fire', this.door(6, 2, 'S'), 'Istasyon ng Bumbero', '🚒');
-    depot('dump', this.door(4, 6, 'N'), 'Tambakan ng Basura', '🗑');
+    add('videoke', this.door(2, 6, 'N'), 'videoke', 'Videoke ni Aling Puring', '🎤');
     add('prop_sari', this.door(1, 2, 'S'), 'property', 'Sari-sari Store (Ibinebenta)', '🔑');
     add('prop_carin', this.door(4, 2, 'S'), 'property', 'Carinderia (Ibinebenta)', '🔑');
     add('prop_talyer', this.door(4, 5, 'N'), 'property', 'Talyer sa Paco (Ibinebenta)', '🔑');
@@ -541,7 +547,7 @@ const MAP = {
     add('islandstore', { x: (this.island.cx + 3.5) * T, y: (this.island.cy + 1) * T }, 'sari', 'Tindahan sa Isla', '🏪');
     add('bodega', { x: (this.rs(0) + RW + 5.5) * T, y: 8 * T }, 'spot', 'Bodega ni Mayor', '📦');
     // signs (awnings) for shops
-    const awn = { ukay: ['#e84393', 'UKAY-UKAY'], barber: ['#2e86c1', 'BARBERYA'], paint: ['#e67e22', 'PINTURA'], sari: ['#27ae60', 'SARI-SARI'], chop: ['#c0392b', 'TALYER'], hospital: ['#c0392b', 'OSPITAL'], police: ['#2c5aa0', 'PRESINTO'], home: ['#d4ac0d', 'JEEPNEY TERMINAL'], weapon: ['#6c7a89', 'HARDWARE'], gunshop: ['#3b3b3b', 'ARMAS'], rider: ['#e8641e', 'RIDER HUB'], tow: ['#b7950b', 'IMPOUND LOT'], garage: ['#5d6d7e', 'GARAHE'] };
+    const awn = { ukay: ['#e84393', 'UKAY-UKAY'], barber: ['#2e86c1', 'BARBERYA'], paint: ['#e67e22', 'PINTURA'], sari: ['#27ae60', 'SARI-SARI'], chop: ['#c0392b', 'TALYER'], hospital: ['#c0392b', 'OSPITAL'], police: ['#2c5aa0', 'PRESINTO'], home: ['#d4ac0d', 'JEEPNEY TERMINAL'], weapon: ['#6c7a89', 'HARDWARE'], gunshop: ['#3b3b3b', 'ARMAS'], videoke: ['#8e44ad', 'VIDEOKE'], rider: ['#e8641e', 'RIDER HUB'], tow: ['#b7950b', 'IMPOUND LOT'], garage: ['#5d6d7e', 'GARAHE'] };
     for (const k in P) {
       const p = P[k];
       const a = awn[p.type];

@@ -181,6 +181,8 @@ const ACH_LIST = [
   ['garbage1', '♻️', 'Malinis na Maynila', 'Tapusin ang isang ruta ng basura', () => (G.stats.garbage || 0) >= 1],
   ['rescue10', '🛟', 'Bayani ng Bagyo', 'Magligtas ng 10 tao sa bagyo', () => (G.stats.rescued || 0) >= 10],
   ['fiesta1', '🎉', 'Pistahan!', 'Sumayaw sa parada ng Pista sa Tondo', () => (G.stats.parade || 0) >= 1],
+  ['videoke90', '🎤', 'Tawag ng Tanghalan', 'Makakuha ng 90+ sa Videoke', () => (G.stats.vkTop || 0) >= 90],
+  ['shoot10', '🏀', 'Tres Points', 'Makakuha ng 10+ puntos sa 3-Point Shootout', () => (G.stats.shootBest || 0) >= 10],
   ['gun1', '🔫', 'Kasa Na', 'Bumili ng unang baril sa Armas ni Kabo', () => GUN_IDS.some(w => GUNS.owned(w))],
   ['arsenal', '🧰', 'Arsenal', 'Magkaroon ng lahat ng baril at granada', () => GUN_IDS.concat('granada').every(w => GUNS.owned(w))],
   ['kuta1', '☠️', 'Unang Kuta', 'Linisin ang isang kuta ng sindikato', () => !!(G.flags.kuta && Object.keys(G.flags.kuta).length >= 1)],
