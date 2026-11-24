@@ -508,7 +508,9 @@ const G = {
       for (const p of this.peds) if (p.kind === 'cop' && p.state !== 'down' && U.d2(p.x, p.y, P.x, P.y) < 34 * 34) { near = true; break; }
     } else if (Math.abs(P.vehicle.fwd()) < 35) {
       const v = P.vehicle;
-      for (const c of this.vehicles) if (c.unit && c.driver && !c.dead && U.dist(c.x, c.y, v.x, v.y) < (v.L + c.L) / 2 + 26) { near = true; break; }
+      let box = 0;
+      for (const c of this.vehicles) if (c.unit && c.driver && !c.dead && U.dist(c.x, c.y, v.x, v.y) < (v.L + c.L) / 2 + 26) box++;
+      near = box >= (D().boxIn || 1);
       if (!near) for (const p of this.peds) if (p.kind === 'cop' && p.state !== 'down' && U.dist(p.x, p.y, v.x, v.y) < v.L / 2 + 28) { near = true; break; }
     }
     if (near) P.arrest += dt / ((P.vehicle ? 2.6 : 1.7) * D().arrest);
