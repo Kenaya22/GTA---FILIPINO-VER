@@ -418,3 +418,22 @@ body.touch #sub-face { width: 52px; height: 52px; flex-basis: 52px; }
 #mg-canvas { width: 100%; aspect-ratio: 16 / 10; max-height: 62vh; border-radius: 12px; background: #000; touch-action: none; cursor: crosshair; }
 #event { font-weight: 900; font-size: 12px; color: #fff; background: rgba(120, 30, 30, 0.82); padding: 4px 10px; border-radius: 12px; max-width: 260px; text-align: right; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 body.touch #event { font-size: 10px; }
+/* ===== v1.7 Wardrobe & Photo mode ===== */
+.wtabs { display: flex; gap: 8px; width: 100%; }
+.wtabs button { flex: 1; border: 0; border-radius: 10px; padding: 10px; font-weight: 900; background: var(--panel2); color: var(--muted); }
+.wtabs button.on { background: var(--accent); color: #1a1205; }
+.swatch { display: inline-block; width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.6); }
+body.photo #hud, body.photo #touch { display: none !important; }
+#photo { position: fixed; inset: 0; pointer-events: none; z-index: 9; display: flex; flex-direction: column; justify-content: space-between; padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); }
+#photo.hidden { display: none; }
+#photo .ph-top, #photo .ph-bar { pointer-events: auto; background: rgba(10,14,24,0.78); border-radius: 14px; padding: 8px 12px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+#photo .ph-top { justify-content: space-between; }
+#photo .ph-top small { color: var(--muted); font-weight: 700; font-size: 11px; }
+.ph-badge { font-family: var(--font-display); color: var(--accent); }
+#photo .ph-bar { flex-direction: column; align-items: stretch; }
+.ph-filters { display: flex; gap: 6px; overflow-x: auto; }
+.ph-filters button, .ph-tog { border: 0; border-radius: 18px; padding: 7px 12px; font-weight: 900; font-size: 12px; background: var(--panel2); color: #fff; white-space: nowrap; }
+.ph-filters button.on, .ph-tog.on { background: var(--accent); color: #1a1205; }
+.ph-row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.ph-row label { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 6px; flex: 1; min-width: 140px; }
+.ph-row input[type=range] { flex: 1; accent-color: var(--accent); }

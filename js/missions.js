@@ -216,7 +216,7 @@ const MISSIONS = [
         enter(c) {
           MS.freeShops = true;
           WANTED.setStars(3); WANTED.spotted('cctv', 0);
-          WANTED.prof = { car: G.player.vehicle ? G.player.vehicle.ident : 'old-suv', clothes: G.player.look.outfit, face: G.player.look.hair };
+          WANTED.prof = Object.assign(WANTED.current(), { car: G.player.vehicle ? G.player.vehicle.ident : 'old-suv' });
           WANTED.cctvT = 10;
         },
         target: () => null,
@@ -893,13 +893,7 @@ const SHOP = {
     const P = G.player;
     if (['ukay', 'barber', 'paint'].includes(p.type) && this.watched()) { UI.toast('👀 May pulis na nakatingin! Mawala ka muna sa paningin nila.'); return; }
     switch (p.type) {
-      case 'ukay': {
-        if (!this.pay(150)) return;
-        let o; do { o = U.choice(OUTFITS); } while (o.id === P.look.outfit);
-        P.look.shirt = o.shirt; P.look.pat = o.pat; P.look.outfit = o.id;
-        P.look.pants = U.choice(['#2b3a55', '#3b3b3b', '#4a3b2a', '#1f2633', '#6b5a3a']);
-        AUD.cash(); UI.toast(`👕 Bagong damit: ${o.name}`); G.fadeFlash(); break;
-      }
+      case 'ukay': WARDROBE.open(); break;
       case 'barber': {
         if (!this.pay(100)) return;
         let h; do { h = U.choice(HAIRS); } while (h.id === P.look.hair);

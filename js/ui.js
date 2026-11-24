@@ -103,6 +103,11 @@ const UI = {
     $('btn-pload').onclick = () => SAVE.open('load');
     $('btn-slotclose').onclick = () => this.hide('slots');
     $('btn-pach').onclick = () => ACH.open();
+    $('btn-photo').onclick = () => PHOTO.open();
+    $('ph-close').onclick = () => PHOTO.close();
+    $('ph-snap').onclick = () => PHOTO.snap();
+    $('ph-frame').onclick = () => { PHOTO.frame = !PHOTO.frame; PHOTO.render(); AUD.click(); };
+    $('ph-zoom').oninput = (e) => PHOTO.setZoom(+e.target.value);
     $('btn-achclose').onclick = () => this.hide('achievements');
     $('btn-shopclose').onclick = () => { this.hide('shop'); if ($('pause').classList.contains('hidden')) G.paused = false; };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };

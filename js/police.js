@@ -26,7 +26,8 @@ const WANTED = {
   },
   current() {
     const P = G.player;
-    return { car: P.vehicle ? P.vehicle.ident : null, clothes: P.look.outfit, face: P.look.hair };
+    const acc = ACCS.find(a => a.id === P.look.acc);
+    return { car: P.vehicle ? P.vehicle.ident : null, clothes: P.look.outfit, face: P.look.hair + (acc && acc.head ? ':' + acc.id : '') };
   },
   visibleKeys(kind, dist) {
     const P = G.player;

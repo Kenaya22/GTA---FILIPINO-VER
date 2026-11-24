@@ -14,6 +14,25 @@ const OUTFITS = [
   { id: 'army', name: 'Army Green Tee', shirt: '#4b5a32', pat: 'plain' },
   { id: 'black', name: 'Black Band Tee', shirt: '#24262b', pat: 'plain' },
   { id: 'purple', name: 'Purple Stripes', shirt: '#8e44ad', pat: 'stripe' },
+  { id: 'camo', name: 'Camo Jacket', shirt: '#5b6b3a', pat: 'camo' },
+  { id: 'flannel', name: 'Red Flannel', shirt: '#b03a2e', pat: 'flannel' },
+  { id: 'terno', name: 'Filipiniana Terno', shirt: '#d98cb3', pat: 'terno' },
+  { id: 'gilas', name: 'Gilas Jersey #5', shirt: '#1f3fa0', pat: 'jersey' },
+  { id: 'kamiseta', name: 'Kamisa de Chino', shirt: '#f3ead6', pat: 'plain' },
+  { id: 'leather', name: 'Leather Jacket', shirt: '#2b211c', pat: 'hood' },
+  { id: 'ilove', name: 'I ♥ Manila Tee', shirt: '#f7f7f7', pat: 'heart' },
+  { id: 'kapote', name: 'Dilaw na Kapote', shirt: '#f4d03f', pat: 'hood' },
+];
+// accessories: head ones also change your "face" clue for the police
+const ACCS = [
+  { id: 'none', name: 'Wala', icon: '🚫', price: 0 },
+  { id: 'salakot', name: 'Salakot', icon: '👒', price: 250, head: 1 },
+  { id: 'shades', name: 'Shades', icon: '🕶', price: 200, head: 1 },
+  { id: 'bandana', name: 'Pulang Bandana', icon: '🧣', price: 120, head: 1 },
+  { id: 'mask', name: 'Face Mask', icon: '😷', price: 80, head: 1 },
+  { id: 'headset', name: 'Headphones', icon: '🎧', price: 600, head: 1 },
+  { id: 'chain', name: 'Gold Chain', icon: '📿', price: 2000 },
+  { id: 'bimpo', name: 'Bimpo sa Balikat', icon: '🧻', price: 50 },
 ];
 const HAIRS = [
   { id: 'short', name: 'Gupit Binata' }, { id: 'buzz', name: 'Semi-kalbo' }, { id: 'long', name: 'Mahabang Buhok' },
@@ -371,6 +390,15 @@ function drawPerson(g, p, now) {
     g.fillStyle = U.shade(L.shirt, -0.25); g.beginPath(); g.ellipse(-5, 0, 3, 6, 0, 0, TAU); g.fill();
   } else if (L.pat === 'vest') {
     g.fillStyle = '#d4ff3a'; g.fillRect(-4, -10, 3, 20); g.fillRect(2, -10, 3, 20);
+  } else if (L.pat === 'camo') {
+    g.fillStyle = 'rgba(40,50,25,0.6)'; for (const [fx, fy, r] of [[-3, -5, 2.6], [2, 3, 3], [-2, 6, 2], [3, -3, 1.8]]) { g.beginPath(); g.arc(fx, fy, r, 0, TAU); g.fill(); }
+    g.fillStyle = 'rgba(150,130,80,0.5)'; g.beginPath(); g.arc(-4, 2, 1.8, 0, TAU); g.arc(1, -7, 1.6, 0, TAU); g.fill();
+  } else if (L.pat === 'flannel') {
+    g.fillStyle = 'rgba(0,0,0,0.3)'; for (let y = -8; y < 9; y += 4) g.fillRect(-7, y, 14, 1.3); for (let x = -6; x < 7; x += 4) g.fillRect(x, -10, 1.3, 20);
+  } else if (L.pat === 'terno') {
+    g.fillStyle = U.shade(L.shirt, 0.25); g.beginPath(); g.ellipse(0, -9, 4, 3.5, 0, 0, TAU); g.ellipse(0, 9, 4, 3.5, 0, 0, TAU); g.fill();
+  } else if (L.pat === 'heart') {
+    g.fillStyle = '#e0245e'; g.beginPath(); g.arc(-1.5, -1.2, 1.7, 0, TAU); g.arc(-1.5, 1.2, 1.7, 0, TAU); g.moveTo(-0.5, -2.6); g.lineTo(-5, 0); g.lineTo(-0.5, 2.6); g.fill();
   } else if (L.pat === 'cop') {
     g.fillStyle = '#f2c14e'; g.fillRect(1, -6, 2, 2);
   }
@@ -391,6 +419,18 @@ function drawPerson(g, p, now) {
     }
     case 'bucket': g.fillStyle = '#c9b48a'; g.beginPath(); g.arc(0.5, 0, 8.5, 0, TAU); g.fill(); g.fillStyle = '#b19c72'; g.beginPath(); g.arc(0.5, 0, 5.5, 0, TAU); g.fill(); break;
     case 'bald': g.fillStyle = 'rgba(255,255,255,0.25)'; g.beginPath(); g.arc(-1, -2, 2, 0, TAU); g.fill(); g.fillStyle = '#111'; g.fillRect(5, -5, 2.5, 10); break;
+  }
+  switch (L.acc) {
+    case 'salakot':
+      g.fillStyle = '#d9b46a'; g.beginPath(); g.arc(0.5, 0, 12, 0, TAU); g.fill();
+      g.strokeStyle = 'rgba(120,85,30,0.6)'; g.lineWidth = 1; for (let k = 0; k < 8; k++) { const a = k * TAU / 8; g.beginPath(); g.moveTo(0.5, 0); g.lineTo(0.5 + Math.cos(a) * 12, Math.sin(a) * 12); g.stroke(); }
+      g.fillStyle = '#8a6a3a'; g.beginPath(); g.arc(0.5, 0, 2.2, 0, TAU); g.fill(); break;
+    case 'shades': g.fillStyle = '#0d0d0d'; g.fillRect(4.6, -5, 2.4, 4); g.fillRect(4.6, 1, 2.4, 4); g.fillRect(5.2, -1, 1.2, 2); break;
+    case 'bandana': g.fillStyle = '#c0392b'; g.beginPath(); g.arc(0.3, 0, 6.6, 1.3, TAU - 1.3); g.fill(); g.beginPath(); g.moveTo(-6, -1); g.lineTo(-11, -3); g.lineTo(-10, 2); g.fill(); g.fillStyle = 'rgba(255,255,255,0.6)'; g.fillRect(-3, -3, 1.2, 1.2); g.fillRect(-1, 2, 1.2, 1.2); break;
+    case 'mask': g.fillStyle = '#dfe9f3'; U.rr(g, 4.4, -4.5, 3, 9, 1.2); g.fill(); g.strokeStyle = '#dfe9f3'; g.lineWidth = 0.8; g.beginPath(); g.moveTo(5, -4); g.lineTo(-1, -6); g.moveTo(5, 4); g.lineTo(-1, 6); g.stroke(); break;
+    case 'headset': g.fillStyle = '#1e1e1e'; g.fillRect(-1, -8.4, 4.5, 3); g.fillRect(-1, 5.4, 4.5, 3); g.strokeStyle = '#1e1e1e'; g.lineWidth = 1.6; g.beginPath(); g.arc(1, 0, 7.2, -1.9, 1.9, true); g.stroke(); g.fillStyle = '#e8641e'; g.fillRect(0, -8, 2, 2); g.fillRect(0, 6, 2, 2); break;
+    case 'chain': g.strokeStyle = '#f5c542'; g.lineWidth = 1.6; g.beginPath(); g.arc(1, 0, 8, -1.3, 1.3); g.stroke(); g.fillStyle = '#f5c542'; g.beginPath(); g.arc(9, 0, 1.8, 0, TAU); g.fill(); break;
+    case 'bimpo': g.fillStyle = '#f0f0f0'; g.beginPath(); g.ellipse(-1, -9.5, 4.5, 2.6, 0.2, 0, TAU); g.fill(); g.fillStyle = 'rgba(46,134,193,0.6)'; g.fillRect(-4, -10, 6, 1); break;
   }
   // vendor props
   if (p.vendor === 'taho') {

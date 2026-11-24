@@ -93,6 +93,7 @@ const G = {
   },
   newGame(dev) {
     this.resetWorld();
+    WARDROBE.load({ o: ['floral_orange'] });
     this.tsinelas = new Set(); this.stats = { sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 }; this.unlock = { sports: false, gold: false };
     const b = MAP.pois.busterm;
     this.player.x = b.x; this.player.y = b.y - 40; this.player.a = -Math.PI / 2; this.player.money = 200;
@@ -151,6 +152,7 @@ const G = {
     else if (code === 'KeyX') { if (!UI.talking) GUNS.trigger(false); }
     else if (code === 'KeyG') GUNS.reload();
     else if (code === 'KeyJ') JOBS.toggle();
+    else if (code === 'KeyO') PHOTO.open();
   },
   action() {
     if (!this.started || this.paused || this.cutscene || this.player.downed) return;
@@ -650,12 +652,12 @@ const G = {
     // POI rings
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (p.type === 'npc' || p.type === 'spot' || !inV(p.x, p.y, 60)) continue;
+      if (p.type === 'npc' || p.type === 'spot' || PHOTO.on || !inV(p.x, p.y, 60)) continue;
       g.strokeStyle = 'rgba(255,255,255,0.25)'; g.lineWidth = 2; g.setLineDash([6, 6]);
       g.beginPath(); g.arc(p.x, p.y, 22, 0, TAU); g.stroke(); g.setLineDash([]);
     }
     // markers
-    this.drawTarget(g, now);
+    if (!PHOTO.on) this.drawTarget(g, now);
     // pickups
     for (const p of this.pickups) {
       if (!inV(p.x, p.y, 20)) continue;
@@ -783,7 +785,7 @@ const G = {
     g.restore();
   },
   drawEdgeArrow(g, W, H, z, ox, oy) {
-    const t = this.target; if (!t) return;
+    const t = this.target; if (!t || PHOTO.on) return;
     const sx = W / 2 + (t.x - ox) * z, sy = H / 2 + (t.y - oy) * z;
     const m = 50 * this.dpr;
     if (sx > m && sx < W - m && sy > m && sy < H - m) return;

@@ -39,7 +39,7 @@ const SAVE = {
       clock: WORLD.clock, day: WORLD.day, rain: WORLD.rainTarget,
       ts: [...G.tsinelas], stats: G.stats, unlock: G.unlock,
       weapons: P.weapons, weapon: P.weapon, mags: P.mags, armor: Math.round(P.armor || 0),
-      flags: G.flags, props: [...ECON.owned], garage: ECON.garage, ach: [...ACH.got], visited: [...ACH.visited], drove: [...ACH.drove],
+      ward: WARDROBE.save(), flags: G.flags, props: [...ECON.owned], garage: ECON.garage, ach: [...ACH.got], visited: [...ACH.visited], drove: [...ACH.drove],
     };
   },
   write(slot, silent) {
@@ -69,6 +69,7 @@ const SAVE = {
     P.weapons = Object.assign({ fists: true }, s.weapons || {}); P.weapon = s.weapon && P.weapons[s.weapon] !== undefined ? s.weapon : 'fists';
     P.mags = Object.assign({}, s.mags || {}); P.armor = s.armor || 0;
     G.flags = Object.assign({}, s.flags || {});
+    WARDROBE.load(s.ward || { o: [P.look.outfit] });
     ECON.owned = new Set(s.props || []); ECON.garage = s.garage || []; ECON.refreshIcons();
     ACH.got = new Set(s.ach || []); ACH.visited = new Set(s.visited || []); ACH.drove = new Set(s.drove || []);
     const pos = s.pos || MAP.pois.home;

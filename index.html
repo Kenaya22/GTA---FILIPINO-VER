@@ -131,7 +131,7 @@
     <div class="menu">
       <button id="btn-resume" class="mbtn primary">ITULOY</button>
       <div class="menurow"><button id="btn-psave" class="mbtn">💾 I-SAVE</button><button id="btn-pload" class="mbtn">📂 I-LOAD</button></div>
-      <button id="btn-pach" class="mbtn">🏆 MGA TAGUMPAY</button>
+      <div class="menurow"><button id="btn-pach" class="mbtn">🏆 MGA TAGUMPAY</button><button id="btn-photo" class="mbtn">📷 PHOTO MODE</button></div>
       <button id="btn-pmap" class="mbtn">MAPA</button>
       <button id="btn-missions" class="mbtn">MGA MISYON</button>
       <button id="btn-phelp" class="mbtn">PAANO LARUIN</button>
@@ -314,6 +314,13 @@
   </div>
 </div>
 
+<div id="photo" class="hidden">
+  <div class="ph-top"><span class="ph-badge">📷 PHOTO MODE</span><small>I-drag para ilipat · scroll / + − para mag-zoom</small><button id="ph-close" class="mbtn small">✕ ISARA</button></div>
+  <div class="ph-bar">
+    <div id="ph-filters" class="ph-filters"></div>
+    <div class="ph-row"><label>🔍 <input id="ph-zoom" type="range" min="0.5" max="2.6" step="0.05" value="1"></label><button id="ph-frame" class="ph-tog">🖼 Frame</button><button id="ph-snap" class="mbtn primary small">📸 KUHANAN</button></div>
+  </div>
+</div>
 <div id="fade"></div>
 <div id="loading" class="hidden">Ginagawa ang Maynila...</div>
 
@@ -335,6 +342,7 @@
 <script src="js/jobs.js"></script>
 <script src="js/events.js"></script>
 <script src="js/minigames.js"></script>
+<script src="js/wardrobe.js"></script>
 <script src="js/save.js"></script>
 <script src="js/tutorial.js"></script>
 <script src="js/portraits.js"></script>
