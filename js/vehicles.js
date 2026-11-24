@@ -16,6 +16,8 @@ const VT = {
   policemoto: { name: 'Police Motor', L: 42, W: 14, max: 630, acc: 650, brake: 1000, grip: 12, steer: 3.6, mass: 0.45, hp: 60, cruise: 250, value: 300, draw: 'moto', cop: 1, color: '#eef1f5' },
   swat: { name: 'SWAT Armored', L: 80, W: 38, max: 490, acc: 430, brake: 900, grip: 9, steer: 2.3, mass: 3, hp: 380, cruise: 230, value: 1000, draw: 'swat', cop: 1, armor: 2 },
   army: { name: 'Army Truck', L: 96, W: 40, max: 470, acc: 380, brake: 800, grip: 9, steer: 2.1, mass: 3.6, hp: 420, cruise: 230, value: 1000, draw: 'army', cop: 1, armor: 2 },
+  bangka: { name: 'Bangka', L: 74, W: 18, max: 430, acc: 300, brake: 300, grip: 2.2, steer: 1.9, mass: 1.2, hp: 120, cruise: 200, value: 300, draw: 'bangka', boat: 1 },
+  policeboat: { name: 'Police Boat', L: 72, W: 26, max: 470, acc: 360, brake: 320, grip: 2.4, steer: 2.0, mass: 1.6, hp: 180, cruise: 250, value: 600, draw: 'pboat', boat: 1, cop: 1 },
   armored: { name: 'Armored Van', L: 84, W: 40, max: 440, acc: 340, brake: 800, grip: 8.5, steer: 2.2, mass: 3, hp: 600, cruise: 200, value: 0, draw: 'armored', armor: 2 },
 };
 const CAR_COLORS = ['#e8e8e8', '#c0392b', '#2e86c1', '#1c1f26', '#7f8c8d', '#d35400', '#27ae60', '#f1c40f', '#8e44ad', '#16a085', '#bdc3c7', '#a0522d', '#f28c28', '#5b6ee1'];
@@ -54,7 +56,11 @@ class Vehicle {
     let ca = Math.cos(this.a), sa = Math.sin(this.a);
     let vf = this.vx * ca + this.vy * sa, vr = -this.vx * sa + this.vy * ca;
     const tile = MAP.tileAt(this.x, this.y);
-    const terrain = tile === TL.GRASS ? 0.72 : 1;
+    let terrain = tile === TL.GRASS ? 0.72 : tile === TL.SAND ? 0.6 : 1;
+    if (!t.boat && WORLD.flood > 0.05) {
+      const f = MAP.floodAt(this.x, this.y);
+      if (f) { terrain *= 1 - 0.55 * WORLD.flood; if (this.speed > 120 && Math.random() < 0.5) G.particle('splash', this.x + U.rand(-20, 20), this.y + U.rand(-20, 20)); }
+    }
     const maxS = t.max * (this.speedMul || 1) * (this.popped ? 0.55 : 1) * terrain * (this.hp < this.maxhp * 0.2 ? 0.8 : 1);
     const th = this.throttle;
     this.braking = false;
@@ -70,7 +76,7 @@ class Vehicle {
     if (vf > maxS) vf = U.lerp(vf, maxS, dt * 2);
     vf -= vf * 0.12 * dt;
     if (this.hand) { const b = Math.min(Math.abs(vf), 260 * dt); vf -= Math.sign(vf) * b; this.braking = true; }
-    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1);
+    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1) * (t.boat ? 1 : 1 - WORLD.rain * 0.18);
     vr *= Math.exp(-grip * dt);
     // steering
     const sf = U.clamp(vf / 150, -1, 1);
@@ -81,7 +87,8 @@ class Vehicle {
     ca = Math.cos(this.a); sa = Math.sin(this.a);
     this.vx = ca * vf - sa * vr; this.vy = sa * vf + ca * vr;
     // skid marks
-    if (Math.abs(vr) > 140 && G.frame % 2 === 0) G.addSkid(this);
+    if (t.boat) { if (Math.abs(vf) > 80 && Math.random() < 0.6) G.particle('wake', this.x - Math.cos(this.a) * this.L * 0.5, this.y - Math.sin(this.a) * this.L * 0.5); }
+    else if (Math.abs(vr) > 140 && G.frame % 2 === 0) G.addSkid(this);
     this.x += this.vx * dt; this.y += this.vy * dt;
     this.collideTiles();
     if (this.lastImpact > 0) this.lastImpact -= dt;
@@ -97,7 +104,7 @@ class Vehicle {
       let cx = this.x + ca * off, cy = this.y + sa * off;
       const tx0 = Math.floor((cx - r) / T), tx1 = Math.floor((cx + r) / T), ty0 = Math.floor((cy - r) / T), ty1 = Math.floor((cy + r) / T);
       for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) {
-        if (!MAP.solidT(tx, ty)) continue;
+        if (this.t.boat ? MAP.get(tx, ty) === TL.WATER : !MAP.solidT(tx, ty)) continue;
         const nx = U.clamp(cx, tx * T, tx * T + T), ny = U.clamp(cy, ty * T, ty * T + T);
         let dx = cx - nx, dy = cy - ny; const d2 = dx * dx + dy * dy;
         if (d2 >= r * r) continue;
@@ -172,6 +179,8 @@ function drawVehicle(g, v, now) {
     case 'swat': drawBox(g, v, '#1f2a3a', hl, hw, now, true); break;
     case 'army': drawArmy(g, v, hl, hw); break;
     case 'armored': drawBox(g, v, '#5c6670', hl, hw, now, false); break;
+    case 'bangka': drawBangka(g, v, col, hl, hw); break;
+    case 'pboat': drawPBoat(g, v, hl, hw, now); break;
   }
   if (v.burnt) { g.fillStyle = 'rgba(0,0,0,0.45)'; U.rr(g, -hl, -hw, L, W, 6); g.fill(); }
   g.restore();
@@ -315,6 +324,25 @@ function drawArmy(g, v, hl, hw) {
   lightsFrontBack(g, v, hl, hw);
 }
 
+function drawBangka(g, v, col, hl, hw) {
+  // outriggers
+  g.strokeStyle = '#c9b48a'; g.lineWidth = 3;
+  for (const x of [-hl * 0.35, hl * 0.3]) { g.beginPath(); g.moveTo(x, -hw - 16); g.lineTo(x, hw + 16); g.stroke(); }
+  g.fillStyle = '#d8c9a0';
+  U.rr(g, -hl * 0.7, -hw - 20, hl * 1.4, 5, 3); g.fill(); U.rr(g, -hl * 0.7, hw + 15, hl * 1.4, 5, 3); g.fill();
+  // hull
+  g.fillStyle = col; g.beginPath(); g.moveTo(hl, 0); g.quadraticCurveTo(hl * 0.5, -hw, -hl * 0.3, -hw); g.lineTo(-hl, -hw * 0.6); g.lineTo(-hl, hw * 0.6); g.lineTo(-hl * 0.3, hw); g.quadraticCurveTo(hl * 0.5, hw, hl, 0); g.fill();
+  g.fillStyle = '#5a4030'; g.beginPath(); g.moveTo(hl - 8, 0); g.quadraticCurveTo(hl * 0.45, -hw + 4, -hl * 0.3, -hw + 4); g.lineTo(-hl + 4, -hw * 0.5); g.lineTo(-hl + 4, hw * 0.5); g.lineTo(-hl * 0.3, hw - 4); g.quadraticCurveTo(hl * 0.45, hw - 4, hl - 8, 0); g.fill();
+  g.fillStyle = v.color2; g.fillRect(-hl * 0.3, -hw, hl * 0.9, 3); g.fillRect(-hl * 0.3, hw - 3, hl * 0.9, 3);
+  if (v.driver) { g.fillStyle = '#333'; g.fillRect(-hl + 2, -3, 8, 6); }
+}
+function drawPBoat(g, v, hl, hw, now) {
+  g.fillStyle = '#eef1f5'; g.beginPath(); g.moveTo(hl, 0); g.quadraticCurveTo(hl * 0.4, -hw, -hl * 0.4, -hw); g.lineTo(-hl, -hw); g.lineTo(-hl, hw); g.lineTo(-hl * 0.4, hw); g.quadraticCurveTo(hl * 0.4, hw, hl, 0); g.fill();
+  g.fillStyle = '#1d3f8f'; g.fillRect(-hl, -hw + 2, hl * 1.3, 4); g.fillRect(-hl, hw - 6, hl * 1.3, 4);
+  g.fillStyle = '#18202d'; U.rr(g, -hl * 0.3, -hw * 0.55, hl * 0.6, hw * 1.1, 4); g.fill();
+  lightbar(g, v, -hl * 0.05, hw * 0.7, now);
+}
+
 // light pass for vehicle (additive)
 function drawVehicleLights(g, v, now, sprites) {
   if (v.burnt) return;
@@ -322,7 +350,7 @@ function drawVehicleLights(g, v, now, sprites) {
   const ca = Math.cos(v.a), sa = Math.sin(v.a);
   if (on) {
     g.save(); g.translate(v.x + ca * v.L * 0.5, v.y + sa * v.L * 0.5); g.rotate(v.a);
-    g.globalAlpha = v.W < 20 ? 0.35 : 0.55;
+    g.globalAlpha = (v.W < 20 ? 0.35 : 0.55) * G.lightMul;
     const s = v.W < 20 ? 0.6 : 1;
     g.drawImage(sprites.cone, -6, -sprites.cone.height * s / 2, sprites.cone.width * s, sprites.cone.height * s);
     g.restore();

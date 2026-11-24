@@ -42,6 +42,11 @@ const AUD = {
       lfo.connect(lfoG); lfoG.connect(this.heliAm.gain);
       hn.connect(hf); hf.connect(this.heliAm); this.heliAm.connect(this.heliG); this.heliG.connect(this.master);
       hn.start(); lfo.start();
+      // rain loop
+      const rn = c.createBufferSource(); rn.buffer = buf; rn.loop = true;
+      const rf = c.createBiquadFilter(); rf.type = 'highpass'; rf.frequency.value = 1200;
+      this.rainG = c.createGain(); this.rainG.gain.value = 0;
+      rn.connect(rf); rf.connect(this.rainG); this.rainG.connect(this.master); rn.start();
     } catch (e) { this.ctx = null; }
   },
   resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
@@ -68,6 +73,13 @@ const AUD = {
   heli(vol) {
     if (!this.ctx) return;
     this.heliG.gain.setTargetAtTime(vol * 0.5, this.t(), 0.3);
+  },
+  rainLoop(v) { if (this.rainG) this.rainG.gain.setTargetAtTime(v * 0.14, this.t(), 0.5); },
+  thunder() { this.noise(2.8, 0.55, 160); this.tone(42, 1.6, 'sine', 0.35, 28); },
+  call(type) {
+    if (type === 'taho') { this.tone(587, 0.28, 'sine', 0.1); this.tone(494, 1.0, 'sine', 0.1, 440, 0.3); }
+    else if (type === 'balut') { this.tone(523, 0.26, 'sine', 0.1); this.tone(440, 1.0, 'sine', 0.1, 392, 0.28); }
+    else { this.tone(3000, 0.12, 'sine', 0.06); this.tone(3150, 0.5, 'sine', 0.06, 2900, 0.18); }
   },
   tone(freq, dur, type = 'square', vol = 0.15, slide = 0, delay = 0) {
     if (!this.ctx) return;

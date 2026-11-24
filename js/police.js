@@ -104,16 +104,16 @@ const WANTED = {
     let seen = null;
     if (this.seeT <= 0) {
       this.seeT = 0.12;
-      const px = P.x, py = P.y;
+      const px = P.x, py = P.y, vis = WORLD.copVision();
       for (const v of G.vehicles) {
         if (!v.isCop || !v.driver || v.dead || v.driver === 'player') continue;
         const d = U.dist(v.x, v.y, px, py);
-        if (d < 540 && MAP.los(v.x, v.y, px, py)) { if (!seen || d < seen.d) seen = { kind: 'cop', d, who: v }; }
+        if (d < 540 * vis && MAP.los(v.x, v.y, px, py)) { if (!seen || d < seen.d) seen = { kind: 'cop', d, who: v }; }
       }
       for (const p of G.peds) {
         if (p.kind !== 'cop' || p.state === 'down') continue;
         const d = U.dist(p.x, p.y, px, py);
-        if (d < 420 && MAP.los(p.x, p.y, px, py)) { if (!seen || d < seen.d) seen = { kind: 'cop', d, who: p }; }
+        if (d < 420 * vis && MAP.los(p.x, p.y, px, py)) { if (!seen || d < seen.d) seen = { kind: 'cop', d, who: p }; }
       }
       for (const h of this.helis) if (!h.leaving && U.dist(h.sx, h.sy, px, py) < 130) seen = seen || { kind: 'heli', d: 300, who: h };
       if (!seen) for (const c of MAP.cctv) if (camSees(c, px, py)) { seen = { kind: 'cctv', d: 0, who: c }; break; }
@@ -194,7 +194,11 @@ const WANTED = {
     if (cars < lim(UNIT_CARS)) need = s <= 2 && Math.random() < 0.3 ? 'policemoto' : 'police';
     else if (swat < lim(UNIT_SWAT)) need = 'swat';
     else if (army < lim(UNIT_ARMY)) need = 'army';
-    if (need) this.spawnUnit(need);
+    if (need && !WORLD.onIsland(P.x, P.y)) this.spawnUnit(need);
+    if (WORLD.onIsland(P.x, P.y) || (P.vehicle && P.vehicle.t.boat)) {
+      const boats = G.vehicles.filter(v => v.type === 'policeboat' && v.unit && !v.dead).length;
+      if (boats < Math.min(3, Math.ceil(s / 2) + 1)) this.spawnBoat();
+    }
     const hs = this.helis.filter(h => !h.leaving).length;
     if (hs < UNIT_HELI[s]) {
       const a = Math.random() * TAU;
@@ -222,6 +226,17 @@ const WANTED = {
       return v;
     }
     return null;
+  },
+  spawnBoat() {
+    const P = G.player;
+    for (let k = 0; k < 20; k++) {
+      const a = Math.random() * TAU, d = U.rand(700, 1200);
+      const x = P.x + Math.cos(a) * d, y = P.y + Math.sin(a) * d;
+      if (MAP.tileAt(x, y) !== TL.WATER || MAP.tileAt(x + 40, y) !== TL.WATER || MAP.tileAt(x - 40, y) !== TL.WATER || TRAFFIC.inView(x, y, 80)) continue;
+      const v = new Vehicle('policeboat', x, y, Math.atan2(P.y - y, P.x - x));
+      v.driver = 'cop'; v.unit = true; v.siren = true; v.ai = new BoatCop(v); G.vehicles.push(v);
+      return;
+    }
   },
   roadblock() {
     const P = G.player, v = P.vehicle;
@@ -299,7 +314,7 @@ class CopDriver {
     } else {
       tx = WANTED.lastX; ty = WANTED.lastY; field = G.copField;
       if (U.dist(v.x, v.y, tx, ty) < 320 || this.road) {
-        if (!this.road) this.road = new RoadDriver(v, { cruise: 300 });
+        if (!this.road) this.road = new RoadDriver(v, { cruise: 300, ignoreLights: true });
         this.road.update(dt);
         return;
       }

@@ -45,6 +45,10 @@ const TIPS = {
   jeep: () => ['🚌 Pasada', 'Nakasakay ka sa jeepney! Sunduin ang mga pasahero sa PARA marker, huminto, tapos ihatid sila para kumita.'],
   damage: () => ['🔥 Sira na ang sasakyan', 'Kapag umusok at nagliyab, LUMABAS KA AGAD — sasabog yan! Ipaayos sa Pintura o lumipat ng ibang sasakyan.'],
   tsinelas: () => ['✨ Gintong Tsinelas', 'May 20 Gintong Tsinelas na nakatago sa buong Maynila (makikita sa mapa). Kapag nakuha mo lahat, may espesyal na premyo!'],
+  rain: () => ['🌧 Tag-ulan', 'Kapag umuulan: madulas ang daan, BAHA sa ilang kalye (mabagal ang sasakyan), at mas mahirap kang makita ng pulis — magandang pagkakataon para tumakas!'],
+  island: () => ['🏝 Isla Maligaya', 'May isla sa Manila Bay! Sumakay ng ferry (₱50) sa pantalan o mag-drive ng BANGKA. Walang kotse ng pulis sa isla — pero may police boat.'],
+  vendor: () => ['🥣 Taho at Balut', 'May naglalakong taho sa umaga at balut sa gabi. Lapitan at bumili para sa dagdag na buhay (₱20).'],
+  daynight: () => ['🌅 Araw at Gabi', 'Umiikot ang oras (tingnan ang orasan sa itaas). May rush hour (7–9 AM, 5–7 PM) na mas trapik, at iba-iba ang tao sa kalye depende sa oras.'],
   retry: () => ['🔁 Checkpoint', 'Nabigo ang misyon? Pindutin ang ULITIN para bumalik sa checkpoint — hindi na kailangang ulitin ang usapan.'],
 };
 const TIP = {
@@ -79,7 +83,10 @@ const TIP = {
     if (W.stars > 0) this.show('wanted');
     if (W.mode === 'search') this.show('search');
     if (W.stars > 0 && (W.prof.car || W.prof.clothes || W.prof.face)) this.show('clues');
+    if (G.frame > 2400) this.show('daynight');
+    if (P.vehicle && P.vehicle.t.boat) this.show('island');
     if (G.frame % 20 === 0) {
+      if (WORLD.nearVendor() || WORLD.vendors.some(v => U.d2(v.x, v.y, P.x, P.y) < 250 * 250)) this.show('vendor');
       for (const c of MAP.cctv) if (U.d2(c.x, c.y, P.x, P.y) < 300 * 300) { this.show('cctv'); break; }
       for (const s of MAP.tsinelas) if (!G.tsinelas.has(s.id) && U.d2(s.x, s.y, P.x, P.y) < 450 * 450) { this.show('tsinelas'); break; }
       const sh = SHOP.near(); if (sh && ['ukay', 'barber', 'paint'].includes(sh.type)) this.show('shop');

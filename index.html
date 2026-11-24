@@ -28,6 +28,7 @@
   </div>
   <div id="topright">
     <div id="money">₱0</div>
+    <div id="clock"></div>
     <div id="vehname"></div>
     <button id="btn-map" class="iconbtn" title="Mapa (M)">🗺</button>
     <button id="btn-pause" class="iconbtn" title="Pause (Esc)">☰</button>
@@ -73,7 +74,7 @@
       <button id="btn-settings" class="mbtn">MGA SETTING</button>
     </div>
     <p class="foot">Isang orihinal na open-world laro · Gawang-Pinoy na ideya</p>
-    <button id="btn-version" class="version">v1.1 · Ano'ng bago? ✨</button>
+    <button id="btn-version" class="version">Ano'ng bago? ✨</button>
   </div>
 </div>
 
@@ -88,6 +89,7 @@
       <button id="btn-missions" class="mbtn">MGA MISYON</button>
       <button id="btn-phelp" class="mbtn">PAANO LARUIN</button>
       <button id="btn-psettings" class="mbtn">MGA SETTING</button>
+      <button id="btn-pnew" class="mbtn">ANO'NG BAGO? ✨</button>
       <button id="btn-sound" class="mbtn">TUNOG: ON</button>
       <button id="btn-quit" class="mbtn danger">BUMALIK SA MENU</button>
     </div>
@@ -129,6 +131,8 @@
         <p><b>Kaliwang joystick</b> — lakad. Sa sasakyan, ituro kung saan pupunta (sa likod = atras).<br><b>SAKAY</b> — sumakay/bumaba/gamitin<br><b>SUNTOK / PRENO</b> — suntok o handbrake<br><b>BUSINA</b> — busina<br><b>📻</b> — palit istasyon ng radyo</p>
         <h3>💰 Kita</h3>
         <p>Misyon · <b>Pasada</b> sa kahit anong jeepney · Ibenta ang kotse kay <b>Mang Ben</b> · Pera ng mga nasuntok</p>
+        <h3>🏝 Lungsod at Isla</h3>
+        <p>Umiikot ang <b>araw at gabi</b>, may <b>ulan at baha</b>, at <b>traffic lights</b>. Bumili ng <b>taho</b> (umaga) o <b>balut</b> (gabi) para sa buhay. Sumakay ng <b>ferry</b> o <b>bangka</b> papuntang <b>Isla Maligaya</b>.</p>
       </div>
     </div>
     <button id="btn-hclose" class="mbtn primary">SIGE!</button>
@@ -156,23 +160,8 @@
 <div id="whatsnew" class="screen hidden">
   <div class="panel wide">
     <h2>ANO'NG BAGO?</h2>
-    <div class="changelog">
-      <h3>v1.1 — Musika at Mas Madaling Laruin <small>Nobyembre 2026</small></h3>
-      <ul>
-        <li>🎵 <b>Musika!</b> Title theme, lo-fi habang naglalakad, at habulan music na lumalakas habang dumarami ang bituin</li>
-        <li>📻 <b>Radyo sa sasakyan</b> — HIMIG FM (OPM), BUDOTS 101 at KALYE RAP. Pindutin ang R o 📻 para magpalit</li>
-        <li>🔁 <b>Checkpoint</b> — ULITIN ang misyon nang hindi inuulit ang usapan</li>
-        <li>⚙️ <b>Mga Setting</b> — volume, hirap (Madali / Normal / Mahirap), graphics, laki ng joystick, kaliwete</li>
-        <li>💡 <b>Mga tip</b> para sa mga bagong manlalaro</li>
-        <li>🐞 Ayos: ang pagkabigo sa huling misyon ay hindi na nagpapakita ng ending</li>
-      </ul>
-      <h3>v1.0 — Unang Labas</h3>
-      <ul>
-        <li>🏙 Ang lungsod ng Maynila — 16 na distrito, trapiko, jeepney, tricycle</li>
-        <li>⭐ 6-star wanted system na may suspect clues at search zone</li>
-        <li>📖 8 story missions, pasada, pagbebenta ng kotse, 20 Gintong Tsinelas</li>
-      </ul>
-    </div>
+    <div class="vtabs" id="vtabs"></div>
+    <div class="changelog" id="vbody"></div>
     <button id="btn-wnclose" class="mbtn primary">SIGE!</button>
   </div>
 </div>
@@ -200,6 +189,7 @@
 <script src="js/people.js"></script>
 <script src="js/traffic.js"></script>
 <script src="js/police.js"></script>
+<script src="js/world.js"></script>
 <script src="js/missions.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/game.js"></script>

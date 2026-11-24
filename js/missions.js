@@ -314,7 +314,7 @@ const MISSIONS = [
         target: (c) => c.van,
         update(c) {
           if (U.dist(G.player.x, G.player.y, c.van.x, c.van.y) < 380) {
-            c.van.ai = new RoadDriver(c.van, { cruise: 400 }); c.van.maxhp = 220; c.van.hp = 220;
+            c.van.ai = new RoadDriver(c.van, { cruise: 400, ignoreLights: true }); c.van.maxhp = 220; c.van.hp = 220;
             UI.say([['Kulas', 'Hala! Tauhan ni Tikboy! TAKBOOO!']]); return true;
           }
         },
@@ -555,7 +555,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -574,6 +574,7 @@ const SHOP = {
       case 'hospital': return P.vehicle ? null : `Ospital — Full heal (${c(100)})`;
       case 'chop': return P.vehicle && MS.idx >= 2 && !(MS.active && MS.active.giver === 'ben') ? `Ibenta kay Mang Ben (~${U.money(this.value(P.vehicle))})` : null;
       case 'home': return P.vehicle ? null : 'I-save ang laro at magpahinga';
+      case 'ferry': return P.vehicle ? null : `${p.label} (${c(50)})`;
     }
     return null;
   },
@@ -633,6 +634,20 @@ const SHOP = {
         G.exitVehicle(true); v.remove = true;
         G.addMoney(val, true); G.stats.sold++;
         UI.toast(`🔧 Nabenta ang ${v.t.name} sa halagang ${U.money(val)}`); break;
+      }
+      case 'ferry': {
+        if (WANTED.stars > 0) { UI.toast('⛴ "Bawal sumakay ng ferry ang may humahabol na pulis!"'); return; }
+        if (!this.pay(50)) return;
+        const dest = p.key === 'ferry1' ? MAP.pois.ferry2 : MAP.pois.ferry1;
+        const f = document.getElementById('fade'); f.classList.add('on'); G.cutscene = true; AUD.horn(true);
+        setTimeout(() => {
+          P.x = dest.x; P.y = dest.y + (p.key === 'ferry1' ? 0 : 8); P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
+          WORLD.clock = (WORLD.clock + 40) % 1440;
+          f.classList.remove('on'); G.cutscene = false;
+          UI.big(p.key === 'ferry1' ? 'ISLA MALIGAYA' : 'MAYNILA', p.key === 'ferry1' ? 'Maligayang pagdating sa isla!' : 'Balik sa lungsod', 2);
+          TIP.show('island');
+        }, 900);
+        break;
       }
       case 'home': {
         P.hp = 100; G.save(); AUD.success(); UI.toast('💾 Na-save ang laro. Busog at pahinga!');

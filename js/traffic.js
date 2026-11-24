@@ -4,7 +4,7 @@ class RoadDriver {
   constructor(v, opt = {}) {
     this.v = v; this.cruise = opt.cruise || v.t.cruise || 220; this.wps = [];
     this.route = opt.route || null; this.ri = 0; this.blockT = 0; this.stuckT = 0; this.revT = 0;
-    this.stopT = 0; this.hornCd = 0; this.finished = false; this.ignorePlayer = !!opt.ignorePlayer;
+    this.stopT = 0; this.hornCd = 0; this.finished = false; this.ignorePlayer = !!opt.ignorePlayer; this.ignoreLights = !!opt.ignoreLights;
     this.snap();
   }
   snap() {
@@ -73,7 +73,8 @@ class RoadDriver {
     if (!this.wps.length) { if (!this.finished) this.snap(); else { v.throttle = v.fwd() > 10 ? -1 : 0; v.steer = 0; return; } }
     let wp = this.wps[0];
     let d = U.dist(v.x, v.y, wp.x, wp.y);
-    if (d < 34 || (this.wps.length > 1 && d < 60 && this.passed(wp))) {
+    const red = wp.ap && !this.ignoreLights && this.redAhead(d);
+    if (!red && (d < 34 || (this.wps.length > 1 && d < 60 && this.passed(wp)))) {
       const was = this.wps.shift();
       if (was.ap) this.chooseNext();
       if (!this.wps.length) { v.throttle = 0; return; }
@@ -97,12 +98,13 @@ class RoadDriver {
       if (ob < 30) target = 0;
     }
     if (this.stopT > 0) { this.stopT -= dt; target = 0; }
+    if (red && d < 190) { target = Math.min(target, Math.max(0, (d - 22) * 1.7)); if (d < 30) target = 0; this.atRed = true; } else this.atRed = false;
     if (fs < target - 10) v.throttle = U.clamp((target - fs) / 80, 0.3, 1);
     else if (fs > target + 25) v.throttle = -U.clamp((fs - target) / 100, 0.3, 1);
     else v.throttle = 0;
     v.hand = false;
     // stuck handling
-    if (target > 50 && Math.abs(fs) < 15) {
+    if (target > 50 && Math.abs(fs) < 15 && !this.atRed) {
       this.stuckT += dt;
       if (this.stuckT > 2.5) { this.revT = 0.9; this.stuckT = 0; }
     } else this.stuckT = 0;
@@ -110,6 +112,14 @@ class RoadDriver {
       this.blockT += dt;
       if (this.blockT > 1.8 && this.hornCd <= 0 && U.dist(v.x, v.y, G.player.x, G.player.y) < 500) { this.hornCd = U.rand(2, 4); AUD.horn(v.isBig()); }
     } else this.blockT = 0;
+  }
+  redAhead(d) {
+    const L = MAP.lightMap[this.ti + ',' + this.tj];
+    if (!L) return false;
+    const st = MAP.lightState(L, this.d === 0 || this.d === 2 ? 'h' : 'v', G.time);
+    if (st === 'g') return false;
+    if (st === 'y' && d < 70) return false;
+    return true;
   }
   passed(wp) {
     const v = this.v;
@@ -233,6 +243,7 @@ const TRAFFIC = {
     }
   },
   spawnParked() {
+    for (const s of MAP.boatSpots) { const b = new Vehicle('bangka', s.x, s.y, s.a, { parked: true, color: U.choice(['#2e86c1', '#c0392b', '#16a085', '#f1c40f']) }); b.keep = true; G.vehicles.push(b); }
     for (const s of MAP.spots) {
       let type;
       if (s.type === 'jeep') type = 'jeepney';

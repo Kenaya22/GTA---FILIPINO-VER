@@ -36,6 +36,7 @@ class Person {
     this.speed = U.rand(50, 75); this.downT = 0; this.fleeT = 0; this.tx = 0; this.ty = 0;
     this.route = null; this.ri = 0; this.dir = Math.random() < 0.5 ? 1 : -1; this.punchT = 0; this.atkCd = 0;
     this.dead = false; this.fromCar = null; this.name = null; this.susp = 0; this.wave = 0;
+    this.scale = 1; this.umb = Math.random() < 0.6 ? U.choice(['#c0392b', '#2e86c1', '#f1c40f', '#8e44ad', '#16a085', '#222']) : null;
   }
   knock(fromX, fromY, force) {
     const a = Math.atan2(this.y - fromY, this.x - fromX);
@@ -86,6 +87,25 @@ class Person {
       return;
     }
     if (this.kind === 'cop') { this.updateCop(dt); this.phase += dt * this.moveAmt * 12; this.move(dt); return; }
+    if (this.state === 'hoop') {
+      const c = this.court;
+      if (!this.tgt || U.d2(this.x, this.y, this.tgt.x, this.tgt.y) < 64 || Math.random() < dt * 0.3) this.tgt = { x: c.x + 24 + Math.random() * (c.w - 48), y: c.y + 24 + Math.random() * (c.h - 48) };
+      this.walkTo(this.tgt.x, this.tgt.y, this.speed, dt);
+      const b = c.ball; if (b) this.a += U.angDiff(this.a, Math.atan2(b.y - this.y, b.x - this.x)) * Math.min(1, dt * 6);
+      this.phase += dt * this.moveAmt * 14; this.move(dt); return;
+    }
+    if (this.state === 'pray') { this.vx = this.vy = 0; this.moveAmt = 0; this.a = this.faceA; return; }
+    if (this.state === 'wander') {
+      if (this.pause > 0) { this.pause -= dt; this.vx = this.vy = 0; this.moveAmt = 0; }
+      else {
+        if (!this.tgt || (this.blocked || 0) > 1.5) {
+          this.blocked = 0;
+          for (let k = 0; k < 6; k++) { const x = this.home.x + U.rand(-220, 220), y = this.home.y + U.rand(-220, 220); const tt = MAP.tileAt(x, y); if (tt === TL.GRASS || tt === TL.SAND || tt === TL.PIER) { this.tgt = { x, y }; break; } }
+        }
+        if (this.tgt && this.walkTo(this.tgt.x, this.tgt.y, this.speed, dt) < 8) { this.tgt = null; this.pause = U.rand(1, 4); }
+      }
+      this.phase += dt * this.moveAmt * 12; this.move(dt); return;
+    }
     if (this.state === 'idle') {
       this.vx = 0; this.vy = 0; this.moveAmt = 0;
       const p = G.player; if (U.d2(this.x, this.y, p.x, p.y) < 200 * 200) this.a += U.angDiff(this.a, Math.atan2(p.y - this.y, p.x - this.x)) * Math.min(1, dt * 5);
@@ -112,6 +132,11 @@ class Person {
   }
   updateCop(dt) {
     const p = G.player;
+    if (this.role === 'enforcer' && this.state !== 'chase') {
+      this.vx = this.vy = 0; this.moveAmt = 0;
+      if (this.post) this.a = Math.atan2(MAP.cy(this.post.j) - this.y, MAP.cx(this.post.i) - this.x) + Math.sin(G.time * 0.8 + this.x) * 0.6;
+      return;
+    }
     const tgt = p.vehicle || p;
     const d = U.dist(this.x, this.y, tgt.x, tgt.y);
     const active = WANTED.stars > 0 && (WANTED.mode === 'chase' || (d < 300 && WANTED.mode === 'search' && WANTED.recognized));
@@ -244,6 +269,7 @@ function drawPerson(g, p, now) {
     g.restore(); return;
   }
   g.rotate(p.a);
+  if (p.scale !== 1 && p.scale) g.scale(p.scale, p.scale);
   const sw = Math.sin(p.phase) * p.moveAmt * 6;
   g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(3, 4, 11, 12, 0, 0, TAU); g.fill();
   // feet
@@ -270,6 +296,8 @@ function drawPerson(g, p, now) {
     g.fillStyle = 'rgba(255,255,255,0.85)'; g.fillRect(-3, -2.5, 2, 5); g.fillRect(0, -2.5, 2, 5);
   } else if (L.pat === 'hood') {
     g.fillStyle = U.shade(L.shirt, -0.25); g.beginPath(); g.ellipse(-5, 0, 3, 6, 0, 0, TAU); g.fill();
+  } else if (L.pat === 'vest') {
+    g.fillStyle = '#d4ff3a'; g.fillRect(-4, -10, 3, 20); g.fillRect(2, -10, 3, 20);
   } else if (L.pat === 'cop') {
     g.fillStyle = '#f2c14e'; g.fillRect(1, -6, 2, 2);
   }
@@ -291,7 +319,23 @@ function drawPerson(g, p, now) {
     case 'bucket': g.fillStyle = '#c9b48a'; g.beginPath(); g.arc(0.5, 0, 8.5, 0, TAU); g.fill(); g.fillStyle = '#b19c72'; g.beginPath(); g.arc(0.5, 0, 5.5, 0, TAU); g.fill(); break;
     case 'bald': g.fillStyle = 'rgba(255,255,255,0.25)'; g.beginPath(); g.arc(-1, -2, 2, 0, TAU); g.fill(); g.fillStyle = '#111'; g.fillRect(5, -5, 2.5, 10); break;
   }
+  // vendor props
+  if (p.vendor === 'taho') {
+    g.strokeStyle = '#8a6a3a'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(0, -18); g.lineTo(0, 18); g.stroke();
+    g.fillStyle = '#c9ced6'; g.beginPath(); g.arc(0, -20, 6, 0, TAU); g.arc(0, 20, 6, 0, TAU); g.fill();
+  } else if (p.vendor === 'balut') {
+    g.fillStyle = '#a0784a'; g.beginPath(); g.arc(9, 9, 7, 0, TAU); g.fill();
+    g.fillStyle = '#efe6cf'; g.beginPath(); g.arc(8, 8, 2, 0, TAU); g.arc(11, 10, 2, 0, TAU); g.fill();
+  }
   g.restore();
+  // umbrella in the rain
+  if (p.umb && WORLD.rain > 0.3 && p.kind === 'ped' && p.state !== 'hoop' && !p.npc) {
+    g.save(); g.translate(p.x - 2, p.y - 2);
+    g.fillStyle = p.umb; g.beginPath(); g.arc(0, 0, 15, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(0,0,0,0.25)'; g.lineWidth = 1;
+    for (let k = 0; k < 6; k++) { const a = k * TAU / 6; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * 15, Math.sin(a) * 15); g.stroke(); }
+    g.restore();
+  }
   // name / suspicion marker
   if (p.susp > 0.05) {
     g.save(); g.translate(p.x, p.y - 26);

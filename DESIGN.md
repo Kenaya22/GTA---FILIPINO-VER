@@ -159,7 +159,14 @@ map and minimap with a GPS route.
 * **Settings**: volumes, difficulty (cop speed/count, arrest time, damage, wanted decay, mission timers), graphics quality, joystick size, left-handed layout, tips.
 * **Tutorial tips**: one-time cards for driving, wanted level, search zone, suspect clues, CCTV, disguise shops, pasada, car damage, tsinelas, retry.
 
-## 8. Technical
+## 8. Phase 2 additions (v1.2)
+* **Clock**: 1 real second = 2 game minutes. Daylight via an overlay blend; lamps and headlights fade by day; vignette lightens.
+* **Weather**: random rain spells (more likely in the afternoon), lightning and thunder, wet grip −18%, cop vision −30% at full rain, 8 flood zones that fill in heavy rain and slow vehicles up to 55%.
+* **Traffic lights**: 45 signalised intersections on a 16 s cycle; AI waits at the approach point on red; cops with sirens ignore them. Rush hour raises the car cap by 45%.
+* **Street life**: taho (5–11 AM) and balut (6 PM–3 AM) vendors, kids at 7 basketball courts, Quiapo devotees, traffic enforcers (witnesses), island villagers.
+* **Isla Maligaya**: island west of the city with a sand ring, village, resort, lighthouse with a rotating beam, a dock, a ferry, and bangka boats. Police cars can't reach it, but police boats can.
+
+## 9. Technical
 * `index.html` + `style.css` + `js/*.js` — no build step, no external assets; open `index.html` or host on GitHub Pages.
 * Procedural city generated from a fixed seed → same map every time.
 * Map rendered into cached 512 px chunks; additive light pass for lamps/headlights/sirens.

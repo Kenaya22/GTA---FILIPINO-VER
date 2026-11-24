@@ -9,6 +9,38 @@ const ICONS = {
   car: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 11l1.8-4.6A2 2 0 0 1 8.7 5h6.6a2 2 0 0 1 1.9 1.4L19 11a2 2 0 0 1 2 2v4h-2v2h-3v-2H8v2H5v-2H3v-4a2 2 0 0 1 2-2zm2.2 0h9.6l-1.3-3.6H8.5z"/><circle cx="7" cy="14" r="1.5" fill="#1a2030"/><circle cx="17" cy="14" r="1.5" fill="#1a2030"/></svg>',
 };
 
+// what's new in each version (newest first)
+const CHANGES = [
+  { v: '1.2', title: 'Buhay na Lungsod', date: 'Nobyembre 2026', items: [
+    '🌅 <b>Araw at gabi</b> — umiikot na ang oras (orasan sa itaas). Maliwanag sa umaga, may takipsilim, at gabi na may ilaw ng poste',
+    '🌧 <b>Tag-ulan</b> — ulan, kidlat at kulog. Madulas ang daan at mas mahirap kang makita ng pulis',
+    '🌊 <b>Baha</b> — lumalalim ang baha sa ilang kalye kapag malakas ang ulan; bumabagal ang sasakyan',
+    '🚦 <b>Traffic lights</b> — humihinto na ang mga sasakyan sa pula',
+    '🚗 <b>Rush hour</b> — mas maraming sasakyan tuwing 7–9 AM at 5–7 PM',
+    '🥣 <b>Magtataho</b> sa umaga at 🥚 <b>magbabalut</b> sa gabi — bumili para dagdag buhay',
+    '🏀 <b>Basketball courts</b> — may mga batang naglalaro sa araw',
+    '🙏 <b>Simbahan ng Quiapo</b> — may mga nagdarasal sa plaza',
+    '👮 <b>Traffic enforcers</b> sa malalaking kanto (nakakakita rin sila ng krimen!)',
+    '🏝 <b>Isla Maligaya</b> — bagong isla sa Manila Bay na may baryo, resort, parola at dalampasigan',
+    '⛴ <b>Ferry</b> papunta at pabalik sa isla (₱50) at 🛶 <b>bangka</b> na pwedeng i-drive',
+    '🚤 <b>Police boats</b> — humahabol sa dagat kapag wanted ka',
+    '☂️ Payong ng mga tao kapag umuulan, at 4 na bagong tip',
+  ] },
+  { v: '1.1', title: 'Musika at Mas Madaling Laruin', date: 'Nobyembre 2026', items: [
+    '🎵 <b>Musika!</b> Title theme, lo-fi habang naglalakad, at habulan music na lumalakas habang dumarami ang bituin',
+    '📻 <b>Radyo sa sasakyan</b> — HIMIG FM (OPM), BUDOTS 101 at KALYE RAP. Pindutin ang R o 📻 para magpalit',
+    '🔁 <b>Checkpoint</b> — ULITIN ang misyon nang hindi inuulit ang usapan',
+    '⚙️ <b>Mga Setting</b> — volume, hirap (Madali / Normal / Mahirap), graphics, laki ng joystick, kaliwete',
+    '💡 <b>Mga tip</b> para sa mga bagong manlalaro',
+    '🐞 Ayos: ang pagkabigo sa huling misyon ay hindi na nagpapakita ng ending',
+  ] },
+  { v: '1.0', title: 'Unang Labas', date: 'Nobyembre 2026', items: [
+    '🏙 Ang lungsod ng Maynila — 16 na distrito, trapiko, jeepney, tricycle',
+    '⭐ 6-star wanted system na may suspect clues at search zone',
+    '📖 8 story missions, pasada, pagbebenta ng kotse, 20 Gintong Tsinelas',
+  ] },
+];
+
 const UI = {
   talking: false, lines: [], lineT: 0, toasts: [], bigT: 0, last: {},
   init() {
@@ -25,9 +57,11 @@ const UI = {
     $('btn-new').onclick = () => { AUD.init(); AUD.resume(); if (G.hasSave() && !confirm('Magsisimula ng bagong laro. Mabubura ang lumang save. Sigurado ka?')) return; G.newGame(); };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };
     $('btn-howto').onclick = () => this.show('help');
-    $('btn-version').onclick = () => this.show('whatsnew');
+    $('btn-version').onclick = () => this.openWhatsNew();
+    $('btn-pnew').onclick = () => this.openWhatsNew();
+    $('btn-version').textContent = `v${GAME_VERSION} · Ano'ng bago? ✨`;
     $('btn-wnclose').onclick = () => { this.hide('whatsnew'); try { localStorage.setItem('harinkalsada_seenver', GAME_VERSION); } catch (e) { } };
-    try { if (G.hasSave() && localStorage.getItem('harinkalsada_seenver') !== GAME_VERSION) this.show('whatsnew'); } catch (e) { }
+    try { if (G.hasSave() && localStorage.getItem('harinkalsada_seenver') !== GAME_VERSION) this.openWhatsNew(); } catch (e) { }
     $('btn-settings').onclick = () => this.openSettings();
     $('btn-psettings').onclick = () => this.openSettings();
     $('btn-setclose').onclick = () => { this.hide('settings'); SETTINGS.save(); };
@@ -57,6 +91,14 @@ const UI = {
     $('btn-endclose').onclick = () => { this.hide('ending'); G.paused = false; };
     if (G.hasSave()) $('btn-continue').classList.remove('hidden');
     INPUT.init();
+  },
+  openWhatsNew(v) {
+    v = v || CHANGES[0].v;
+    $('vtabs').innerHTML = CHANGES.map((c, i) => `<button data-v="${c.v}" class="${c.v === v ? 'on' : ''}">v${c.v}${i === 0 ? '<span class="new">BAGO</span>' : ''}</button>`).join('');
+    $('vtabs').querySelectorAll('button').forEach(b => b.onclick = () => { AUD.click(); this.openWhatsNew(b.dataset.v); });
+    const c = CHANGES.find(x => x.v === v);
+    $('vbody').innerHTML = `<h3>v${c.v} — ${c.title} <small>${c.date}</small></h3><ul>${c.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    this.show('whatsnew');
   },
   openSettings() { this.syncSettings(); this.show('settings'); },
   syncSettings() {
@@ -151,8 +193,9 @@ const UI = {
     }
     const note = W.stars === 0 ? '' : W.mode === 'chase' ? '' : W.escaping ? 'NAKAKALIMUTAN KA NA...' : 'NAGHAHANAP ANG PULIS — lumabas sa search zone';
     this.set('note', this.el['wanted-note'], 'textContent', note);
-    // money
+    // money + clock
     this.set('money', this.el.money, 'textContent', U.money(P.money));
+    this.set('clock', $('clock'), 'textContent', `${WORLD.icon()} ${WORLD.timeStr()}`);
     this.el.hpbar.style.width = Math.max(0, P.hp) + '%';
     this.el.hpbar.style.background = P.hp < 30 ? 'linear-gradient(90deg,#c0392b,#ff6b5a)' : '';
     const v = P.vehicle;
@@ -252,12 +295,14 @@ const UI = {
     G.paused = true;
     this.show('mapscreen');
     const c = $('bigmap'), g = c.getContext('2d');
-    const sz = Math.min(innerWidth * 0.96, innerHeight * 0.78) * Math.min(2, devicePixelRatio || 1);
-    c.width = sz; c.height = sz;
-    c.style.width = (sz / Math.min(2, devicePixelRatio || 1)) + 'px';
+    const pr = Math.min(2, devicePixelRatio || 1);
+    const cssW = Math.min(innerWidth * 0.96, innerHeight * 0.78 * MW / MH);
+    const sz = cssW * pr, szH = sz * MH / MW;
+    c.width = sz; c.height = szH;
+    c.style.width = cssW + 'px'; c.style.height = (cssW * MH / MW) + 'px';
     const k = sz / (MW * T);
     g.imageSmoothingEnabled = false;
-    g.drawImage(MAP.mini, 0, 0, sz, sz);
+    g.drawImage(MAP.mini, 0, 0, sz, szH);
     g.textAlign = 'center'; g.textBaseline = 'middle';
     g.font = `900 ${Math.round(sz / 48)}px Nunito, sans-serif`;
     for (const l of MAP.labels) {

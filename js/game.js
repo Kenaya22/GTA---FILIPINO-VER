@@ -8,7 +8,7 @@ const G = {
   cam: { x: 0, y: 0, zoom: 1, vw: 1000, vh: 1000, shake: 0, sx: 0, sy: 0 },
   unlock: { sports: false, gold: false }, tsinelas: new Set(), stats: { sold: 0, pasada: 0, escapes: 0 },
   copField: null, walkField: null, gpsField: null, gpsPath: null, target: null,
-  fieldT: 0, walkT: 0, gpsT: 0, gpsKey: '', ramCd: 0, nearVeh: null, shopNear: null,
+  fieldT: 0, walkT: 0, gpsT: 0, gpsKey: '', ramCd: 0, nearVeh: null, shopNear: null, lightMul: 1,
 
   boot() {
     SETTINGS.load();
@@ -43,6 +43,7 @@ const G = {
       white: radial('rgba(255,255,240,0.7)'),
       fire: radial('rgba(255,140,40,0.8)'),
       gold: radial('rgba(255,210,60,0.8)'),
+      green: radial('rgba(60,255,120,0.85)'),
       cone: mk(240, 150, (g, w, h) => {
         const gr = g.createRadialGradient(0, h / 2, 0, 0, h / 2, w);
         gr.addColorStop(0, 'rgba(255,240,200,0.55)'); gr.addColorStop(0.6, 'rgba(255,235,190,0.15)'); gr.addColorStop(1, 'rgba(255,235,190,0)');
@@ -57,14 +58,14 @@ const G = {
     if (!this.started) return;
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
-        m: MS.idx, money: this.player.money, look: this.player.look, ts: [...this.tsinelas], stats: this.stats, unlock: this.unlock,
+        clock: WORLD.clock, m: MS.idx, money: this.player.money, look: this.player.look, ts: [...this.tsinelas], stats: this.stats, unlock: this.unlock,
       }));
     } catch (e) { }
   },
   load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return null; } },
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = [];
-    WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset();
+    WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     TRAFFIC.spawnParked();
   },
@@ -97,7 +98,7 @@ const G = {
     const s = this.load();
     if (!s) return this.newGame();
     this.resetWorld();
-    MS.idx = s.m || 0; this.player.money = s.money || 0;
+    MS.idx = s.m || 0; this.player.money = s.money || 0; if (s.clock !== undefined) WORLD.clock = s.clock;
     if (s.look) Object.assign(this.player.look, s.look);
     this.tsinelas = new Set(s.ts || []); this.stats = Object.assign({ sold: 0, pasada: 0, escapes: 0 }, s.stats || {}); this.unlock = Object.assign({ sports: false, gold: false }, s.unlock || {});
     const h = MAP.pois.home; this.player.x = h.x; this.player.y = h.y; this.player.a = Math.PI / 2;
@@ -146,6 +147,7 @@ const G = {
     if (!this.started || this.paused || this.cutscene || this.player.downed) return;
     if (UI.talking) { UI.nextLine(); return; }
     if (MS.canRetry()) { MS.retry(); return; }
+    const vend = WORLD.nearVendor(); if (vend) { WORLD.buy(vend); return; }
     if (MS.canStart()) { MS.start(MS.idx); return; }
     const shop = SHOP.near();
     if (shop && SHOP.label(shop)) { SHOP.use(shop); return; }
@@ -205,14 +207,18 @@ const G = {
   exitVehicle(force) {
     const P = this.player, v = P.vehicle; if (!v) return;
     const sp = v.speed;
-    const opts = [[-1, 0], [1, 0], [0, 1], [0, -1]];
+    const opts = v.t.boat ? [[-1, 0], [1, 0], [0, 1], [0, -1], [-2, 0], [2, 0]] : [[-1, 0], [1, 0], [0, 1], [0, -1]];
     let placed = false;
     for (const [s, f] of opts) {
-      const ox = s ? -Math.sin(v.a) * (v.W / 2 + 14) * s : Math.cos(v.a) * (v.L / 2 + 14) * f;
-      const oy = s ? Math.cos(v.a) * (v.W / 2 + 14) * s : Math.sin(v.a) * (v.L / 2 + 14) * f;
+      const sd = v.t.boat ? (Math.abs(s) > 1 ? 56 : 34) : v.W / 2 + 14, ss = Math.sign(s);
+      const ox = s ? -Math.sin(v.a) * sd * ss : Math.cos(v.a) * (v.L / 2 + 14) * f;
+      const oy = s ? Math.cos(v.a) * sd * ss : Math.sin(v.a) * (v.L / 2 + 14) * f;
       if (!MAP.solidAt(v.x + ox, v.y + oy)) { P.x = v.x + ox; P.y = v.y + oy; placed = true; break; }
     }
-    if (!placed) { P.x = v.x; P.y = v.y; }
+    if (!placed) {
+      if (v.t.boat && !force) { UI.toast('🌊 Hindi ka pwedeng bumaba sa gitna ng dagat! Pumunta sa pantalan o pampang.'); return; }
+      P.x = v.x; P.y = v.y;
+    }
     v.driver = null; v.throttle = 0; v.steer = 0; v.hand = true;
     P.vehicle = null; P.vx = v.vx * 0.3; P.vy = v.vy * 0.3;
     if (!force && sp > 220) P.hurt(Math.min(40, (sp - 220) * 0.1));
@@ -227,6 +233,8 @@ const G = {
   promptText() {
     if (UI.talking || this.cutscene) return '';
     if (MS.canRetry()) return `Ulitin ang misyon mula checkpoint: ${MS.retryInfo.m.title} (${Math.ceil(MS.retryT)}s)`;
+    const vend = WORLD.nearVendor();
+    if (vend) return vend.vendor === 'taho' ? 'Bumili ng taho kay Manong (₱20)' : 'Bumili ng balut kay Manong (₱20)';
     const m = MS.canStart();
     if (m) return `Kausapin si ${CHARS[m.giver].name} — Misyon ${MS.idx + 1}: ${m.title}`;
     const shop = SHOP.near(); const lab = shop && SHOP.label(shop);
@@ -256,6 +264,9 @@ const G = {
     else if (type === 'spark') { p.life = p.max = 0.3; p.size = 3; p.vx = U.rand(-200, 200); p.vy = U.rand(-200, 200); }
     else if (type === 'hit') { p.life = p.max = 0.25; p.size = 18; p.vx = 0; p.vy = 0; }
     else if (type === 'boom') { p.life = p.max = U.rand(0.6, 1.1); p.size = U.rand(20, 40); p.vx = U.rand(-160, 160); p.vy = U.rand(-160, 160); }
+    else if (type === 'splash') { p.life = p.max = 0.5; p.size = U.rand(4, 9); p.vx = U.rand(-60, 60); p.vy = U.rand(-60, 60); }
+    else if (type === 'wake') { p.life = p.max = 1.6; p.size = U.rand(5, 9); p.vx *= 0.3; p.vy *= 0.3; }
+    else if (type === 'drip') { p.life = p.max = 0.4; p.size = U.rand(3, 6); p.vx = 0; p.vy = 0; }
     else if (type === 'cash') { p.life = p.max = 1; p.size = 14; p.vx = 0; p.vy = -40; }
     this.particles.push(p);
   },
@@ -358,6 +369,7 @@ const G = {
     }
     this.collidePeople();
     WANTED.update(dt);
+    WORLD.update(dt);
     // fields
     this.fieldT -= dt;
     if (WANTED.stars > 0 && this.fieldT <= 0) {
@@ -559,6 +571,7 @@ const G = {
       g.strokeStyle = Wd.escaping ? 'rgba(255,90,60,0.5)' : 'rgba(170,140,255,0.8)'; g.lineWidth = 6; g.setLineDash([24, 14]);
       g.strokeRect(Wd.lastX - Wd.zone, Wd.lastY - Wd.zone, Wd.zone * 2, Wd.zone * 2); g.setLineDash([]);
     }
+    WORLD.drawFloods(g, inV, now);
     // skids
     g.fillStyle = 'rgba(10,10,12,0.35)';
     for (const s of this.skids) { if (!inV(s.x, s.y, 10)) continue; g.globalAlpha = Math.min(1, s.life / 4) * 0.6; g.save(); g.translate(s.x, s.y); g.rotate(s.a); g.fillRect(-5, -2.5, 10, 5); g.restore(); }
@@ -580,6 +593,7 @@ const G = {
       g.fillStyle = Math.floor(now * 2) % 2 ? '#ff3030' : '#801010'; g.beginPath(); g.arc(13, 0, 2.5, 0, TAU); g.fill();
       g.restore();
     }
+    WORLD.drawLights(g, inV, false);
     // POI rings
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
@@ -604,6 +618,7 @@ const G = {
       g.strokeStyle = '#7a5c12'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(-6, -3); g.lineTo(0, -7); g.lineTo(6, -3); g.stroke();
       g.restore();
     }
+    WORLD.drawCourts(g, inV, now);
     // people (down first)
     for (const p of this.peds) if (p.state === 'down' && inV(p.x, p.y, 30)) drawPerson(g, p, now);
     // vehicles
@@ -618,12 +633,16 @@ const G = {
       if (p.type === 'smoke') { g.fillStyle = `rgba(60,60,66,${0.35 * t})`; g.beginPath(); g.arc(p.x, p.y, p.size * (2 - t), 0, TAU); g.fill(); }
       else if (p.type === 'spark') { g.fillStyle = `rgba(255,220,120,${t})`; g.fillRect(p.x, p.y, 3, 3); }
       else if (p.type === 'hit') { g.strokeStyle = `rgba(255,255,255,${t})`; g.lineWidth = 3; g.beginPath(); g.arc(p.x, p.y, p.size * (1.5 - t), 0, TAU); g.stroke(); }
+      else if (p.type === 'splash' || p.type === 'drip') { g.strokeStyle = `rgba(190,215,240,${0.6 * t})`; g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, p.size * (1.6 - t), 0, TAU); g.stroke(); }
+      else if (p.type === 'wake') { g.fillStyle = `rgba(220,235,245,${0.35 * t})`; g.beginPath(); g.arc(p.x, p.y, p.size * (2 - t), 0, TAU); g.fill(); }
       else if (p.type === 'cash') { g.fillStyle = `rgba(125,255,155,${t})`; g.font = 'bold 14px sans-serif'; g.textAlign = 'center'; g.fillText('+₱', p.x, p.y); }
     }
+    WORLD.drawOverlay(g, x0 - 40, y0 - 40, x1 - x0 + 80, y1 - y0 + 80);
     // ---- light pass ----
     g.globalCompositeOperation = 'lighter';
     const S = this.sprites;
-    g.globalAlpha = 0.9;
+    WORLD.drawLights(g, inV, true);
+    g.globalAlpha = 0.9 * this.lightMul;
     for (const l of MAP.lamps) if (inV(l.x, l.y, 130)) g.drawImage(S.lamp, l.x - 120, l.y - 120, 240, 240);
     g.globalAlpha = 1;
     for (const v of this.vehicles) if (inV(v.x, v.y, 200)) drawVehicleLights(g, v, now, S);
@@ -633,6 +652,10 @@ const G = {
     g.globalAlpha = 1;
     for (const s of MAP.tsinelas) if (!this.tsinelas.has(s.id) && inV(s.x, s.y, 40)) { g.globalAlpha = 0.5 + Math.sin(now * 4) * 0.2; g.drawImage(S.gold, s.x - 30, s.y - 30, 60, 60); }
     g.globalAlpha = 1;
+    if (MAP.island && inV(MAP.island.lighthouse.x, MAP.island.lighthouse.y, 400)) {
+      const lh = MAP.island.lighthouse, a = now * 0.8;
+      g.globalAlpha = 0.35 * this.lightMul; g.save(); g.translate(lh.x, lh.y); g.rotate(a); g.drawImage(S.cone, 0, -75, 360, 150); g.restore();
+    }
     for (const h of Wd.helis) { g.globalAlpha = 0.38; g.drawImage(S.white, h.sx - 120, h.sy - 120, 240, 240); }
     if (this.target) { g.globalAlpha = 0.35 + Math.sin(now * 5) * 0.1; g.drawImage(S.gold, this.target.x - 60, this.target.y - 60, 120, 120); }
     g.globalAlpha = 1;
@@ -644,6 +667,13 @@ const G = {
     for (const h of Wd.helis) if (inV(h.x, h.y, 120)) h.draw(g);
     // names
     g.font = 'bold 12px Nunito, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'bottom';
+    for (const p of this.peds) if (p.sayT > 0 && p.say && inV(p.x, p.y, 40)) {
+      g.font = 'bold 12px Nunito, sans-serif'; const w = g.measureText(p.say).width + 12;
+      g.fillStyle = 'rgba(255,255,255,0.92)'; U.rr(g, p.x - w / 2, p.y - 46, w, 20, 8); g.fill();
+      g.beginPath(); g.moveTo(p.x - 4, p.y - 27); g.lineTo(p.x + 4, p.y - 27); g.lineTo(p.x, p.y - 21); g.fill();
+      g.fillStyle = '#1a2030'; g.fillText(p.say, p.x, p.y - 30);
+    }
+    g.font = 'bold 12px Nunito, sans-serif';
     for (const p of this.peds) if (p.name && inV(p.x, p.y, 20)) { g.fillStyle = 'rgba(0,0,0,0.6)'; g.fillText(p.name, p.x + 1, p.y - 17); g.fillStyle = '#ffd23f'; g.fillText(p.name, p.x, p.y - 18); }
     // POI icons
     g.font = '18px sans-serif'; g.textBaseline = 'middle';
@@ -651,6 +681,7 @@ const G = {
     // screen-space: edge arrow
     g.setTransform(1, 0, 0, 1, 0, 0);
     this.drawEdgeArrow(g, W, H, z, ox, oy);
+    WORLD.drawRain(g, W, H, this.dpr);
   },
   drawTarget(g, now) {
     const t = this.target; if (!t) return;
