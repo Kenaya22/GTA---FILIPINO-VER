@@ -456,7 +456,7 @@ const G = {
           if (a.parked) a.parked = !!a.parked; // stays parked flag but can move
           const pl = a.driver === 'player' ? a : b.driver === 'player' ? b : null;
           const other = pl === a ? b : a;
-          if (pl && hit > 90 && this.ramCd <= 0) {
+          if (pl && hit > (D().ramMin || 90) && this.ramCd <= 0) {
             this.ramCd = 1;
             if (other.isCop && other.driver) { other.lastHitByPlayer = true; WANTED.crime(2, other.x, other.y, true); }
             else if (hit > 260 && other.driver && !other.criminal) WANTED.crime(1, other.x, other.y);
@@ -506,7 +506,7 @@ const G = {
     let near = false;
     if (!P.vehicle) {
       for (const p of this.peds) if (p.kind === 'cop' && p.state !== 'down' && U.d2(p.x, p.y, P.x, P.y) < 34 * 34) { near = true; break; }
-    } else if (Math.abs(P.vehicle.fwd()) < 35) {
+    } else if (Math.abs(P.vehicle.fwd()) < (D().stopSpd || 35)) {
       const v = P.vehicle;
       let box = 0;
       for (const c of this.vehicles) if (c.unit && c.driver && !c.dead && U.dist(c.x, c.y, v.x, v.y) < (v.L + c.L) / 2 + 26) box++;

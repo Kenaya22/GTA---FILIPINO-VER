@@ -30,7 +30,7 @@ const SETTINGS = {
 // heliMin/roadblock/spikes/pellet: minimum stars before each kind of response
 const DIFFS = {
   madali: { name: 'Madali', icon: '😎', desc: 'Para mag-enjoy. Mabagal at kaunti ang pulis, madaling tumakas, mas matibay ka.',
-    copSpeed: 0.8, units: 0.5, arrest: 2.0, dmg: 0.5, carDmg: 0.6, decay: 0.5, timer: 1.4, vision: 0.7, lost: 1.8, zone: 0.65, heat: 0.65, inZone: 0.55, heliMin: 6, roadblock: 4, spikes: 6, pellet: 6, boxIn: 2 },
+    copSpeed: 0.8, units: 0.5, arrest: 2.5, dmg: 0.5, carDmg: 0.6, decay: 0.5, timer: 1.4, vision: 0.7, lost: 1.8, zone: 0.65, heat: 0.65, inZone: 0.55, heliMin: 6, roadblock: 4, spikes: 6, pellet: 6, boxIn: 2, ramMin: 230, stopSpd: 20 },
   normal: { name: 'Normal', icon: '🙂', desc: 'Balanse. Kaya mong tumakas kung magtatago ka at magpapalit ng itsura.',
     copSpeed: 0.94, units: 0.85, arrest: 1.2, dmg: 0.9, carDmg: 0.9, decay: 0.8, timer: 1.1, vision: 0.88, lost: 2.5, zone: 0.85, heat: 0.9, inZone: 0.3, heliMin: 5, roadblock: 3, spikes: 5, pellet: 5 },
   mahirap: { name: 'Mahirap', icon: '🔥', desc: 'Para sa mga beterano. Mabilis, marami at matalas ang mata ng pulis.',
