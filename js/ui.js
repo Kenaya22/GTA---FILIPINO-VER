@@ -11,6 +11,14 @@ const ICONS = {
 
 // what's new in each version (newest first)
 const CHANGES = [
+  { v: '1.4', title: 'Bagong Home Page at Madaling Laro', date: 'Nobyembre 2026', items: [
+    '🏠 <b>Bagong home page</b> — may live na habulan sa likod, card ng huling laro (misyon, pera, % kumpleto) at mabilis na ITULOY',
+    '💪 <b>Pumili ng hirap</b> bago maglaro: 😎 Madali, 🙂 Normal, 🔥 Mahirap',
+    '😎 <b>Mas madaling tumakas</b> — sa Madali: mas mabagal at kaunti ang pulis, mas maikli ang tingin nila, mas maliit ang search zone, mas mabilis kang makalimutan',
+    '🧭 <b>Madaling Pagmamaneho</b> — ituro lang kung SAAN pupunta (pati sa keyboard). Kung walang daan, didiretso at liliko sa susunod na kanto (dilaw na arrow)',
+    '🛟 <b>Tulong sa manibela</b> — mas makapit ang gulong, kusang dumidiretso sa kalsada, at pumipreno bago bumangga',
+    '🏎 Pwede pa ring piliin ang <b>Classic</b> na pagmamaneho sa Settings',
+  ] },
   { v: '1.3', title: 'Negosyo, Trabaho at Save', date: 'Nobyembre 2026', items: [
     '💾 <b>Save at Load</b> — 3 save slot + Auto-save. Pwede kang umalis anumang oras; nase-save ang lugar, sasakyan at misyon mo',
     '🔨 <b>Armas</b> sa Hardware: 🏏 pamalo, 🎯 tirador (auto-aim) at 💦 water gun. Q / 🔄 para magpalit',
@@ -65,7 +73,12 @@ const UI = {
     this.mctx = this.el.minimap.getContext('2d');
     this.el.subtitle.addEventListener('pointerdown', (e) => { e.stopPropagation(); this.nextLine(); });
     // menu buttons
-    $('btn-new').onclick = () => { AUD.init(); AUD.resume(); if (G.hasSave() && !confirm('Magsisimula ng bagong laro. Papalitan ang Auto-save (ligtas ang Slot 1–3). Sigurado ka?')) return; G.newGame(); };
+    $('btn-new').onclick = () => { AUD.init(); AUD.resume(); this.openNewGame(); };
+    $('ng-back').onclick = () => this.hide('newgame');
+    $('ng-go').onclick = () => {
+      if (G.hasSave() && !confirm('Magsisimula ng bagong laro. Papalitan ang Auto-save (ligtas ang Slot 1–3). Sigurado ka?')) return;
+      SETTINGS.save(); this.hide('newgame'); G.newGame();
+    };
     $('btn-load').onclick = () => { AUD.init(); SAVE.open('load'); };
     $('btn-psave').onclick = () => SAVE.open('save');
     $('btn-pload').onclick = () => SAVE.open('load');
@@ -77,12 +90,12 @@ const UI = {
     $('btn-howto').onclick = () => this.show('help');
     $('btn-version').onclick = () => this.openWhatsNew();
     $('btn-pnew').onclick = () => this.openWhatsNew();
-    $('btn-version').textContent = `v${GAME_VERSION} · Ano'ng bago? ✨`;
+    $('t-ver').textContent = `v${GAME_VERSION}`;
     $('btn-wnclose').onclick = () => { this.hide('whatsnew'); try { localStorage.setItem('harinkalsada_seenver', GAME_VERSION); } catch (e) { } };
     try { if (G.hasSave() && localStorage.getItem('harinkalsada_seenver') !== GAME_VERSION) this.openWhatsNew(); } catch (e) { }
     $('btn-settings').onclick = () => this.openSettings();
     $('btn-psettings').onclick = () => this.openSettings();
-    $('btn-setclose').onclick = () => { this.hide('settings'); SETTINGS.save(); };
+    $('btn-setclose').onclick = () => { this.hide('settings'); SETTINGS.save(); this.refreshTitle(); };
     $('set-resettips').onclick = () => { SETTINGS.seen = {}; SETTINGS.save(); AUD.click(); this.toast('Ipapakita ulit ang mga tip'); };
     $('tip-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TIP.close(); });
     const bindRange = (id, key) => { const el = $(id); el.oninput = () => { SETTINGS[key] = el.value / 100; SETTINGS.apply(); }; };
@@ -107,7 +120,7 @@ const UI = {
     $('btn-mapclose').onclick = () => { this.hide('mapscreen'); if (!$('pause').classList.contains('hidden')) return; G.paused = false; };
     $('btn-mclose').onclick = () => this.hide('missions');
     $('btn-endclose').onclick = () => { this.hide('ending'); G.paused = false; };
-    if (G.hasSave()) { $('btn-continue').classList.remove('hidden'); $('btn-load').classList.remove('hidden'); }
+    this.refreshTitle();
     INPUT.init();
   },
   openWhatsNew(v) {
@@ -117,6 +130,27 @@ const UI = {
     const c = CHANGES.find(x => x.v === v);
     $('vbody').innerHTML = `<h3>v${c.v} — ${c.title} <small>${c.date}</small></h3><ul>${c.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
     this.show('whatsnew');
+  },
+  refreshTitle() {
+    const l = SAVE.latest();
+    $('btn-continue').classList.toggle('hidden', !l); $('btn-load').classList.toggle('hidden', !l); $('t-save').classList.toggle('hidden', !l);
+    $('btn-new').classList.toggle('primary', !l); $('btn-new').classList.toggle('t-big', !l);
+    if (l) {
+      const d = SAVE.describe(l.data), pct = ACH.percentOf(l.data);
+      $('t-save-l1').textContent = d.line1.replace(/ · \d+%$/, '');
+      $('t-save-l2').textContent = `${pct}% kumpleto · ${d.line2}`;
+      $('t-save-bar').style.width = pct + '%';
+    }
+    const df = D();
+    $('t-diff').textContent = `Hirap: ${df.icon} ${df.name} · Pagmamaneho: ${SETTINGS.drive === 'madali' ? 'Madali' : 'Classic'}`;
+  },
+  openNewGame() {
+    const opt = (key, val, ic, name, desc, rec) => `<button class="ng-opt ${SETTINGS[key] === val ? 'on' : ''}" data-k="${key}" data-v="${val}"><span class="ic">${ic}</span><b>${name}</b><small>${desc}</small>${rec ? '<span class="rec">REKOMENDADO</span>' : ''}</button>`;
+    $('ng-diff').innerHTML = Object.entries(DIFFS).map(([k, d]) => opt('diff', k, d.icon, d.name, d.desc, k === 'madali')).join('');
+    $('ng-drive').innerHTML = opt('drive', 'madali', '🧭', 'Madali', 'Ituro lang kung SAAN pupunta — kusang liliko, may tulong sa manibela at preno.', true)
+      + opt('drive', 'classic', '🏎', 'Classic', 'Gas, preno at liko mismo (W/S/A/D). Para sa sanay na.');
+    document.querySelectorAll('#newgame .ng-opt').forEach(b => b.onclick = () => { SETTINGS[b.dataset.k] = b.dataset.v; AUD.click(); this.openNewGame(); });
+    this.show('newgame');
   },
   openSettings() { this.syncSettings(); this.show('settings'); },
   syncSettings() {
@@ -456,6 +490,11 @@ const INPUT = {
     if (this.joy.active && !anyKey) { s.mx = this.joy.x; s.my = this.joy.y; s.touchDrive = true; }
     else { s.mx = (rt ? 1 : 0) - (lf ? 1 : 0); s.my = (dn ? 1 : 0) - (up ? 1 : 0); const m = Math.hypot(s.mx, s.my); if (m > 1) { s.mx /= m; s.my /= m; } }
     if (!anyKey && this.touch) s.touchDrive = true;
+    // easy driving on keyboard: keys point where you want to go (screen direction)
+    if (anyKey && SETTINGS.drive === 'madali' && G.player && G.player.vehicle) {
+      const m = Math.hypot(s.mx, s.my) || 1;
+      s.touchDrive = true; s.joy = { x: s.mx / m, y: s.my / m, mag: 1 };
+    }
     s.throttle = (up ? 1 : 0) - (dn ? 1 : 0);
     s.steer = (rt ? 1 : 0) - (lf ? 1 : 0);
     return s;

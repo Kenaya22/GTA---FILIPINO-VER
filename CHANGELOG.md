@@ -1,5 +1,12 @@
 # Changelog — Hari ng Kalsada
 
+## v1.4: Bagong Home Page at Madaling Laro / New Home & Easier Play (2026-11-24)
+- 🏠 **New home page**: live police-chase scene in the background, "last game" card (missions, money, % complete), big ITULOY button, quick Settings / How-to / What's-new buttons, responsive for phones
+- 💪 **Choose difficulty** when starting a new game: 😎 Madali (recommended), 🙂 Normal, 🔥 Mahirap
+- 🚨 **Escaping is easier**: difficulty now controls cop speed, number, sight range, how fast they lose you, search-zone size, how fast stars drain, and when helicopters/roadblocks/spikes/pellets appear. Normal is also easier than before
+- 🧭 **Easy driving mode** (default): point where you want to go, on touch or keyboard; the car steers itself. If there's no road that way, it keeps straight and turns at the next intersection (yellow arrow)
+- 🛟 **Driving assist**: more grip, auto-straightening on roads, automatic braking before walls. Classic controls are still available in Settings
+
 ## v1.3: Negosyo, Trabaho at Save / Business, Jobs & Saving (2026-11-24)
 - 💾 **Save & load**: 3 manual slots + Auto-save (every 45 s and whenever you leave or close the app). Saves your exact spot, current car (with upgrades), active mission (resumes at its checkpoint), money, weapons, properties, garage, tsinelas, achievements and time of day
 - 🔨 **Weapons** at the Hardware: pamalo (bat), tirador (slingshot, auto-aim) and water gun (soak people until they slip). `Q` / 🔄 to switch

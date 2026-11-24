@@ -127,7 +127,7 @@ const ARMS = {
   },
   // cops fire rubber pellets at 5+ stars
   copFire(cop, dt) {
-    if (WANTED.stars < 5 || WANTED.mode !== 'chase') return;
+    if (WANTED.stars < D().pellet || WANTED.mode !== 'chase') return;
     cop.shootCd = (cop.shootCd || U.rand(0.5, 1.5)) - dt;
     if (cop.shootCd > 0) return;
     const P = G.player, tg = P.vehicle || P;

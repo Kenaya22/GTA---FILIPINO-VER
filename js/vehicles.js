@@ -77,7 +77,7 @@ class Vehicle {
     if (vf > maxS) vf = U.lerp(vf, maxS, dt * 2);
     vf -= vf * 0.12 * dt;
     if (this.hand) { const b = Math.min(Math.abs(vf), 260 * dt); vf -= Math.sign(vf) * b; this.braking = true; }
-    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1) * (t.boat ? 1 : 1 - WORLD.rain * 0.18);
+    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1) * (t.boat ? 1 : 1 - WORLD.rain * 0.18) * (this.assist && this.driver === 'player' ? 1.35 : 1);
     vr *= Math.exp(-grip * dt);
     // steering
     const sf = U.clamp(vf / 150, -1, 1);

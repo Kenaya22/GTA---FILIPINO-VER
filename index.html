@@ -63,22 +63,47 @@
 </div>
 
 <div id="title" class="screen">
-  <div class="title-bg"></div>
-  <div class="title-inner">
-    <div class="logo">
-      <div class="stars-deco">★★★★★★</div>
-      <h1>HARI NG<br><span>KALSADA</span></h1>
-      <div class="sub">MAYNILA</div>
+  <div class="t-shade"></div>
+  <div class="t-wrap">
+    <div class="t-hero">
+      <div class="t-badge"><span class="t-dot"></span> OPEN-WORLD · MAYNILA</div>
+      <div class="t-stars"><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><span class="crown2">👑</span></div>
+      <h1 class="t-logo"><span class="crown">👑</span>HARI NG<br><b>KALSADA</b></h1>
+      <p class="t-tag">Magpasada ng jeep, tumakas sa pulis, magnegosyo, at bawiin ang lupa ng pamilya mo mula kay Mayor Kurakot.</p>
+      <div class="t-feats">
+        <span>🚌 Jeepney at Tricycle</span><span>⭐ 6-Star na Habulan</span><span>🏝 Isla Maligaya</span><span>🌧 Araw, Gabi at Ulan</span><span>📻 Radyo</span><span>💼 Side Jobs</span>
+      </div>
     </div>
-    <div class="menu">
-      <button id="btn-new" class="mbtn primary">BAGONG LARO</button>
-      <button id="btn-continue" class="mbtn hidden">ITULOY</button>
-      <button id="btn-load" class="mbtn hidden">I-LOAD</button>
-      <button id="btn-howto" class="mbtn">PAANO LARUIN</button>
-      <button id="btn-settings" class="mbtn">MGA SETTING</button>
+    <div class="t-card">
+      <div id="t-save" class="t-save hidden">
+        <div class="t-save-h">HULING LARO</div>
+        <div id="t-save-l1" class="t-save-l1"></div>
+        <div id="t-save-l2" class="t-save-l2"></div>
+        <div class="t-bar"><div id="t-save-bar"></div></div>
+      </div>
+      <button id="btn-continue" class="mbtn primary t-big hidden">▶&nbsp; ITULOY</button>
+      <button id="btn-new" class="mbtn t-new">✚&nbsp; BAGONG LARO</button>
+      <button id="btn-load" class="mbtn hidden">📂&nbsp; I-LOAD ANG SAVE</button>
+      <div class="t-row">
+        <button id="btn-settings" class="mbtn t-sm">⚙️<small>SETTING</small></button>
+        <button id="btn-howto" class="mbtn t-sm">❓<small>PAANO</small></button>
+        <button id="btn-version" class="mbtn t-sm">✨<small>BAGO</small></button>
+      </div>
+      <div id="t-diff" class="t-diff"></div>
     </div>
-    <p class="foot">Isang orihinal na open-world laro · Gawang-Pinoy na ideya</p>
-    <button id="btn-version" class="version">Ano'ng bago? ✨</button>
+  </div>
+  <div class="t-foot"><span id="t-ver">v1.4</span> · Isang orihinal na laro · Gawang-Pinoy na ideya</div>
+</div>
+
+<div id="newgame" class="screen hidden">
+  <div class="panel wide">
+    <h2>BAGONG LARO</h2>
+    <div class="ng-h">GAANO KAHIRAP ANG PULIS?</div>
+    <div id="ng-diff" class="ng-grid"></div>
+    <div class="ng-h">PAANO MAGMANEHO?</div>
+    <div id="ng-drive" class="ng-grid two"></div>
+    <p class="note">Pwede mo itong palitan anumang oras sa ⚙️ Settings.</p>
+    <div class="menurow" style="width:min(420px,90vw)"><button id="ng-back" class="mbtn">BUMALIK</button><button id="ng-go" class="mbtn primary">SIMULAN ▶</button></div>
   </div>
 </div>
 
@@ -132,9 +157,13 @@
       </div>
       <div>
         <h3>⌨️ Keyboard</h3>
-        <p><b>WASD / Arrows</b> — lakad / maneho<br><b>Shift</b> — takbo<br><b>E / F</b> — sumakay, bumaba, gamitin<br><b>Space</b> — suntok / handbrake<br><b>H</b> — busina<br><b>Q</b> — palit armas<br><b>J</b> — simulan/tapusin ang side job<br><b>R</b> — palit istasyon ng radyo<br><b>M</b> — mapa · <b>Esc</b> — pause</p>
+        <p><b>WASD / Arrows</b> — lakad / maneho (sa MADALI na pagmamaneho: pindutin kung SAAN pupunta)<br><b>Shift</b> — takbo<br><b>E / F</b> — sumakay, bumaba, gamitin<br><b>Space</b> — suntok / handbrake<br><b>H</b> — busina<br><b>Q</b> — palit armas<br><b>J</b> — simulan/tapusin ang side job<br><b>R</b> — palit istasyon ng radyo<br><b>M</b> — mapa · <b>Esc</b> — pause</p>
         <h3>📱 Touch</h3>
         <p><b>Kaliwang joystick</b> — lakad. Sa sasakyan, ituro kung saan pupunta (sa likod = atras).<br><b>SAKAY</b> — sumakay/bumaba/gamitin<br><b>SUNTOK / PRENO</b> — suntok o handbrake<br><b>BUSINA</b> — busina<br><b>🔄</b> — palit armas · <b>💼</b> — side job<br><b>📻</b> — palit istasyon ng radyo</p>
+        <h3>🚗 Madaling Pagmamaneho</h3>
+        <p>Sa <b>MADALI</b> na pagmamaneho (default): pindutin o ituro kung <b>SAAN</b> mo gustong pumunta sa screen — kusang liliko ang sasakyan. Kung walang daan doon, didiretso muna ito at <b>liliko sa susunod na kanto</b> (may dilaw na arrow). Kusa rin itong pumipreno bago bumangga sa pader. Space / PRENO = preno.</p>
+        <h3>🚨 Pagtakas sa Pulis</h3>
+        <p>Mawala sa paningin nila (lumiko sa mga kanto, pumasok sa eskinita), lumabas sa purple na zone, at magpalit ng damit/kotse. Kung mahirap pa rin, piliin ang hirap na <b>MADALI</b> sa ⚙️ Settings.</p>
         <h3>💰 Kita</h3>
         <p>Misyon · <b>Pasada</b> sa kahit anong jeepney · Ibenta ang kotse kay <b>Mang Ben</b> · Pera ng mga nasuntok</p>
         <h3>🏝 Lungsod at Isla</h3>
@@ -179,6 +208,7 @@
       <label class="setrow"><span>🔊 Sound effects</span><input type="range" id="set-sfx" min="0" max="100"></label>
       <div class="setrow"><span>🚶 Musika habang naglalakad</span><div class="seg" data-key="walkMusic"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
       <div class="setrow"><span>💪 Hirap</span><div class="seg" data-key="diff"><button data-v="madali">MADALI</button><button data-v="normal">NORMAL</button><button data-v="mahirap">MAHIRAP</button></div></div>
+      <div class="setrow"><span>🚗 Pagmamaneho</span><div class="seg" data-key="drive"><button data-v="madali">MADALI</button><button data-v="classic">CLASSIC</button></div></div>
       <div class="setrow"><span>🖼 Graphics</span><div class="seg" data-key="quality"><button data-v="high">MAGANDA</button><button data-v="low">MABILIS</button></div></div>
       <div class="setrow"><span>🕹 Laki ng joystick</span><div class="seg" data-key="joy"><button data-v="0.8">MALIIT</button><button data-v="1">NORMAL</button><button data-v="1.25">MALAKI</button></div></div>
       <div class="setrow"><span>✋ Kaliwete (palit puwesto ng controls)</span><div class="seg" data-key="lefty"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>

@@ -55,7 +55,7 @@ const WANTED = {
     }
     if (!w) for (const c of MAP.cctv) if (camSees(c, x, y)) { w = true; kind = 'cctv'; break; }
     if (!w) return false;
-    this.addHeat(sev);
+    this.addHeat(sev * D().heat);
     this.spotted(kind, dist);
     return true;
   },
@@ -111,7 +111,7 @@ const WANTED = {
     let seen = null;
     if (this.seeT <= 0) {
       this.seeT = 0.12;
-      const px = P.x, py = P.y, vis = WORLD.copVision();
+      const px = P.x, py = P.y, vis = WORLD.copVision() * D().vision;
       for (const v of G.vehicles) {
         if (!v.isCop || !v.driver || v.dead || v.driver === 'player') continue;
         const d = U.dist(v.x, v.y, px, py);
@@ -137,8 +137,8 @@ const WANTED = {
         this.addHeat(0);
       } else {
         this.unseenT += dt;
-        if (this.unseenT > 3.2) {
-          this.mode = 'search'; this.zone = 520 + this.stars * 150; this.decayT = 0; this.recognized = false; this.susp = 0;
+        if (this.unseenT > D().lost) {
+          this.mode = 'search'; this.zone = (520 + this.stars * 150) * D().zone; this.decayT = 0; this.recognized = false; this.susp = 0;
           UI.toast('Nawala ka sa paningin nila — tumakas palabas ng search zone!');
         }
       }
@@ -161,7 +161,7 @@ const WANTED = {
       }
       if (!recog) { this.susp = Math.max(0, this.susp - dt * 0.5); for (const p of G.peds) if (p.susp > 0) p.susp = Math.max(0, p.susp - dt); }
       if (this.mode === 'search') {
-        this.decayT += dt * (this.escaping ? 1 : 0.22) * (recog ? 0 : 1);
+        this.decayT += dt * (this.escaping ? 1 : D().inZone) * (recog ? 0 : 1);
         const need = (3.5 + this.stars * 0.9) * D().decay;
         if (this.decayT > need && !(this.lock && this.stars <= this.minStars)) {
           this.decayT = 0;
@@ -207,13 +207,14 @@ const WANTED = {
       if (boats < Math.min(3, Math.ceil(s / 2) + 1)) this.spawnBoat();
     }
     const hs = this.helis.filter(h => !h.leaving).length;
-    if (hs < UNIT_HELI[s]) {
+    const heliWant = s >= D().heliMin ? (D().heliMin > 5 ? 1 : UNIT_HELI[s]) : 0;
+    if (hs < heliWant) {
       const a = Math.random() * TAU;
       this.helis.push(new Heli(P.x + Math.cos(a) * 1300, P.y + Math.sin(a) * 1300));
     }
     // roadblocks
     this.roadT -= 2.2;
-    if (s >= 3 && this.mode === 'chase' && P.vehicle && P.vehicle.speed > 180 && this.roadT <= 0) { this.roadT = 14; this.roadblock(); }
+    if (s >= D().roadblock && this.mode === 'chase' && P.vehicle && P.vehicle.speed > 180 && this.roadT <= 0) { this.roadT = 14; this.roadblock(); }
   },
   spawnUnit(type) {
     const cx = this.mode === 'search' ? this.lastX : G.player.x, cy = this.mode === 'search' ? this.lastY : G.player.y;
@@ -267,7 +268,7 @@ const WANTED = {
       c.driver = 'cop'; c.unit = true; c.siren = true; c.ai = new CopDriver(c); c.ai.hold = 14;
       G.vehicles.push(c);
     }
-    if (this.stars >= 5) {
+    if (this.stars >= D().spikes) {
       const sx = ax ? best.nx - sg * 320 : best.nx, sy = ax ? best.ny : best.ny - sg * 320;
       this.spikes.push({ x: sx, y: sy, horiz: !ax, life: 40 });
     }

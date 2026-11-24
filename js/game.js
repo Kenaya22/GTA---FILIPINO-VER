@@ -630,6 +630,14 @@ const G = {
     for (const p of this.peds) if (p.state !== 'down' && inV(p.x, p.y, 30)) drawPerson(g, p, now);
     const P = this.player;
     if (!P.vehicle) drawPerson(g, P, now);
+    else if (P.turnQueued !== false && P.turnQueued !== undefined) {
+      // easy-drive: show the queued turn as an arrow ahead of the car
+      const v = P.vehicle, Q = Math.PI / 2, cur = Math.round(v.a / Q) * Q, des = P.turnDes;
+      const ax = v.x + Math.cos(cur) * (v.L / 2 + 40), ay = v.y + Math.sin(cur) * (v.L / 2 + 40);
+      g.save(); g.translate(ax, ay); g.rotate(des); g.globalAlpha = 0.6 + Math.sin(now * 8) * 0.3;
+      g.fillStyle = '#ffd23f'; g.beginPath(); g.moveTo(14, 0); g.lineTo(-6, -11); g.lineTo(-2, 0); g.lineTo(-6, 11); g.closePath(); g.fill();
+      g.restore(); g.globalAlpha = 1;
+    }
     ARMS.draw(g, inV);
     // particles
     for (const p of this.particles) {
@@ -728,24 +736,76 @@ const G = {
     g.fillStyle = '#ffd23f'; g.font = `bold ${12 * this.dpr}px Nunito, sans-serif`; g.textAlign = 'center';
     g.fillText(Math.round(d / 14) + 'm', ex - Math.cos(a) * 30 * this.dpr, ey - Math.sin(a) * 30 * this.dpr);
   },
+  // animated chase scene behind the home page
+  titleScene() {
+    if (this.ts) return this.ts;
+    const A = [MAP.cx(3) + LO, MAP.cy(5) + LO], B = [MAP.cx(6) - LO, MAP.cy(5) + LO], C = [MAP.cx(6) - LO, MAP.cy(7) - LO], Dd = [MAP.cx(3) + LO, MAP.cy(7) - LO];
+    const corners = [A, B, C, Dd], pts = [], R = 70;
+    for (let k = 0; k < 4; k++) {
+      const p0 = corners[(k + 3) % 4], p1 = corners[k], p2 = corners[(k + 1) % 4];
+      const d0 = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]), d2 = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+      const a = [p1[0] + (p0[0] - p1[0]) / d0 * R, p1[1] + (p0[1] - p1[1]) / d0 * R], b = [p1[0] + (p2[0] - p1[0]) / d2 * R, p1[1] + (p2[1] - p1[1]) / d2 * R];
+      for (let t = 0; t <= 1; t += 0.125) pts.push([(1 - t) * (1 - t) * a[0] + 2 * (1 - t) * t * p1[0] + t * t * b[0], (1 - t) * (1 - t) * a[1] + 2 * (1 - t) * t * p1[1] + t * t * b[1]]);
+    }
+    const seg = []; let L = 0;
+    for (let k = 0; k < pts.length; k++) { const a = pts[k], b = pts[(k + 1) % pts.length]; const l = Math.hypot(b[0] - a[0], b[1] - a[1]); seg.push({ a, b, l, s: L }); L += l; }
+    const mk = (type, col) => { const v = new Vehicle(type, 0, 0, 0, { color: col }); v.driver = 'ai'; return v; };
+    const cars = [{ v: mk('sports', '#f28c28'), off: 0 }];
+    for (let k = 1; k <= 3; k++) { const c = mk('police'); c.siren = true; cars.push({ v: c, off: -140 * k - 20 }); }
+    const heli = new Heli(A[0], A[1]);
+    if (!this.vehicles.length) TRAFFIC.spawnParked();
+    this.ts = { seg, L, cars, heli, s: 0, camX: A[0], camY: A[1] };
+    return this.ts;
+  },
+  pathAt(sc, d) {
+    d = ((d % sc.L) + sc.L) % sc.L;
+    for (const sg of sc.seg) if (d <= sg.s + sg.l) { const t = (d - sg.s) / sg.l; return { x: sg.a[0] + (sg.b[0] - sg.a[0]) * t, y: sg.a[1] + (sg.b[1] - sg.a[1]) * t, a: Math.atan2(sg.b[1] - sg.a[1], sg.b[0] - sg.a[0]) }; }
+    const sg = sc.seg[0]; return { x: sg.a[0], y: sg.a[1], a: 0 };
+  },
   renderTitle(dt) {
-    // animated city behind title
     this.time += dt;
-    const g = this.ctx, z = 0.7 * this.dpr, W = this.canvas.width, H = this.canvas.height;
-    const x = MAP.cx(4) + Math.sin(this.time * 0.05) * 1500, y = MAP.cy(4) + Math.cos(this.time * 0.04) * 1500;
+    const sc = this.titleScene();
+    sc.s += dt * 420;
+    for (const c of sc.cars) {
+      const p = this.pathAt(sc, sc.s + c.off), v = c.v;
+      const wob = c.off ? Math.sin(this.time * 3 + c.off) * 6 : 0;
+      v.x = p.x - Math.sin(p.a) * wob; v.y = p.y + Math.cos(p.a) * wob;
+      v.a += U.angDiff(v.a, p.a) * Math.min(1, dt * 8);
+    }
+    const hero = sc.cars[0].v, h = sc.heli;
+    h.x += (hero.x - 60 - h.x) * Math.min(1, dt * 1.2); h.y += (hero.y - 80 - h.y) * Math.min(1, dt * 1.2);
+    h.a = Math.atan2(hero.y - h.y, hero.x - h.x); h.rot += dt * 30; h.sx = hero.x; h.sy = hero.y;
+    const lx = hero.x + Math.cos(hero.a) * 160, ly = hero.y + Math.sin(hero.a) * 160;
+    sc.camX += (lx - sc.camX) * Math.min(1, dt * 1.5); sc.camY += (ly - sc.camY) * Math.min(1, dt * 1.5);
+    const g = this.ctx, W = this.canvas.width, H = this.canvas.height;
+    const z = Math.min(innerWidth, innerHeight) / 760 * this.dpr * (innerWidth > 820 ? 1.05 : 0.95);
+    // on wide screens, keep the action on the right side (menu card is on the left/center)
+    const ox = sc.camX - (innerWidth > 820 ? innerWidth * 0.18 : 0) * this.dpr / z, oy = sc.camY + (innerWidth > 820 ? 0 : innerHeight * 0.12) * this.dpr / z;
     g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#0d111b'; g.fillRect(0, 0, W, H);
-    g.setTransform(z, 0, 0, z, W / 2 - x * z, H / 2 - y * z);
+    g.setTransform(z, 0, 0, z, W / 2 - ox * z, H / 2 - oy * z);
     const vw = W / z, vh = H / z, CS = MAP.CH;
-    let budget = 1;
-    for (let cy = Math.floor((y - vh / 2) / CS); cy <= Math.floor((y + vh / 2) / CS); cy++) for (let cx = Math.floor((x - vw / 2) / CS); cx <= Math.floor((x + vw / 2) / CS); cx++) {
+    const inV = (x, y, m) => Math.abs(x - ox) < vw / 2 + m && Math.abs(y - oy) < vh / 2 + m;
+    let budget = 2;
+    for (let cy = Math.floor((oy - vh / 2) / CS); cy <= Math.floor((oy + vh / 2) / CS); cy++) for (let cx = Math.floor((ox - vw / 2) / CS); cx <= Math.floor((ox + vw / 2) / CS); cx++) {
       let c = MAP.getChunk(cx, cy, false);
       if (!c && budget-- > 0) c = MAP.getChunk(cx, cy, true);
       if (c) g.drawImage(c, cx * CS, cy * CS, CS + 0.6, CS + 0.6);
     }
+    WORLD.drawLights(g, inV, false);
+    for (const v of this.vehicles) if (inV(v.x, v.y, 80)) drawVehicle(g, v, this.time);
+    for (const c of sc.cars) drawVehicle(g, c.v, this.time);
     g.globalCompositeOperation = 'lighter';
-    for (const l of MAP.lamps) if (Math.abs(l.x - x) < vw && Math.abs(l.y - y) < vh) g.drawImage(this.sprites.lamp, l.x - 120, l.y - 120, 240, 240);
+    const S = this.sprites;
+    g.globalAlpha = 0.9;
+    for (const l of MAP.lamps) if (inV(l.x, l.y, 130)) g.drawImage(S.lamp, l.x - 120, l.y - 120, 240, 240);
+    g.globalAlpha = 1;
+    WORLD.drawLights(g, inV, true);
+    for (const c of sc.cars) drawVehicleLights(g, c.v, this.time, S);
+    g.globalAlpha = 0.35; g.drawImage(S.white, h.sx - 120, h.sy - 120, 240, 240); g.globalAlpha = 1;
     g.globalCompositeOperation = 'source-over';
+    h.draw(g);
   },
+
 };
 
 window.addEventListener('load', () => G.boot());

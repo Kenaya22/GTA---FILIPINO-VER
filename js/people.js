@@ -198,10 +198,26 @@ class Player extends Person {
       const v = this.vehicle;
       this.x = v.x; this.y = v.y; this.a = v.a;
       if (v.dead) { v.throttle = 0; v.steer = 0; v.hand = false; return; }
+      this.turnQueued = false;
       if (inp.touchDrive) {
         const j = inp.joy;
         if (j.mag > 0.18) {
-          const desired = Math.atan2(j.y, j.x);
+          let desired = Math.atan2(j.y, j.x);
+          // easy mode "smart turn": if there's no road where you point, keep straight and turn at the next intersection
+          this.turnQueued = false;
+          if (SETTINGS.drive === 'madali' && !v.t.boat && MAP.tileAt(v.x, v.y) === TL.ROAD && v.speed > 40) {
+            const Q = Math.PI / 2, cur = Math.round(v.a / Q) * Q, des = Math.round(desired / Q) * Q;
+            const turn = Math.abs(U.angDiff(cur, des));
+            if (turn > 0.5 && turn < 2.6) {
+              const open = MAP.tileAt(v.x + Math.cos(des) * 90, v.y + Math.sin(des) * 90) === TL.ROAD && MAP.tileAt(v.x + Math.cos(des) * 150, v.y + Math.sin(des) * 150) === TL.ROAD;
+              if (!open) {
+                desired = cur; this.turnQueued = des; this.turnDes = des;
+                // slow down when the side road is coming up
+                const ax = v.x + Math.cos(cur) * 150, ay = v.y + Math.sin(cur) * 150;
+                if (MAP.tileAt(ax + Math.cos(des) * 90, ay + Math.sin(des) * 90) === TL.ROAD) this.turnQueued = 'soon';
+              } else desired = des;
+            }
+          }
           const diff = U.angDiff(v.a, desired);
           const fs = v.fwd();
           if (this.revMode) { if (Math.abs(diff) < 1.4) this.revMode = false; }
@@ -212,12 +228,27 @@ class Player extends Person {
           } else {
             v.steer = U.clamp(diff * 2.2, -1, 1);
             v.throttle = j.mag * (Math.abs(diff) > 1.3 && fs > 260 ? 0.15 : 1);
+            if (SETTINGS.drive === 'madali' && ((Math.abs(diff) > 0.5 && fs > 200) || (this.turnQueued === 'soon' && fs > 210))) v.throttle = -0.7;
           }
         } else { v.throttle = 0; v.steer = 0; this.revMode = false; }
         v.hand = inp.hand;
         if (inp.brake) v.throttle = -1;
       } else {
         v.throttle = inp.throttle; v.steer = inp.steer; v.hand = inp.hand;
+      }
+      v.assist = SETTINGS.drive === 'madali';
+      if (v.assist && !v.t.boat) {
+        const sp = v.speed, fs = v.fwd();
+        // keep the car straight along the road grid when not steering
+        if (Math.abs(v.steer) < 0.2 && sp > 80) {
+          const ax = Math.round(v.a / (Math.PI / 2)) * (Math.PI / 2), d = U.angDiff(v.a, ax);
+          if (Math.abs(d) < 0.3) v.a = U.wrap(v.a + d * Math.min(1, G.dt * 3));
+        }
+        // brake before hitting a wall
+        if (fs > 160 && v.throttle >= 0) {
+          const look = Math.min(170, fs * 0.32) + v.L / 2;
+          if (MAP.solidAt(v.x + Math.cos(v.a) * look, v.y + Math.sin(v.a) * look)) v.throttle = -0.7;
+        }
       }
       return;
     }

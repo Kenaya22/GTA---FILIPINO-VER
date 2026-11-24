@@ -2,15 +2,15 @@
 // ===== Settings, difficulty & tutorial tips =====
 const SETTINGS_KEY = 'harinkalsada_settings_v1';
 const SETTINGS = {
-  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'normal', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {},
+  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {},
   load() {
     try { Object.assign(this, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch (e) { }
     if (!this.seen) this.seen = {};
   },
   save() {
     try {
-      const { music, sfx, walkMusic, diff, quality, joy, lefty, tipsOn, seen } = this;
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ music, sfx, walkMusic, diff, quality, joy, lefty, tipsOn, seen }));
+      const { music, sfx, walkMusic, diff, drive, quality, joy, lefty, tipsOn, seen } = this;
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ music, sfx, walkMusic, diff, drive, quality, joy, lefty, tipsOn, seen }));
     } catch (e) { }
   },
   apply() {
@@ -25,10 +25,16 @@ const SETTINGS = {
 };
 
 // difficulty multipliers
+// vision: how far cops see · lost: secs out of sight before they lose you · zone: search-zone size
+// heat: how fast crimes add stars · decay: time per star to forget you (lower = faster)
+// heliMin/roadblock/spikes/pellet: minimum stars before each kind of response
 const DIFFS = {
-  madali: { name: 'Madali', copSpeed: 0.88, units: 0.6, arrest: 1.6, dmg: 0.6, carDmg: 0.7, decay: 0.7, timer: 1.35 },
-  normal: { name: 'Normal', copSpeed: 1, units: 1, arrest: 1, dmg: 1, carDmg: 1, decay: 1, timer: 1 },
-  mahirap: { name: 'Mahirap', copSpeed: 1.06, units: 1.35, arrest: 0.8, dmg: 1.3, carDmg: 1.25, decay: 1.35, timer: 0.85 },
+  madali: { name: 'Madali', icon: '😎', desc: 'Para mag-enjoy. Mabagal at kaunti ang pulis, madaling tumakas, mas matibay ka.',
+    copSpeed: 0.8, units: 0.5, arrest: 2.0, dmg: 0.5, carDmg: 0.6, decay: 0.5, timer: 1.4, vision: 0.7, lost: 1.8, zone: 0.65, heat: 0.65, inZone: 0.55, heliMin: 6, roadblock: 4, spikes: 6, pellet: 6 },
+  normal: { name: 'Normal', icon: '🙂', desc: 'Balanse. Kaya mong tumakas kung magtatago ka at magpapalit ng itsura.',
+    copSpeed: 0.94, units: 0.85, arrest: 1.2, dmg: 0.9, carDmg: 0.9, decay: 0.8, timer: 1.1, vision: 0.88, lost: 2.5, zone: 0.85, heat: 0.9, inZone: 0.3, heliMin: 5, roadblock: 3, spikes: 5, pellet: 5 },
+  mahirap: { name: 'Mahirap', icon: '🔥', desc: 'Para sa mga beterano. Mabilis, marami at matalas ang mata ng pulis.',
+    copSpeed: 1.06, units: 1.3, arrest: 0.8, dmg: 1.3, carDmg: 1.25, decay: 1.3, timer: 0.85, vision: 1.1, lost: 3.6, zone: 1.1, heat: 1.2, inZone: 0.15, heliMin: 5, roadblock: 3, spikes: 5, pellet: 5 },
 };
 const D = () => DIFFS[SETTINGS.diff] || DIFFS.normal;
 
@@ -36,7 +42,9 @@ const D = () => DIFFS[SETTINGS.diff] || DIFFS.normal;
 const TIPS = {
   car: () => INPUT.touch
     ? ['🚗 Pagmamaneho', 'Ituro ang joystick kung saan mo gustong pumunta — kusang liliko ang sasakyan. Ituro sa likod para umatras. PRENO = handbrake para mag-drift. 📻 = palit istasyon ng radyo.']
-    : ['🚗 Pagmamaneho', 'W = gas, S = preno/atras, A/D = liko, Space = handbrake (drift), H = busina, R = palit istasyon ng radyo, E = bumaba.'],
+    : SETTINGS.drive === 'madali'
+      ? ['🚗 Madaling Pagmamaneho', 'Pindutin ang arrow / WASD kung SAAN mo gustong pumunta sa screen — kusang liliko ang sasakyan. Space = preno, H = busina, R = radyo, E = bumaba. (Palitan sa Settings → Pagmamaneho)']
+      : ['🚗 Pagmamaneho (Classic)', 'W = gas, S = preno/atras, A/D = liko, Space = handbrake (drift), H = busina, R = radyo, E = bumaba.'],
   wanted: () => ['⭐ Hinahabol ka!', 'Ang krimeng NAKITA ng pulis o ng CCTV ay nagdadagdag ng bituin. Mas maraming bituin, mas maraming pulis. Mawala ka sa paningin nila para makatakas.'],
   search: () => ['🟪 Search Zone', 'Nawala ka sa paningin nila — kaya naka-outline ang bituin. Lumabas sa purple na zone: magiging PULA ang bituin at unti-unti ka nilang makakalimutan.'],
   clues: () => ['🕵️ Suspect Clues', 'Kinikilala ka ng pulis sa 4 na clue: CCTV, damit, mukha at sasakyan. Kapag binago mo ang alam nila (may ekis na pula), HINDI ka nila makikilala kahit makita ka pa.'],

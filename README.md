@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila — v1.3
+# 👑 HARI NG KALSADA: Maynila — v1.4
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -13,6 +13,9 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 * **On your phone:** turn on GitHub Pages (repo → Settings → Pages → Deploy from branch →
   this branch, root `/`), then open the Pages link on your phone. You can also "Add to Home Screen".
 * Or run a local server: `python3 -m http.server` and open `http://localhost:8000`.
+
+## 🧭 Easy driving (default)
+Point where you want to go (arrow keys / WASD or the joystick) and the car steers itself. If there's no road that way, it keeps straight and turns at the next intersection. It also brakes before walls. Switch to **Classic** (gas/brake/steer) in ⚙️ Settings.
 
 ## 🎮 Controls
 | | Keyboard | Touch |
