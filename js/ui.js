@@ -13,7 +13,7 @@ const UI = {
   talking: false, lines: [], lineT: 0, toasts: [], bigT: 0, last: {},
   init() {
     this.el = {};
-    for (const id of ['hud', 'objective', 'sidejob', 'stars', 'clues', 'wanted-note', 'money', 'vehname', 'minimap', 'hpbar', 'carbar', 'carbarwrap', 'speedo', 'kmh', 'arrest', 'arrestbar', 'prompt', 'subtitle', 'sub-name', 'sub-text', 'toasts', 'bigmsg', 'big-title', 'big-sub', 'touch', 'tb-b', 'tb-horn', 'tb-act'])
+    for (const id of ['radio', 'tip', 'tip-title', 'tip-body', 'tb-radio', 'hud', 'objective', 'sidejob', 'stars', 'clues', 'wanted-note', 'money', 'vehname', 'minimap', 'hpbar', 'carbar', 'carbarwrap', 'speedo', 'kmh', 'arrest', 'arrestbar', 'prompt', 'subtitle', 'sub-name', 'sub-text', 'toasts', 'bigmsg', 'big-title', 'big-sub', 'touch', 'tb-b', 'tb-horn', 'tb-act'])
       this.el[id] = $(id);
     this.el.stars.innerHTML = STAR_SVG.repeat(6);
     this.starEls = [...this.el.stars.querySelectorAll('.star')];
@@ -25,6 +25,21 @@ const UI = {
     $('btn-new').onclick = () => { AUD.init(); AUD.resume(); if (G.hasSave() && !confirm('Magsisimula ng bagong laro. Mabubura ang lumang save. Sigurado ka?')) return; G.newGame(); };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };
     $('btn-howto').onclick = () => this.show('help');
+    $('btn-settings').onclick = () => this.openSettings();
+    $('btn-psettings').onclick = () => this.openSettings();
+    $('btn-setclose').onclick = () => { this.hide('settings'); SETTINGS.save(); };
+    $('set-resettips').onclick = () => { SETTINGS.seen = {}; SETTINGS.save(); AUD.click(); this.toast('Ipapakita ulit ang mga tip'); };
+    $('tip-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TIP.close(); });
+    const bindRange = (id, key) => { const el = $(id); el.oninput = () => { SETTINGS[key] = el.value / 100; SETTINGS.apply(); }; };
+    bindRange('set-music', 'music'); bindRange('set-sfx', 'sfx');
+    document.querySelectorAll('#settings .seg').forEach(seg => {
+      seg.querySelectorAll('button').forEach(b => b.onclick = () => {
+        const key = seg.dataset.key; let v = b.dataset.v;
+        if (key === 'walkMusic' || key === 'lefty' || key === 'tipsOn') v = v === '1';
+        else if (key === 'joy') v = parseFloat(v);
+        SETTINGS[key] = v; SETTINGS.apply(); SETTINGS.save(); AUD.click(); this.syncSettings();
+      });
+    });
     $('btn-hclose').onclick = () => { this.hide('help'); };
     $('btn-pause').onclick = () => G.pause(true);
     $('btn-map').onclick = () => this.openMap();
@@ -39,6 +54,29 @@ const UI = {
     $('btn-endclose').onclick = () => { this.hide('ending'); G.paused = false; };
     if (G.hasSave()) $('btn-continue').classList.remove('hidden');
     INPUT.init();
+  },
+  openSettings() { this.syncSettings(); this.show('settings'); },
+  syncSettings() {
+    $('set-music').value = Math.round(SETTINGS.music * 100); $('set-sfx').value = Math.round(SETTINGS.sfx * 100);
+    document.querySelectorAll('#settings .seg').forEach(seg => {
+      const cur = SETTINGS[seg.dataset.key];
+      seg.querySelectorAll('button').forEach(b => {
+        const v = b.dataset.v;
+        const on = typeof cur === 'boolean' ? (v === '1') === cur : String(cur) === v;
+        b.classList.toggle('on', on);
+      });
+    });
+  },
+  radio(text, dur = 3) {
+    if (!this.el) return;
+    this.el.radio.textContent = text; this.el.radio.classList.remove('hidden');
+    this.el.radio.style.animation = 'none'; void this.el.radio.offsetWidth; this.el.radio.style.animation = '';
+    this.radioT = dur;
+  },
+  tip(title, body) {
+    if (!title) { this.el.tip.classList.add('hidden'); return; }
+    this.el['tip-title'].textContent = title; this.el['tip-body'].textContent = body;
+    this.el.tip.classList.remove('hidden'); AUD.tone(880, 0.1, 'triangle', 0.08); AUD.tone(1320, 0.15, 'triangle', 0.08, 0, 0.1);
   },
   show(id) { $(id).classList.remove('hidden'); },
   hide(id) { $(id).classList.add('hidden'); },
@@ -78,6 +116,7 @@ const UI = {
     // toasts
     for (const t of this.toasts) { t.life -= dt; if (t.life < 0.4) t.el.classList.add('out'); }
     this.toasts = this.toasts.filter(t => { if (t.life <= 0) { t.el.remove(); return false; } return true; });
+    if (this.radioT > 0) { this.radioT -= dt; if (this.radioT <= 0) this.el.radio.classList.add('hidden'); }
     if (this.bigT > 0) { this.bigT -= dt; if (this.bigT <= 0) this.el.bigmsg.classList.add('hidden'); }
     // stars
     const W = WANTED;
@@ -140,7 +179,8 @@ const UI = {
     if (INPUT.touch) {
       this.set('tbb', this.el['tb-b'], 'textContent', v ? 'PRENO' : 'SUNTOK');
       this.el['tb-horn'].classList.toggle('hidden', !v);
-      this.set('tba', this.el['tb-act'], 'textContent', pr ? (v && !G.shopNear ? 'BABA' : 'GAMIT') : v ? 'BABA' : 'SAKAY');
+      this.el['tb-radio'].classList.toggle('hidden', !v);
+      this.set('tba', this.el['tb-act'], 'textContent', MS.canRetry() ? 'ULITIN' : pr ? (v && !G.shopNear ? 'BABA' : 'GAMIT') : v ? 'BABA' : 'SAKAY');
     }
     this.drawMinimap();
   },
@@ -329,6 +369,7 @@ const INPUT = {
     btn('tb-act', () => G.action());
     btn('tb-b', () => { this.bHeld = true; if (!G.player.vehicle) G.player.punch(); }, () => { this.bHeld = false; });
     btn('tb-horn', () => G.horn());
+    btn('tb-radio', () => MUSIC.nextStation());
     // desktop click on canvas resumes audio
     addEventListener('pointerdown', () => { AUD.init(); AUD.resume(); });
   },

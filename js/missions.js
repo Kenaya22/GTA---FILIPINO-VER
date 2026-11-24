@@ -34,6 +34,7 @@ function removePeds(list) { if (list) for (const p of list) p.remove = true; }
 const MISSIONS = [
   { // 1
     id: 'bagong-salta', title: 'Bagong Salta', giver: 'tito', reward: 800,
+    cp: { stage: 2, pos: () => MAP.pois.tito },
     desc: 'Dumating sa Maynila at tulungan si Tito Boy sa pamamasada.',
     stages: [
       {
@@ -104,6 +105,7 @@ const MISSIONS = [
   },
   { // 2
     id: 'hiram-muna', title: 'Hiram Muna', giver: 'ben', reward: 1500,
+    cp: { stage: 1, pos: () => { const d = MAP.door(7, 6, 'N'); return { x: d.x - 260, y: d.y }; } },
     desc: 'Kunin ang pulang SUV sa Makati para kay Mang Ben.',
     stages: [
       talk([
@@ -147,6 +149,7 @@ const MISSIONS = [
   },
   { // 3
     id: 'mainit-pa', title: 'Mainit Pa!', giver: 'nena', reward: 1200,
+    cp: { stage: 1, pos: () => ({ x: MAP.pois.lechonan.x - 500, y: MAP.laneY(0, 0) }), car: 'sedan' },
     desc: 'Ihatid ang lechon sa pista bago lumamig.',
     stages: [
       talk([
@@ -159,7 +162,7 @@ const MISSIONS = [
         target: () => G.player.vehicle ? Object.assign({ stop: true }, MAP.pois.lechonan) : MAP.pois.lechonan,
         update(c) {
           const v = G.player.vehicle;
-          if (v && stopAt(v, MAP.pois.lechonan, 110, c, 'h', 1.2)) { c.v = v; c.hp0 = v.hp; c.time = 50; AUD.coin(); UI.toast('🐷 Naikarga ang lechon! Bilisan mo!'); return true; }
+          if (v && stopAt(v, MAP.pois.lechonan, 110, c, 'h', 1.2)) { c.v = v; c.hp0 = v.hp; c.time = Math.round(50 * D().timer); AUD.coin(); UI.toast('🐷 Naikarga ang lechon! Bilisan mo!'); return true; }
         },
       },
       {
@@ -181,6 +184,7 @@ const MISSIONS = [
   },
   { // 4
     id: 'bagong-itsura', title: 'Bagong Itsura', giver: 'nena', reward: 1000,
+    cp: { stage: 1, pos: () => MAP.pois.nena },
     desc: 'Hinahanap ka ng pulis. Magbagong-anyo at tumakas.',
     stages: [
       talk([
@@ -209,6 +213,7 @@ const MISSIONS = [
   },
   { // 5
     id: 'karera', title: 'Karera sa Baywalk', giver: 'paeng', reward: 2500,
+    cp: { stage: 1, pos: () => MAP.pois.paeng },
     desc: 'Talunin ang mga karerista ng Maynila.',
     stages: [
       talk([
@@ -287,10 +292,11 @@ const MISSIONS = [
         ['Kuya Paeng', 'Ay, at si Boss Tikboy sa Binondo... hinahanap ka. Mag-ingat ka sa taong yun.'],
       ]),
     ],
-    done(c) { G.unlock.sports = true; for (const v of [c.r1, c.r2]) if (v) { v.mission = false; v.driver = 'ai'; v.ai = new RoadDriver(v); } if (c.car) c.car.mission = false; },
+    done(c, ok) { if (ok) G.unlock.sports = true; for (const v of [c.r1, c.r2]) if (v) { v.mission = false; v.driver = 'ai'; v.ai = new RoadDriver(v); } if (c.car) c.car.mission = false; },
   },
   { // 6
     id: 'singilan', title: 'Singilan', giver: 'tikboy', reward: 2000,
+    cp: { stage: 1, pos: () => ({ x: MAP.cx(4) - 400, y: MAP.laneY(1, 0) }), car: 'sedan' },
     desc: 'Singilin si Kulas para kay Boss Tikboy.',
     stages: [
       talk([
@@ -348,6 +354,7 @@ const MISSIONS = [
   },
   { // 7
     id: 'buntot', title: 'Buntot', giver: 'tito', reward: 1500,
+    cp: { stage: 1, pos: () => ({ x: MAP.cx(7) - 300, y: MAP.laneY(2, 0) }), car: 'sedan' },
     desc: 'Sundan ang itim na SUV ni Mayor Kurakot.',
     stages: [
       talk([
@@ -393,6 +400,7 @@ const MISSIONS = [
   },
   { // 8
     id: 'hari-ng-kalsada', title: 'Hari ng Kalsada', giver: 'tito', reward: 10000,
+    cp: { stage: 1, pos: () => ({ x: MAP.pois.bodega.x + 130, y: MAP.pois.bodega.y + 230 }) },
     desc: 'Nakawin ang armored van ni Mayor at ibalik ang pera sa bayan.',
     stages: [
       talk([
@@ -440,13 +448,13 @@ const MISSIONS = [
         [N, 'Salamat, Tito. Pero... parang gusto ko pang mag-stay sa Maynila. Ang dami pang pwedeng gawin.'],
       ]),
     ],
-    done() { WANTED.lock = false; WANTED.minStars = 0; setTimeout(() => UI.ending(), 600); },
+    done(c, ok) { WANTED.lock = false; WANTED.minStars = 0; if (ok) setTimeout(() => UI.ending(), 600); },
   },
 ];
 
 const MS = {
-  idx: 0, active: null, stage: 0, c: null, entered: false, freeShops: false, failCd: 0, giverNPC: null,
-  reset() { this.idx = 0; this.active = null; this.stage = 0; this.c = null; this.freeShops = false; if (this.giverNPC) this.giverNPC.remove = true; this.giverNPC = null; },
+  idx: 0, active: null, stage: 0, c: null, entered: false, freeShops: false, failCd: 0, giverNPC: null, retryInfo: null, retryT: 0,
+  reset() { this.retryInfo = null; this.idx = 0; this.active = null; this.stage = 0; this.c = null; this.freeShops = false; if (this.giverNPC) this.giverNPC.remove = true; this.giverNPC = null; },
   giverPOI(m) { return MAP.pois[{ tito: 'tito', ben: 'mangben', nena: 'nena', paeng: 'paeng', tikboy: 'tikboy' }[m.giver]]; },
   start(i) {
     if (this.giverNPC && i !== 0) { /* keep */ }
@@ -471,6 +479,7 @@ const MS = {
   },
   update(dt) {
     this.failCd -= dt;
+    if (this.retryT > 0) { this.retryT -= dt; if (this.retryT <= 0) this.retryInfo = null; }
     // giver NPC
     if (this.idx < MISSIONS.length) {
       const m = MISSIONS[this.idx], p = this.giverPOI(m), ch = CHARS[m.giver];
@@ -491,7 +500,7 @@ const MS = {
   },
   complete() {
     const m = this.active;
-    if (m.done) m.done(this.c);
+    if (m.done) m.done(this.c, true);
     G.addMoney(m.reward, true);
     AUD.success();
     UI.big('MISYON TAPOS!', `${m.title} · +${U.money(m.reward)}`, 3);
@@ -501,7 +510,7 @@ const MS = {
   },
   fail(reason) {
     const m = this.active; if (!m) return;
-    if (m.done) m.done(this.c || {});
+    if (m.done) m.done(this.c || {}, false);
     if (this.c) for (const k in this.c) { const o = this.c[k]; if (o instanceof Vehicle && o !== G.player.vehicle) { o.mission = false; if (!o.driver) o.remove = true; } if (o instanceof Person) o.remove = true; if (k === 'waiting') removePeds(o); }
     if (this.c && this.c.car && G.player.vehicle === this.c.car) this.c.car.mission = false;
     WANTED.lock = false; WANTED.minStars = 0;
@@ -510,6 +519,26 @@ const MS = {
     UI.big('BIGO ANG MISYON', reason, 3);
     this.active = null; this.c = null; this.freeShops = false;
     this.failCd = 3;
+    if (m.cp) { this.retryInfo = { m }; this.retryT = 20; setTimeout(() => TIP.show('retry'), 3500); }
+  },
+  canRetry() { return !!(this.retryInfo && this.retryT > 0 && !this.active && !G.cutscene); },
+  retry() {
+    const m = this.retryInfo.m; this.retryInfo = null;
+    const P = G.player, pos = m.cp.pos();
+    const f = document.getElementById('fade'); f.classList.add('on');
+    G.cutscene = true;
+    setTimeout(() => {
+      if (P.vehicle) G.exitVehicle(true);
+      WANTED.clear(false);
+      for (const v of G.vehicles) if (v.unit) v.remove = true;
+      for (const p of G.peds) if (p.fromCar) p.remove = true;
+      P.x = pos.x; P.y = pos.y; P.hp = Math.max(P.hp, 100); P.vx = P.vy = 0;
+      if (m.cp.car) { const v = new Vehicle(m.cp.car, pos.x, pos.y, 0); G.vehicles.push(v); G.enterVehicle(v); }
+      G.cam.x = P.x; G.cam.y = P.y;
+      this.active = m; this.stage = m.cp.stage; this.c = {}; this.entered = false;
+      UI.big(m.title.toUpperCase(), 'Mula sa checkpoint', 1.8);
+      f.classList.remove('on'); G.cutscene = false;
+    }, 600);
   },
   canStart() {
     if (this.active || this.idx >= MISSIONS.length || this.failCd > 0) return null;

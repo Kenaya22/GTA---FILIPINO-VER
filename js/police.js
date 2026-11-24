@@ -155,7 +155,7 @@ const WANTED = {
       if (!recog) { this.susp = Math.max(0, this.susp - dt * 0.5); for (const p of G.peds) if (p.susp > 0) p.susp = Math.max(0, p.susp - dt); }
       if (this.mode === 'search') {
         this.decayT += dt * (this.escaping ? 1 : 0.22) * (recog ? 0 : 1);
-        const need = 3.5 + this.stars * 0.9;
+        const need = (3.5 + this.stars * 0.9) * D().decay;
         if (this.decayT > need && !(this.lock && this.stars <= this.minStars)) {
           this.decayT = 0;
           const n = this.stars - 1;
@@ -190,9 +190,10 @@ const WANTED = {
       if (v.type === 'swat') swat++; else if (v.type === 'army') army++; else cars++;
     }
     let need = null;
-    if (cars < UNIT_CARS[s]) need = s <= 2 && Math.random() < 0.3 ? 'policemoto' : 'police';
-    else if (swat < UNIT_SWAT[s]) need = 'swat';
-    else if (army < UNIT_ARMY[s]) need = 'army';
+    const lim = (arr) => arr[s] ? Math.max(1, Math.round(arr[s] * D().units)) : 0;
+    if (cars < lim(UNIT_CARS)) need = s <= 2 && Math.random() < 0.3 ? 'policemoto' : 'police';
+    else if (swat < lim(UNIT_SWAT)) need = 'swat';
+    else if (army < lim(UNIT_ARMY)) need = 'army';
     if (need) this.spawnUnit(need);
     const hs = this.helis.filter(h => !h.leaving).length;
     if (hs < UNIT_HELI[s]) {
@@ -284,7 +285,7 @@ class CopDriver {
       return;
     }
     v.siren = true;
-    v.speedMul = [1, 0.8, 0.86, 0.93, 0.98, 1, 1.04][WANTED.stars];
+    v.speedMul = [1, 0.8, 0.86, 0.93, 0.98, 1, 1.04][WANTED.stars] * D().copSpeed;
     if (this.hold > 0) {
       this.hold -= dt; v.throttle = 0; v.hand = true; v.steer = 0;
       if (U.dist(v.x, v.y, P.x, P.y) < 260) this.hold = 0;

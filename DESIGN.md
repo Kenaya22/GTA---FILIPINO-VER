@@ -153,7 +153,13 @@ map and minimap with a GPS route.
 
 ---
 
-## 7. Technical
+## 7. Phase 1 additions
+* **Music**: step-sequencer synth engine; title theme, 3 radio stations (OPM pop, budots, Pinoy hip-hop with kulintang), lo-fi walking track, star-reactive chase music; car-speaker filter; ducking during dialogue/pause.
+* **Checkpoints**: every mission has a checkpoint stage; after failing, ULITIN restarts there (skips intro dialogue, places you nearby, gives a car where needed).
+* **Settings**: volumes, difficulty (cop speed/count, arrest time, damage, wanted decay, mission timers), graphics quality, joystick size, left-handed layout, tips.
+* **Tutorial tips**: one-time cards for driving, wanted level, search zone, suspect clues, CCTV, disguise shops, pasada, car damage, tsinelas, retry.
+
+## 8. Technical
 * `index.html` + `style.css` + `js/*.js` — no build step, no external assets; open `index.html` or host on GitHub Pages.
 * Procedural city generated from a fixed seed → same map every time.
 * Map rendered into cached 512 px chunks; additive light pass for lamps/headlights/sirens.

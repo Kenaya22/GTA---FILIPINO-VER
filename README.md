@@ -22,6 +22,7 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 | Enter / exit / use shop | E or F | **SAKAY / BABA / GAMIT** |
 | Punch / handbrake | Space | **SUNTOK / PRENO** |
 | Horn | H | **BUSINA** |
+| Change radio station | R | **📻** |
 | Map / Pause | M / Esc | 🗺 / ☰ |
 
 ## ⭐ The wanted system
@@ -33,6 +34,16 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
   switch cars. If a cop spots you and nothing matches the profile, they ignore you.
 * 1★ patrols → 3★ roadblocks → 4★ SWAT → 5★ helicopter + spike strips → 6★ army trucks.
 
+## 🎵 Music & radio
+All music is synthesized live in the browser; there are no audio files.
+* **HIMIG FM 98.7**: OPM pop ballad · **BUDOTS 101.1**: budots dance · **KALYE RAP 89.5**: Pinoy boom-bap with kulintang gongs
+* DJ lines and fake ads scroll on screen while you drive. Each car starts on its own station (jeepneys love budots).
+* A title theme, a lo-fi track while walking, and **chase music** that adds layers as your stars go up.
+
+## ⚙️ Settings
+Music and SFX volume · walking music on/off · difficulty (**Madali / Normal / Mahirap**) · graphics (Maganda / Mabilis for older phones) ·
+joystick size · left-handed controls · tutorial tips on/off.
+
 ## 📖 Story missions
 1. **Bagong Salta**: arrive in Manila and drive Tito Boy's jeepney
 2. **Hiram Muna**: steal a red SUV for Mang Ben's talyer
@@ -42,6 +53,8 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 6. **Singilan**: chase down and ram a debtor's van
 7. **Buntot**: tail the Mayor's black SUV to his secret bodega
 8. **Hari ng Kalsada**: steal the armored van full of stolen money and escape 6 stars
+
+Failed a mission? Tap **ULITIN** within 20 seconds to restart from the checkpoint, with no repeated dialogue.
 
 Side activities: jeepney **pasada**, selling cars to Mang Ben, and **20 Gintong Tsinelas** to collect.
 
@@ -59,3 +72,5 @@ See **[DESIGN.md](DESIGN.md)** for the full design document: research, game flow
 | `js/ui.js` | HUD, minimap, map, dialogue, menus, touch controls |
 | `js/game.js` | Main loop, collisions, camera, lighting, save/load |
 | `js/audio.js` | Synthesized sound effects (WebAudio) |
+| `js/music.js` | Music engine: 6 songs, radio stations, DJ lines |
+| `js/settings.js` | Settings, difficulty, tutorial tips |

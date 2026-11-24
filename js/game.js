@@ -11,6 +11,7 @@ const G = {
   fieldT: 0, walkT: 0, gpsT: 0, gpsKey: '', ramCd: 0, nearVeh: null, shopNear: null,
 
   boot() {
+    SETTINGS.load();
     this.canvas = document.getElementById('game');
     this.ctx = this.canvas.getContext('2d');
     addEventListener('resize', () => this.resize());
@@ -23,11 +24,12 @@ const G = {
     this.player = new Player(MAP.pois.busterm.x, MAP.pois.busterm.y);
     this.cam.x = this.player.x; this.cam.y = this.player.y;
     UI.init();
+    SETTINGS.apply();
     this.last = performance.now();
     requestAnimationFrame((t) => this.loop(t));
   },
   resize() {
-    this.dpr = Math.min(2, window.devicePixelRatio || 1);
+    this.dpr = SETTINGS.quality === 'low' ? 1 : Math.min(2, window.devicePixelRatio || 1);
     this.canvas.width = Math.floor(innerWidth * this.dpr);
     this.canvas.height = Math.floor(innerHeight * this.dpr);
   },
@@ -138,10 +140,12 @@ const G = {
     if (code === 'KeyE' || code === 'KeyF' || code === 'Enter') this.action();
     else if (code === 'Space') { if (UI.talking) UI.nextLine(); else if (!this.player.vehicle) this.player.punch(); }
     else if (code === 'KeyH') this.horn();
+    else if (code === 'KeyR') MUSIC.nextStation();
   },
   action() {
     if (!this.started || this.paused || this.cutscene || this.player.downed) return;
     if (UI.talking) { UI.nextLine(); return; }
+    if (MS.canRetry()) { MS.retry(); return; }
     if (MS.canStart()) { MS.start(MS.idx); return; }
     const shop = SHOP.near();
     if (shop && SHOP.label(shop)) { SHOP.use(shop); return; }
@@ -222,6 +226,7 @@ const G = {
   },
   promptText() {
     if (UI.talking || this.cutscene) return '';
+    if (MS.canRetry()) return `Ulitin ang misyon mula checkpoint: ${MS.retryInfo.m.title} (${Math.ceil(MS.retryT)}s)`;
     const m = MS.canStart();
     if (m) return `Kausapin si ${CHARS[m.giver].name} — Misyon ${MS.idx + 1}: ${m.title}`;
     const shop = SHOP.near(); const lab = shop && SHOP.label(shop);
@@ -324,7 +329,9 @@ const G = {
       while (this.acc >= 1 / 60 && n < 4) { this.update(1 / 60); this.acc -= 1 / 60; n++; }
       if (n === 4) this.acc = 0;
       UI.update(dt);
+      TIP.check(dt); TIP.update(dt);
     }
+    MUSIC.update(dt, this.player);
     if (this.started) this.render(); else this.renderTitle(dt);
     requestAnimationFrame((tt) => this.loop(tt));
   },
@@ -489,7 +496,7 @@ const G = {
       for (const c of this.vehicles) if (c.unit && c.driver && !c.dead && U.dist(c.x, c.y, v.x, v.y) < (v.L + c.L) / 2 + 26) { near = true; break; }
       if (!near) for (const p of this.peds) if (p.kind === 'cop' && p.state !== 'down' && U.dist(p.x, p.y, v.x, v.y) < v.L / 2 + 28) { near = true; break; }
     }
-    if (near) P.arrest += dt / (P.vehicle ? 2.6 : 1.7);
+    if (near) P.arrest += dt / ((P.vehicle ? 2.6 : 1.7) * D().arrest);
     else P.arrest = Math.max(0, P.arrest - dt * 0.6);
     if (P.arrest >= 1) this.busted();
   },

@@ -155,7 +155,7 @@ class Player extends Person {
   faceId() { return this.look.hair; }
   hurt(n, fx, fy) {
     if (this.downed || G.cutscene) return;
-    this.hp -= n; this.hurtT = 0.3;
+    this.hp -= n * D().dmg; this.hurtT = 0.3;
     G.shake(3);
     if (this.hp <= 0) this.knockout('hp');
   }

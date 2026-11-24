@@ -8,9 +8,12 @@ const AUD = {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
       const c = this.ctx = new AC();
+      this.out = c.createGain();
+      this.out.gain.value = this.on ? 1 : 0;
+      this.out.connect(c.destination);
       this.master = c.createGain();
-      this.master.gain.value = this.on ? 0.55 : 0;
-      this.master.connect(c.destination);
+      this.master.gain.value = 0.7 * SETTINGS.sfx;
+      this.master.connect(this.out);
       // noise buffer
       const len = c.sampleRate * 2;
       const buf = c.createBuffer(1, len, c.sampleRate);
@@ -42,7 +45,8 @@ const AUD = {
     } catch (e) { this.ctx = null; }
   },
   resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
-  setOn(v) { this.on = v; if (this.master) this.master.gain.value = v ? 0.55 : 0; },
+  setOn(v) { this.on = v; if (this.out) this.out.gain.value = v ? 1 : 0; },
+  setVolumes() { if (this.master) this.master.gain.value = 0.7 * SETTINGS.sfx; },
   t() { return this.ctx ? this.ctx.currentTime : 0; },
   engine(on, frac, big) {
     if (!this.ctx) return;

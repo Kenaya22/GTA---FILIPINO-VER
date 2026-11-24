@@ -24,6 +24,7 @@
     <div id="stars"></div>
     <div id="clues" class="hidden"></div>
     <div id="wanted-note"></div>
+    <div id="radio" class="hidden"></div>
   </div>
   <div id="topright">
     <div id="money">₱0</div>
@@ -43,6 +44,7 @@
   <div id="prompt" class="hidden"></div>
   <div id="subtitle" class="hidden"><b id="sub-name"></b><span id="sub-text"></span><small id="sub-skip">tap / E ▸</small></div>
   <div id="toasts"></div>
+  <div id="tip" class="hidden"><b id="tip-title"></b><span id="tip-body"></span><button id="tip-ok">OK ✓</button></div>
   <div id="bigmsg" class="hidden"><h1 id="big-title"></h1><p id="big-sub"></p></div>
 </div>
 
@@ -52,6 +54,7 @@
     <button id="tb-act" class="tbtn big">SAKAY</button>
     <button id="tb-b" class="tbtn">SUNTOK</button>
     <button id="tb-horn" class="tbtn small hidden">BUSINA</button>
+    <button id="tb-radio" class="tbtn small hidden">📻</button>
   </div>
 </div>
 
@@ -67,6 +70,7 @@
       <button id="btn-new" class="mbtn primary">BAGONG LARO</button>
       <button id="btn-continue" class="mbtn hidden">ITULOY</button>
       <button id="btn-howto" class="mbtn">PAANO LARUIN</button>
+      <button id="btn-settings" class="mbtn">MGA SETTING</button>
     </div>
     <p class="foot">Isang orihinal na open-world laro · Gawang-Pinoy na ideya</p>
   </div>
@@ -82,6 +86,7 @@
       <button id="btn-pmap" class="mbtn">MAPA</button>
       <button id="btn-missions" class="mbtn">MGA MISYON</button>
       <button id="btn-phelp" class="mbtn">PAANO LARUIN</button>
+      <button id="btn-psettings" class="mbtn">MGA SETTING</button>
       <button id="btn-sound" class="mbtn">TUNOG: ON</button>
       <button id="btn-quit" class="mbtn danger">BUMALIK SA MENU</button>
     </div>
@@ -118,14 +123,32 @@
       </div>
       <div>
         <h3>⌨️ Keyboard</h3>
-        <p><b>WASD / Arrows</b> — lakad / maneho<br><b>Shift</b> — takbo<br><b>E / F</b> — sumakay, bumaba, gamitin<br><b>Space</b> — suntok / handbrake<br><b>H</b> — busina<br><b>M</b> — mapa · <b>Esc</b> — pause</p>
+        <p><b>WASD / Arrows</b> — lakad / maneho<br><b>Shift</b> — takbo<br><b>E / F</b> — sumakay, bumaba, gamitin<br><b>Space</b> — suntok / handbrake<br><b>H</b> — busina<br><b>R</b> — palit istasyon ng radyo<br><b>M</b> — mapa · <b>Esc</b> — pause</p>
         <h3>📱 Touch</h3>
-        <p><b>Kaliwang joystick</b> — lakad. Sa sasakyan, ituro kung saan pupunta (sa likod = atras).<br><b>SAKAY</b> — sumakay/bumaba/gamitin<br><b>SUNTOK / PRENO</b> — suntok o handbrake<br><b>BUSINA</b> — busina</p>
+        <p><b>Kaliwang joystick</b> — lakad. Sa sasakyan, ituro kung saan pupunta (sa likod = atras).<br><b>SAKAY</b> — sumakay/bumaba/gamitin<br><b>SUNTOK / PRENO</b> — suntok o handbrake<br><b>BUSINA</b> — busina<br><b>📻</b> — palit istasyon ng radyo</p>
         <h3>💰 Kita</h3>
         <p>Misyon · <b>Pasada</b> sa kahit anong jeepney · Ibenta ang kotse kay <b>Mang Ben</b> · Pera ng mga nasuntok</p>
       </div>
     </div>
     <button id="btn-hclose" class="mbtn primary">SIGE!</button>
+  </div>
+</div>
+
+<div id="settings" class="screen hidden">
+  <div class="panel">
+    <h2>MGA SETTING</h2>
+    <div class="setlist">
+      <label class="setrow"><span>🎵 Musika</span><input type="range" id="set-music" min="0" max="100"></label>
+      <label class="setrow"><span>🔊 Sound effects</span><input type="range" id="set-sfx" min="0" max="100"></label>
+      <div class="setrow"><span>🚶 Musika habang naglalakad</span><div class="seg" data-key="walkMusic"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
+      <div class="setrow"><span>💪 Hirap</span><div class="seg" data-key="diff"><button data-v="madali">MADALI</button><button data-v="normal">NORMAL</button><button data-v="mahirap">MAHIRAP</button></div></div>
+      <div class="setrow"><span>🖼 Graphics</span><div class="seg" data-key="quality"><button data-v="high">MAGANDA</button><button data-v="low">MABILIS</button></div></div>
+      <div class="setrow"><span>🕹 Laki ng joystick</span><div class="seg" data-key="joy"><button data-v="0.8">MALIIT</button><button data-v="1">NORMAL</button><button data-v="1.25">MALAKI</button></div></div>
+      <div class="setrow"><span>✋ Kaliwete (palit puwesto ng controls)</span><div class="seg" data-key="lefty"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
+      <div class="setrow"><span>💡 Mga tip</span><div class="seg" data-key="tipsOn"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
+      <button id="set-resettips" class="mbtn small">IPAKITA ULIT ANG MGA TIP</button>
+    </div>
+    <button id="btn-setclose" class="mbtn primary">TAPOS</button>
   </div>
 </div>
 
@@ -144,7 +167,9 @@
 <div id="loading" class="hidden">Ginagawa ang Maynila...</div>
 
 <script src="js/util.js"></script>
+<script src="js/settings.js"></script>
 <script src="js/audio.js"></script>
+<script src="js/music.js"></script>
 <script src="js/map.js"></script>
 <script src="js/vehicles.js"></script>
 <script src="js/people.js"></script>

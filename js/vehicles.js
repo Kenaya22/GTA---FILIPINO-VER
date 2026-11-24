@@ -10,7 +10,7 @@ const VT = {
   jeepney: { name: 'Jeepney', L: 96, W: 38, max: 380, acc: 290, brake: 750, grip: 8, steer: 2.1, mass: 2, hp: 180, cruise: 185, value: 600, draw: 'jeep' },
   tricycle: { name: 'Tricycle', L: 46, W: 34, max: 300, acc: 340, brake: 800, grip: 9, steer: 3.3, mass: 0.6, hp: 60, cruise: 150, value: 120, draw: 'trike' },
   motor: { name: 'Motorsiklo', L: 40, W: 14, max: 600, acc: 620, brake: 1000, grip: 12, steer: 3.6, mass: 0.4, hp: 50, cruise: 250, value: 250, draw: 'moto' },
-  sports: { name: 'Sports Car', L: 62, W: 31, max: 720, acc: 720, brake: 1100, grip: 10.5, steer: 3.0, mass: 1, hp: 90, cruise: 260, value: 1500, draw: 'sports' },
+  sports: { name: 'Sports Car', L: 62, W: 31, max: 720, acc: 720, brake: 1100, grip: 10.5, steer: 3.0, mass: 1, hp: 110, cruise: 260, value: 1500, draw: 'sports' },
   bus: { name: 'Provincial Bus', L: 150, W: 44, max: 340, acc: 220, brake: 650, grip: 8, steer: 1.6, mass: 4, hp: 300, cruise: 170, value: 800, draw: 'bus' },
   police: { name: 'Patrol Car', L: 64, W: 30, max: 610, acc: 560, brake: 1000, grip: 10, steer: 2.9, mass: 1.25, hp: 130, cruise: 250, value: 500, draw: 'police', cop: 1 },
   policemoto: { name: 'Police Motor', L: 42, W: 14, max: 630, acc: 650, brake: 1000, grip: 12, steer: 3.6, mass: 0.45, hp: 60, cruise: 250, value: 300, draw: 'moto', cop: 1, color: '#eef1f5' },
@@ -130,6 +130,7 @@ class Vehicle {
     if (this.lastImpact > 0) { if (sp <= this.lastSp) return; dmg = (sp - this.lastSp) * 0.055; this.lastSp = sp; }
     else { dmg = (sp - 130) * 0.055; this.lastSp = sp; }
     dmg /= (this.t.armor || 1);
+    if (this.driver === 'player') dmg *= D().carDmg;
     if (!this.invuln) this.hp -= dmg;
     if (this.lastImpact <= 0) {
       this.lastImpact = 0.35;
