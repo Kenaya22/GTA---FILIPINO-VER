@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila — v1.4
+# 👑 HARI NG KALSADA: Maynila — v1.5
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -13,6 +13,9 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 * **On your phone:** turn on GitHub Pages (repo → Settings → Pages → Deploy from branch →
   this branch, root `/`), then open the Pages link on your phone. You can also "Add to Home Screen".
 * Or run a local server: `python3 -m http.server` and open `http://localhost:8000`.
+
+## 🌾 Chapter 2: Probinsya (v1.5)
+After the Manila story, drive the highway east to **San Isidro** and help Lola Isyang against the land-grabbing **Don Severo**. 6 missions, a stealth mission, and a **choice with two endings**.
 
 ## 🧭 Easy driving (default)
 Point where you want to go (arrow keys / WASD or the joystick) and the car steers itself. If there's no road that way, it keeps straight and turns at the next intersection. It also brakes before walls. Switch to **Classic** (gas/brake/steer) in ⚙️ Settings.
@@ -93,4 +96,5 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/weapons.js` | Weapons, projectiles, hardware shop |
 | `js/economy.js` | Properties, garage, car customization, achievements |
 | `js/jobs.js` | Side jobs: rider, taxi, tow, vigilante, race |
+| `js/tutorial.js` | New-player tutorial, developer mode |
 | `js/world.js` | Day/night, weather, floods, traffic lights, street life, police boats |

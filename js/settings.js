@@ -2,21 +2,23 @@
 // ===== Settings, difficulty & tutorial tips =====
 const SETTINGS_KEY = 'harinkalsada_settings_v1';
 const SETTINGS = {
-  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {},
+  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', touchCtl: 'joystick', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {},
   load() {
     try { Object.assign(this, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch (e) { }
     if (!this.seen) this.seen = {};
   },
   save() {
     try {
-      const { music, sfx, walkMusic, diff, drive, quality, joy, lefty, tipsOn, seen } = this;
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ music, sfx, walkMusic, diff, drive, quality, joy, lefty, tipsOn, seen }));
+      const { music, sfx, walkMusic, diff, drive, touchCtl, quality, joy, lefty, tipsOn, seen } = this;
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ music, sfx, walkMusic, diff, drive, touchCtl, quality, joy, lefty, tipsOn, seen }));
     } catch (e) { }
   },
   apply() {
     AUD.setVolumes();
     MUSIC.applyGain();
     document.body.classList.toggle('lefty', !!this.lefty);
+    document.body.classList.toggle('dpadmode', this.touchCtl === 'dpad');
+    if (typeof INPUT !== 'undefined' && INPUT.keys) INPUT.releaseDpad();
     document.documentElement.style.setProperty('--joy', this.joy);
     TRAFFIC.maxCars = this.quality === 'low' ? 16 : 26;
     TRAFFIC.maxPeds = this.quality === 'low' ? 20 : 34;
@@ -76,7 +78,7 @@ const TIP = {
       if (this.t <= 0) this.close();
       return;
     }
-    if (this.queue.length && this.cd <= 0 && !UI.talking) {
+    if (this.queue.length && this.cd <= 0 && !UI.talking && !TUT.active && !TUT.pending) {
       const key = this.queue.shift();
       const [title, body] = TIPS[key]();
       SETTINGS.seen[key] = true; SETTINGS.save();

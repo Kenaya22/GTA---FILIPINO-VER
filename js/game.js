@@ -8,7 +8,7 @@ const G = {
   cam: { x: 0, y: 0, zoom: 1, vw: 1000, vh: 1000, shake: 0, sx: 0, sy: 0 },
   unlock: { sports: false, gold: false }, tsinelas: new Set(), stats: { sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 },
   copField: null, walkField: null, gpsField: null, gpsPath: null, target: null,
-  fieldT: 0, walkT: 0, gpsT: 0, gpsKey: '', ramCd: 0, nearVeh: null, shopNear: null, lightMul: 1,
+  flags: {}, fieldT: 0, walkT: 0, gpsT: 0, gpsKey: '', ramCd: 0, nearVeh: null, shopNear: null, lightMul: 1,
 
   boot() {
     SETTINGS.load();
@@ -59,6 +59,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
+    PROV.reset(); G.flags = {};
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -75,7 +76,7 @@ const G = {
     this.cam.vw = innerWidth; this.cam.vh = innerHeight;
     for (let k = 0; k < 40; k++) { TRAFFIC.spawnCar(); TRAFFIC.spawnPed(); }
   },
-  newGame() {
+  newGame(dev) {
     this.resetWorld();
     this.tsinelas = new Set(); this.stats = { sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 }; this.unlock = { sports: false, gold: false };
     const b = MAP.pois.busterm;
@@ -84,8 +85,10 @@ const G = {
     const tr = new Vehicle('tricycle', b.x + 70, b.y - 10, -Math.PI / 2, { color: '#2e86c1' }); tr.keep = true;
     this.vehicles.push(tr);
     this.beginPlay();
+    if (dev) { this.save(); return; }
     UI.big('HARI NG KALSADA', 'Maynila', 2.5);
     MS.start(0);
+    TUT.pending = true;
     this.save();
   },
   continueGame() {
@@ -381,6 +384,8 @@ const G = {
     MS.update(dt);
     PASADA.update(dt);
     JOBS.update(dt);
+    TUT.update(dt);
+    PROV.update(dt);
     ARMS.update(dt);
     ACH.update(dt);
     SAVE.update(dt);
@@ -625,6 +630,11 @@ const G = {
       g.restore();
     }
     WORLD.drawCourts(g, inV, now);
+    // guard vision cones (stealth)
+    if (Wd.stars === 0) for (const p of this.peds) {
+      if (p.role !== 'guard' || p.state === 'down' || !inV(p.x, p.y, 260)) continue;
+      g.fillStyle = 'rgba(255,200,60,0.13)'; g.beginPath(); g.moveTo(p.x, p.y); g.arc(p.x, p.y, 250, p.a - 0.6, p.a + 0.6); g.closePath(); g.fill();
+    }
     // people (down first)
     for (const p of this.peds) if (p.state === 'down' && inV(p.x, p.y, 30)) drawPerson(g, p, now);
     // vehicles

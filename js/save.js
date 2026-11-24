@@ -39,7 +39,7 @@ const SAVE = {
       clock: WORLD.clock, rain: WORLD.rainTarget,
       ts: [...G.tsinelas], stats: G.stats, unlock: G.unlock,
       weapons: P.weapons, weapon: P.weapon,
-      props: [...ECON.owned], garage: ECON.garage, ach: [...ACH.got], visited: [...ACH.visited], drove: [...ACH.drove],
+      flags: G.flags, props: [...ECON.owned], garage: ECON.garage, ach: [...ACH.got], visited: [...ACH.visited], drove: [...ACH.drove],
     };
   },
   write(slot, silent) {
@@ -66,6 +66,7 @@ const SAVE = {
     G.stats = Object.assign({ sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 }, s.stats || {});
     G.unlock = Object.assign({ sports: false, gold: false }, s.unlock || {});
     P.weapons = Object.assign({ fists: true }, s.weapons || {}); P.weapon = s.weapon && P.weapons[s.weapon] !== undefined ? s.weapon : 'fists';
+    G.flags = Object.assign({}, s.flags || {});
     ECON.owned = new Set(s.props || []); ECON.garage = s.garage || []; ECON.refreshIcons();
     ACH.got = new Set(s.ach || []); ACH.visited = new Set(s.visited || []); ACH.drove = new Set(s.drove || []);
     const pos = s.pos || MAP.pois.home;

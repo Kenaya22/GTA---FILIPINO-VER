@@ -6,6 +6,11 @@ const CHARS = {
   ben: { name: 'Mang Ben', look: { skin: '#9a5f35', shirt: '#4b5a32', pat: 'plain', outfit: 'npc', hair: 'buzz', hairCol: '#222', pants: '#2b3a55' } },
   paeng: { name: 'Kuya Paeng', look: { skin: '#c68b59', shirt: '#24262b', pat: 'plain', outfit: 'npc', hair: 'mohawk', hairCol: '#c0392b', pants: '#1f2633' } },
   tikboy: { name: 'Boss Tikboy', look: { skin: '#e0b07a', shirt: '#efe6cf', pat: 'barong', outfit: 'npc', hair: 'bald', hairCol: '#111', pants: '#1f2633' } },
+  lola: { name: 'Lola Isyang', look: { skin: '#c68b59', shirt: '#8e2b3a', pat: 'floral', outfit: 'npc', hair: 'long', hairCol: '#cfcfcf', pants: '#3b3b3b' } },
+  ditas: { name: 'Mang Ditas', look: { skin: '#9a5f35', shirt: '#f0f0f0', pat: 'sando', outfit: 'npc', hair: 'bucket', hairCol: '#222', pants: '#4a3b2a' } },
+  luz: { name: 'Kapitana Luz', look: { skin: '#d9a066', shirt: '#2e6fd1', pat: 'barong', outfit: 'npc', hair: 'long', hairCol: '#1b1410', pants: '#1f2633' } },
+  severo: { name: 'Don Severo', look: { skin: '#e0b07a', shirt: '#efe6cf', pat: 'barong', outfit: 'npc', hair: 'cap_red', hairCol: '#666', pants: '#1f2633' } },
+  goon: { name: 'Tauhan ni Don', look: { skin: '#a86b3c', shirt: '#24262b', pat: 'plain', outfit: 'npc', hair: 'buzz', hairCol: '#111', pants: '#1f2633' } },
   kulas: { name: 'Kulas', look: { skin: '#b87a4b', shirt: '#6b7280', pat: 'hood', outfit: 'npc', hair: 'curly', hairCol: '#1b1410', pants: '#3b3b3b' } },
 };
 const N = 'Nonoy';
@@ -30,6 +35,19 @@ function waitingPeds(c, pt, n) {
   }
 }
 function removePeds(list) { if (list) for (const p of list) p.remove = true; }
+function comic(panels) { return { obj: '', enter() { UI.comic(panels); }, update() { return !UI.talking; } }; }
+function near(pt, r) { const P = G.player, me = P.vehicle || P; return U.dist(me.x, me.y, pt.x, pt.y) < r; }
+function spawnGoonCar(near, target, minD = 700, maxD = 1300) {
+  const pts = MAP.prov.pts.concat(MAP.prov.loop);
+  for (let k = 0; k < 20; k++) {
+    const p = U.choice(pts), d = U.dist(p.x, p.y, near.x, near.y);
+    if (d < minD || d > maxD || TRAFFIC.inView(p.x, p.y, 60)) continue;
+    const v = new Vehicle('mayor', p.x, p.y, Math.atan2(near.y - p.y, near.x - p.x), { color: '#14161b' });
+    v.driver = 'ai'; v.mission = true; v.goon = true; v.criminal = true; v.maxhp = v.hp = 150;
+    v.ai = new GoonDriver(v, target); G.vehicles.push(v); return v;
+  }
+  return null;
+}
 
 const MISSIONS = [
   { // 1
@@ -448,18 +466,288 @@ const MISSIONS = [
         [N, 'Salamat, Tito. Pero... parang gusto ko pang mag-stay sa Maynila. Ang dami pang pwedeng gawin.'],
       ]),
     ],
-    done(c, ok) { WANTED.lock = false; WANTED.minStars = 0; if (ok) setTimeout(() => UI.ending(), 600); },
+    done(c, ok) { WANTED.lock = false; WANTED.minStars = 0; if (ok) setTimeout(() => UI.ending('ch1'), 600); },
   },
 ];
+
+MISSIONS.forEach(m => { m.chapter = m.chapter || 1; });
+const pr = () => MAP.prov;
+MISSIONS.push(
+  { // 9
+    id: 'pauwi', title: 'Pauwi sa Probinsya', giver: 'tito', reward: 1500, chapter: 2,
+    desc: 'Umuwi sa San Isidro at hanapin si Lola Isyang.',
+    cp: { stage: 2, pos: () => ({ x: (MAP.rs(8) + RW + 6) * T, y: (pr().hy + 3) * T }), car: 'sedan' },
+    stages: [
+      comic([
+        ['🏙️👑🚔', 'Nakulong na si Mayor Kurakot. Payapa na ulit ang Maynila...'],
+        ['✉️👵🌾', '"Apo, bumalik ka. May bagong panginoon dito sa San Isidro — si DON SEVERO. Inaagaw niya ang mga bukid."'],
+        ['🛣️🚙🌅', 'KABANATA 2: PROBINSYA'],
+      ]),
+      talk([
+        ['Tito Boy', 'Nonoy, bago makulong si Tikboy, naibenta na pala niya ang mga titulo ng lupa sa isang haciendero — si Don Severo.'],
+        ['Tito Boy', 'Umuwi ka muna sa San Isidro. Sundan mo lang ang malaking highway pa-silangan. Ingat sa daan!'],
+      ]),
+      { obj: 'Mag-drive pa-silangan sa highway papuntang San Isidro', target: () => MAP.pois.plaza, update: () => near(MAP.pois.plaza, 260) },
+      talk([
+        ['Kapitana Luz', 'Ikaw ba si Nonoy, ang apo ni Lola Isyang? Salamat sa Diyos at nakauwi ka!'],
+        ['Kapitana Luz', 'Hinihintay ka ng lola mo sa bahay niya — sa dulo ng highway, sa silangan.'],
+      ]),
+      { obj: 'Puntahan si Lola Isyang sa silangan ng bayan', target: () => MAP.pois.lola, update: () => near(MAP.pois.lola, 110) },
+      talk([
+        ['Lola Isyang', 'NONOY! Apo ko! Ang laki mo na... at ang payat mo! Kumain ka na ba?'],
+        ['Lola Isyang', 'Si Don Severo... binabakuran ang mga bukid. Sabi niya, sa kanya na raw ang lupa dahil may titulo siya.'],
+        [N, 'Lola, hindi ako papayag. Tutulungan ko kayo.'],
+      ]),
+    ],
+  },
+  { // 10
+    id: 'ani', title: 'Ani ng Bayan', giver: 'lola', reward: 2000, chapter: 2,
+    desc: 'Kolektahin ang palay gamit ang kuliglig ni Lolo.',
+    cp: { stage: 1, pos: () => MAP.pois.lola },
+    stages: [
+      talk([
+        ['Lola Isyang', 'Anihan na, pero kinuha ng mga tauhan ni Don ang mga trak ng magsasaka.'],
+        ['Lola Isyang', 'Gamitin mo ang kuliglig ng Lolo mo. Kunin ang palay sa tatlong bukid at dalhin sa kiskisan sa kanluran ng bayan.'],
+      ]),
+      {
+        obj: 'Sumakay sa kuliglig ni Lolo',
+        enter(c) { const l = MAP.pois.lola; c.k = laneSpawn('kuliglig', l.x - 80, (pr().hy + 1) * T, Math.PI); c.k.cargo = 0; c.n = 0; c.farms = pr().farms.slice(0, 3); },
+        target: (c) => c.k, update(c) { if (c.k.dead) return 'Nasira ang kuliglig!'; return G.player.vehicle === c.k; },
+      },
+      {
+        obj: (c) => `Kunin ang palay sa mga bukid (${c.n}/3)`,
+        target: (c) => G.player.vehicle === c.k ? Object.assign({ stop: true }, c.farms[c.n]) : c.k,
+        update(c) {
+          if (c.k.dead) return 'Nasira ang kuliglig!';
+          if (G.player.vehicle === c.k && stopAt(c.k, c.farms[c.n], 110, c, 'h', 1)) {
+            c.n++; c.k.cargo = c.n * 2; AUD.coin(); UI.toast(`🌾 Naikarga ang palay (${c.n}/3)`);
+            if (c.n >= 3) return true;
+          }
+        },
+      },
+      {
+        obj: 'Dalhin ang palay sa kiskisan (rice mill)',
+        target: (c) => G.player.vehicle === c.k ? Object.assign({ stop: true }, MAP.pois.mill) : c.k,
+        update(c) { if (c.k.dead) return 'Nasira ang kuliglig!'; return G.player.vehicle === c.k && stopAt(c.k, MAP.pois.mill, 140, c, 'h2', 1); },
+      },
+      talk([
+        ['Mang Kanor (kiskisan)', 'Ang dami nito! Salamat, iho. Ngayon lang ulit may naghatid simula nang dumating si Don Severo.'],
+        ['Mang Kanor (kiskisan)', 'Sabi ni Don, siya lang daw ang pwedeng bumili ng palay — sa kalahating presyo! Pero ngayon, may bigas na ang bayan.'],
+      ]),
+    ],
+    done(c) { if (c.k) { c.k.mission = false; c.k.cargo = 0; } },
+  },
+  { // 11
+    id: 'karera-kuliglig', title: 'Karera ng Kuliglig', giver: 'ditas', reward: 2500, chapter: 2,
+    desc: 'Talunin ang mga kampeon sa taunang karera ng kuliglig.',
+    cp: { stage: 1, pos: () => MAP.pois.ditas },
+    stages: [
+      talk([
+        ['Mang Ditas', 'Pista na! At ang pinakaabangan — ang Karera ng Kuliglig sa palayan!'],
+        ['Mang Ditas', 'Isang ikot sa daan ng bukid. Kung mananalo ka, sa iyo ang premyo. Hindi pa natatalo si Bebang ng tatlong taon!'],
+      ]),
+      {
+        obj: 'Pumunta sa simula ng karera sa palayan', target: () => pr().loop[0],
+        enter(c) {
+          const s0 = pr().loop[0];
+          c.car = laneSpawn('kuliglig', s0.x - 40, s0.y, 0, { color: '#f28c28' });
+          c.r1 = laneSpawn('kuliglig', s0.x - 110, s0.y - 30, 0); c.r2 = laneSpawn('kuliglig', s0.x - 180, s0.y + 25, 0);
+          for (const [r, sk] of [[c.r1, 0.98], [c.r2, 0.95]]) { r.driver = 'ai'; r.skill = sk; r.ri = 0; r.st = { t: 0 }; }
+          const L = pr().loop; c.cps = [L[1], L[2], L[3], L[4], L[0]];
+        },
+        update(c) { return G.player.vehicle === c.car || (near(pr().loop[0], 160) && !G.player.vehicle && (G.player.x = c.car.x, G.player.y = c.car.y, G.enterVehicle(c.car), true)); },
+      },
+      {
+        obj: 'Humanda...', target: () => null, enter(c) { c.cd = 3.5; c.last = 4; },
+        update(c, dt) {
+          c.cd -= dt; for (const v of [c.car, c.r1, c.r2]) { v.vx = 0; v.vy = 0; }
+          const n = Math.ceil(c.cd); if (n !== c.last && n > 0) { c.last = n; UI.big(String(n), '', 0.8); AUD.beep(); }
+          if (c.cd <= 0) { UI.big('GO!', '', 0.8); AUD.tone(1600, 0.4, 'square', 0.1); c.pi = 0; return true; }
+        },
+      },
+      {
+        obj: (c) => `KARERA! Checkpoint ${c.pi + 1}/${c.cps.length}`,
+        target: (c) => Object.assign({ cp: true, n: c.pi + 1 }, c.cps[c.pi]),
+        update(c, dt) {
+          if (c.car.dead) return 'Nasira ang kuliglig mo!';
+          if (G.player.vehicle !== c.car) { c.out = (c.out || 0) + dt; if (c.out > 5) return 'Bumaba ka sa karera!'; } else c.out = 0;
+          if (U.dist(c.car.x, c.car.y, c.cps[c.pi].x, c.cps[c.pi].y) < 110) { c.pi++; AUD.checkpoint(); if (c.pi >= c.cps.length) return true; }
+          for (const r of [c.r1, c.r2]) {
+            if (r.ri >= c.cps.length) continue;
+            if (driveRacer(r, c.cps[r.ri], c.cps[r.ri + 1], 0, dt, r.st) < 100) r.ri++;
+            if (r.ri >= c.cps.length) return 'Naunahan ka sa karera!';
+          }
+        },
+      },
+      talk([['Mang Ditas', 'HINDI KAPANI-PANIWALA! May bagong kampeon ang San Isidro!'], ['Bebang', 'Hmp. Sa susunod na taon, babawi ako!']]),
+    ],
+    done(c) { for (const v of [c.r1, c.r2, c.car]) if (v) { v.mission = false; if (v !== c.car) v.remove = true; } },
+  },
+  { // 12
+    id: 'bantay', title: 'Mga Bantay ni Don Severo', giver: 'lola', reward: 3000, chapter: 2,
+    desc: 'Pigilan ang pagbabakod sa bukid ni Mang Pedring.',
+    cp: { stage: 1, pos: () => MAP.pois.lola, car: 'sedan' },
+    stages: [
+      talk([
+        ['Lola Isyang', 'Nonoy! Nagbabakod na ang mga tauhan ni Don sa bukid ni Mang Pedring!'],
+        ['Lola Isyang', 'Pigilan mo sila... pero mag-ingat ka. Pati ang mga pulis dito, binabayaran ni Don.'],
+      ]),
+      {
+        obj: 'Pumunta sa bukid ni Mang Pedring', target: () => pr().farms[1],
+        enter(c) { const f = pr().farms[1]; c.goons = []; for (let k = 0; k < 3; k++) { const p = new Person(f.x + U.rand(-60, 60), f.y + 40 + U.rand(-20, 20), 'ped', Object.assign({}, CHARS.goon.look)); p.npc = true; p.state = 'idle'; p.keep = true; G.peds.push(p); c.goons.push(p); } },
+        update: () => near(pr().farms[1], 200),
+      },
+      talk([
+        ['Tauhan ni Don', 'Hoy! Pag-aari na ni Don Severo ang lupang ito! May titulo kami!'],
+        [N, 'Peke ang titulo niyo! Umalis kayo!'],
+        ['Tauhan ni Don', 'Matapang ka ha. PULIS! May nanggugulo dito! Hulihin niyo siya!'],
+      ]),
+      {
+        obj: () => WANTED.mode === 'chase' ? 'Takasan ang mga pulis ni Don Severo!' : 'Lumayo at magtago hanggang mawala ang mga bituin',
+        enter(c) { removePeds(c.goons); WANTED.setStars(3); WANTED.spotted('cop', 100); },
+        target: () => null, update: () => WANTED.stars === 0,
+      },
+      talk([['Lola Isyang (sa telepono)', 'Ligtas ka? Salamat sa Diyos. Nonoy, kailangan natin ng patunay na peke ang titulo ni Don. Kausapin mo si Kapitana Luz sa munisipyo.']]),
+    ],
+  },
+  { // 13
+    id: 'titulo', title: 'Ang Titulo', giver: 'luz', reward: 3000, chapter: 2,
+    desc: 'Pasukin ang hacienda at kunin ang mga orihinal na titulo.',
+    cp: { stage: 1, pos: () => ({ x: MAP.pois.hacgate.x, y: MAP.pois.hacgate.y + 260 }) },
+    stages: [
+      talk([
+        ['Kapitana Luz', 'Nasa opisina sa loob ng hacienda ang mga ORIHINAL na titulo ng mga magsasaka. Kapag nakuha mo, mapapatunayan nating peke ang kay Don.'],
+        ['Kapitana Luz', 'May mga bantay. Tingnan mo ang dilaw na tingin nila — huwag kang papasok doon. Mas madali sa gabi.'],
+      ]),
+      {
+        obj: 'Pumunta sa Hacienda Severo (hilaga ng bayan)', target: () => MAP.pois.hacgate,
+        update: () => near(MAP.pois.hacgate, 220),
+      },
+      {
+        obj: () => WANTED.stars > 0 ? 'Nakita ka! Kunin pa rin ang titulo — o tumakas muna' : 'Pumasok nang palihim at kunin ang titulo sa opisina (iwas sa dilaw na tingin)',
+        enter(c) {
+          const h = pr().hacienda, cx = (h.x0 + h.x1) / 2;
+          c.guards = [];
+          const routes = [[[h.x0 + 80, h.y0 + 520], [h.x1 - 80, h.y0 + 520]], [[cx - 60, h.y0 + 420], [cx - 60, h.y1 - 90]], [[h.x1 - 120, h.y0 + 120], [h.x1 - 120, h.y0 + 440]], [[h.x0 + 100, h.y0 + 120], [cx - 200, h.y0 + 120]]];
+          for (const r of routes) { const p = new Person(r[0][0], r[0][1], 'cop', Object.assign({}, CHARS.goon.look)); p.role = 'guard'; p.keep = true; p.patrol = r.map(([x, y]) => ({ x, y })); G.peds.push(p); c.guards.push(p); }
+        },
+        target: () => MAP.pois.office,
+        update(c) { if (!G.player.vehicle && near(MAP.pois.office, 50)) { AUD.cash(); UI.big('📁 NAKUHA ANG TITULO!', 'Lumabas ng hacienda', 2, 'good'); return true; } },
+      },
+      {
+        obj: () => WANTED.stars > 0 ? 'Takasan ang mga bantay at pulis!' : 'Lumabas ng hacienda at lumayo',
+        target: () => WANTED.stars > 0 ? null : { x: MAP.pois.hacgate.x, y: MAP.pois.hacgate.y + 160 },
+        update() { const h = pr().hacienda, P = G.player; const out = P.x < h.x0 - 60 || P.x > h.x1 + 60 || P.y < h.y0 - 60 || P.y > h.y1 + 100; return out && WANTED.stars === 0; },
+      },
+      {
+        obj: 'Magpasya...', target: () => null,
+        enter(c) {
+          UI.say([['Don Severo (sa telepono)', 'Alam kong ikaw ang kumuha ng mga titulo, bata. Matalino ka. Ibenta mo sa akin — ₱30,000. Cash. Walang tanong.']]);
+          c.wait = true;
+        },
+        update(c) {
+          if (UI.talking || !c.wait) return c.picked;
+          c.wait = false;
+          UI.choice('Ano ang gagawin mo sa mga titulo?', [
+            { label: '🤝 Ibigay kay Kapitana Luz', desc: 'Para sa mga magsasaka at sa bayan. Walang pera — pero tama.' },
+            { label: '💰 Ibenta kay Don Severo (₱30,000)', desc: 'Mabilis na pera. Pero mawawalan ng lupa ang mga kababayan mo.' },
+          ], (k) => {
+            G.flags.ch2 = k === 0 ? 'bayan' : 'pera';
+            if (k === 1) { G.addMoney(30000, true); UI.say([['Don Severo', 'Hehehe. Alam kong maiintindihan mo, iho. Ang mundo ay para sa matatalino.']]); }
+            else UI.say([['Kapitana Luz', 'Nonoy... salamat. Bukas, dadalhin namin ito sa korte kasama ang lahat ng magsasaka. Ito na ang pag-asa ng San Isidro.']]);
+            c.picked = true;
+          });
+        },
+      },
+      { obj: '', update: () => !UI.talking },
+    ],
+    done(c) { removePeds(c.guards); },
+  },
+  { // 14
+    id: 'lupa-ng-bayan', title: 'Lupa ng Bayan', giver: 'lola', reward: 15000, chapter: 2,
+    desc: 'Ang huling laban para sa San Isidro.',
+    cp: { stage: 1, pos: () => MAP.pois.lola, car: 'suv' },
+    stages: [
+      {
+        obj: '', enter() {
+          if (G.flags.ch2 === 'pera') UI.say([
+            ['Lola Isyang', 'Nonoy... totoo ba? Ibinenta mo ang mga titulo kay Don Severo?'],
+            ['Lola Isyang', 'Ang mga Pedring, ang mga Kanor... wala na silang lupa. Hindi kita pinalaki para diyan, apo.'],
+            ['Tito Boy (sa telepono)', 'NONOY! Tumakbo ka! Si Don Severo — ayaw niya ng saksi. Pinapahabol ka niya! Bumalik ka sa Maynila, sa terminal ko!'],
+          ]);
+          else UI.say([
+            ['Lola Isyang', 'Ngayong araw dadalhin ng mga magsasaka ang mga titulo sa munisipyo, sakay ng dalawang jeep.'],
+            ['Lola Isyang', 'Pero nag-aabang ang mga itim na SUV ni Don. Bantayan mo ang convoy, apo — at banggain mo ang sinumang haharang!'],
+          ]);
+        }, update: () => !UI.talking,
+      },
+      {
+        obj: (c) => G.flags.ch2 === 'pera'
+          ? `Tumakas papuntang Maynila — sa terminal ni Tito Boy! ${c.goons ? '· Mga SUV ni Don: ' + c.goons.filter(v => !v.dead).length : ''}`
+          : `Protektahan ang convoy ng magsasaka! 🚌 ${c.jeeps ? c.jeeps.map(j => Math.max(0, Math.round(j.hp / j.maxhp * 100)) + '%').join(' · ') : ''} · 🚙 Kalaban: ${c.goons ? c.goons.filter(v => !v.dead).length : 0}`,
+        enter(c) {
+          c.goons = []; c.t = 0; c.spawned = 0;
+          if (G.flags.ch2 === 'pera') { WANTED.setStars(4); WANTED.spotted('cop', 100); return; }
+          const L = pr().loop, tcx = (pr().tcx + 0.5) * T, tcy = pr().tcy;
+          const path = [L[0], { x: tcx, y: (tcy + 22) * T }, { x: tcx, y: (tcy + 15.5) * T }, { x: tcx - 40, y: (tcy + 11) * T }];
+          c.jeeps = [];
+          for (let k = 0; k < 2; k++) {
+            const j = laneSpawn('jeepney', L[4].x + 200 - k * 130, L[4].y, 0, { color: k ? '#27ae60' : '#c0392b' });
+            j.driver = 'ai'; j.maxhp = j.hp = 420; j.passengers = 6;
+            j.ai = new PathDriver(j, path, { cruise: 170, solid: true });
+            c.jeeps.push(j);
+          }
+          UI.toast('🚌 Umalis na ang convoy! Bantayan sila!');
+        },
+        target: (c) => G.flags.ch2 === 'pera' ? MAP.pois.home : (c.jeeps ? c.jeeps[0] : null),
+        update(c, dt) {
+          c.t += dt;
+          const alive = c.goons.filter(v => !v.dead && !v.remove);
+          if (G.flags.ch2 === 'pera') {
+            if (c.spawned < 4 && c.t > 2 + c.spawned * 5 && MAP.inProvince(G.player.x)) { const v = spawnGoonCar(G.player, () => G.player.vehicle || G.player); if (v) { c.goons.push(v); c.spawned++; } }
+            if (near(MAP.pois.home, 220)) { WANTED.clear(false); for (const v of c.goons) v.remove = true; return true; }
+            return;
+          }
+          for (const j of c.jeeps) if (j.dead || j.hp <= 0) return 'Nasira ang jeep ng convoy!';
+          if (c.spawned < 6 && alive.length < 3 && c.t > 3 + c.spawned * 4) {
+            const tgt = U.choice(c.jeeps.filter(j => !j.dead));
+            const v = spawnGoonCar(tgt, () => { const live = c.jeeps.filter(j => !j.dead); return live.length ? live.reduce((a, b) => U.d2(a.x, a.y, v.x, v.y) < U.d2(b.x, b.y, v.x, v.y) ? a : b) : null; }, 600, 1100);
+            if (v) { c.goons.push(v); c.spawned++; UI.toast('🚙 May paparating na SUV ni Don!'); }
+          }
+          if (c.jeeps.every(j => j.ai && j.ai.finished)) { for (const v of c.goons) { v.ai = null; v.driver = null; } return true; }
+        },
+      },
+      { obj: '', enter() {
+          if (G.flags.ch2 === 'pera') UI.comic([
+            ['🚙💨🌃', 'Nakatakas ka pabalik ng Maynila. Mayaman ka na...'],
+            ['🏚️🌾😢', '...pero ang mga bukid ng San Isidro, nabakuran ni Don Severo.'],
+            ['👵💔', '"Ang tunay na hari ng kalsada, hindi nagbebenta ng sariling bayan." — Lola Isyang'],
+            ['🔚', 'WAKAS (Ending B: Ang Presyo)'],
+          ]);
+          else UI.comic([
+            ['🏛️📁⚖️', 'Naiharap ang mga orihinal na titulo sa korte. PEKE ang kay Don Severo!'],
+            ['🚔👔🔒', 'Inaresto si Don Severo dahil sa pandaraya at pang-aagaw ng lupa.'],
+            ['🌾👨‍🌾🎉', 'Nabawi ng mga magsasaka ang kanilang mga bukid. Pista ulit sa San Isidro!'],
+            ['👵❤️👑', '"Ipinagmamalaki kita, apo. Ikaw ang tunay na Hari ng Kalsada." — WAKAS (Ending A: Lupa ng Bayan)'],
+          ]);
+        }, update: () => !UI.talking },
+    ],
+    done(c, ok) {
+      if (c.goons) for (const v of c.goons) { v.mission = false; v.criminal = false; }
+      if (c.jeeps) for (const j of c.jeeps) j.mission = false;
+      if (ok) { G.flags.ending2 = G.flags.ch2 === 'pera' ? 'B' : 'A'; setTimeout(() => UI.ending(G.flags.ending2 === 'A' ? 'ch2a' : 'ch2b'), 600); }
+    },
+  },
+);
 
 const MS = {
   idx: 0, active: null, stage: 0, c: null, entered: false, freeShops: false, failCd: 0, giverNPC: null, retryInfo: null, retryT: 0,
   reset() { this.retryInfo = null; this.idx = 0; this.active = null; this.stage = 0; this.c = null; this.freeShops = false; if (this.giverNPC) this.giverNPC.remove = true; this.giverNPC = null; },
-  giverPOI(m) { return MAP.pois[{ tito: 'tito', ben: 'mangben', nena: 'nena', paeng: 'paeng', tikboy: 'tikboy' }[m.giver]]; },
+  giverPOI(m) { return MAP.pois[{ tito: 'tito', ben: 'mangben', nena: 'nena', paeng: 'paeng', tikboy: 'tikboy', lola: 'lola', ditas: 'ditas', luz: 'luz' }[m.giver]]; },
   start(i) {
     if (this.giverNPC && i !== 0) { /* keep */ }
     this.active = MISSIONS[i]; this.stage = 0; this.c = {}; this.entered = false;
-    UI.big(this.active.title.toUpperCase(), `Misyon ${i + 1} ng ${MISSIONS.length}`, 2.2);
+    UI.big(this.active.title.toUpperCase(), `Kabanata ${this.active.chapter} · Misyon ${i + 1} ng ${MISSIONS.length}`, 2.2);
     AUD.tone(523, 0.2, 'triangle', 0.1); AUD.tone(784, 0.3, 'triangle', 0.1, 0, 0.15);
   },
   objText() {

@@ -46,12 +46,14 @@
   <div id="prompt" class="hidden"></div>
   <div id="subtitle" class="hidden"><b id="sub-name"></b><span id="sub-text"></span><small id="sub-skip">tap / E ▸</small></div>
   <div id="toasts"></div>
+  <div id="tut" class="hidden"><div class="tut-top"><span class="tut-badge">🎓 TUTORIAL</span><span id="tut-n"></span><button id="tut-skip">Laktawan ✕</button></div><div id="tut-text"></div><div class="tut-bot"><span id="tut-wait">⏳ Gawin ito para magpatuloy...</span><button id="tut-ok">SIGE ▶</button></div></div>
   <div id="tip" class="hidden"><b id="tip-title"></b><span id="tip-body"></span><button id="tip-ok">OK ✓</button></div>
   <div id="bigmsg" class="hidden"><h1 id="big-title"></h1><p id="big-sub"></p></div>
 </div>
 
 <div id="touch" class="hidden">
   <div id="joyzone"><div id="joybase"><div id="joyknob"></div></div></div>
+  <div id="dpad" class="hidden"><span class="dp up">▲</span><span class="dp left">◀</span><span class="dp right">▶</span><span class="dp down">▼</span><span class="dp mid"></span></div>
   <div id="tbtns">
     <button id="tb-act" class="tbtn big">SAKAY</button>
     <button id="tb-b" class="tbtn">SUNTOK</button>
@@ -70,9 +72,6 @@
       <div class="t-stars"><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><span class="crown2">👑</span></div>
       <h1 class="t-logo"><span class="crown">👑</span>HARI NG<br><b>KALSADA</b></h1>
       <p class="t-tag">Magpasada ng jeep, tumakas sa pulis, magnegosyo, at bawiin ang lupa ng pamilya mo mula kay Mayor Kurakot.</p>
-      <div class="t-feats">
-        <span>🚌 Jeepney at Tricycle</span><span>⭐ 6-Star na Habulan</span><span>🏝 Isla Maligaya</span><span>🌧 Araw, Gabi at Ulan</span><span>📻 Radyo</span><span>💼 Side Jobs</span>
-      </div>
     </div>
     <div class="t-card">
       <div id="t-save" class="t-save hidden">
@@ -89,7 +88,6 @@
         <button id="btn-howto" class="mbtn t-sm">❓<small>PAANO</small></button>
         <button id="btn-version" class="mbtn t-sm">✨<small>BAGO</small></button>
       </div>
-      <div id="t-diff" class="t-diff"></div>
     </div>
   </div>
   <div class="t-foot"><span id="t-ver">v1.4</span> · Isang orihinal na laro · Gawang-Pinoy na ideya</div>
@@ -102,6 +100,8 @@
     <div id="ng-diff" class="ng-grid"></div>
     <div class="ng-h">PAANO MAGMANEHO?</div>
     <div id="ng-drive" class="ng-grid two"></div>
+    <div class="ng-h ctlrow">KONTROL SA PHONE?</div>
+    <div id="ng-ctl" class="ng-grid two ctlrow"></div>
     <p class="note">Pwede mo itong palitan anumang oras sa ⚙️ Settings.</p>
     <div class="menurow" style="width:min(420px,90vw)"><button id="ng-back" class="mbtn">BUMALIK</button><button id="ng-go" class="mbtn primary">SIMULAN ▶</button></div>
   </div>
@@ -170,7 +170,7 @@
         <p>Umiikot ang <b>araw at gabi</b>, may <b>ulan at baha</b>, at <b>traffic lights</b>. Bumili ng <b>taho</b> (umaga) o <b>balut</b> (gabi) para sa buhay. Sumakay ng <b>ferry</b> o <b>bangka</b> papuntang <b>Isla Maligaya</b>.</p>
       </div>
     </div>
-    <button id="btn-hclose" class="mbtn primary">SIGE!</button>
+    <div class="menurow" style="width:min(420px,90vw)"><button id="btn-tut" class="mbtn">🎓 TUTORIAL</button><button id="btn-hclose" class="mbtn primary">SIGE!</button></div>
   </div>
 </div>
 
@@ -200,6 +200,37 @@
   </div>
 </div>
 
+<div id="comic" class="screen hidden">
+  <div class="comic-wrap"><div id="comic-strip" class="comic-strip"></div><button id="comic-next" class="mbtn primary">TULOY ▶</button></div>
+</div>
+
+<div id="choice" class="screen hidden">
+  <div class="panel">
+    <div class="choice-tag">⚖️ IKAW ANG MAGPAPASYA</div>
+    <h2 id="choice-q"></h2>
+    <div id="choice-opts" class="choice-opts"></div>
+  </div>
+</div>
+
+<div id="devpanel" class="screen hidden">
+  <div class="panel wide">
+    <h2>🛠 DEVELOPER MODE</h2>
+    <p class="note">Pumili ng misyon para direktang simulan ito. Para lang sa pag-test.</p>
+    <div id="dev-missions" class="devlist"></div>
+    <div class="devtools">
+      <button class="mbtn small" onclick="DEV.money()">💰 +₱100,000</button>
+      <button class="mbtn small" id="dev-god" onclick="DEV.god=!DEV.god;DEV.render()">🛡 God mode</button>
+      <button class="mbtn small" onclick="WANTED.clear(false);UI.toast('🛠 Walang wanted')">🚓 Alisin ang wanted</button>
+      <button class="mbtn small" onclick="DEV.setTime(8)">🌅 Umaga</button>
+      <button class="mbtn small" onclick="DEV.setTime(13)">☀️ Tanghali</button>
+      <button class="mbtn small" onclick="DEV.setTime(21)">🌙 Gabi</button>
+      <button class="mbtn small" onclick="DEV.rain()">🌧 Ulan on/off</button>
+      <select id="dev-tp" onchange="DEV.teleport(this.value)"></select>
+    </div>
+    <div class="menurow" style="width:min(420px,90vw)"><button class="mbtn danger" onclick="DEV.lock()">🔒 I-LOCK</button><button class="mbtn primary" onclick="UI.hide('devpanel')">ISARA</button></div>
+  </div>
+</div>
+
 <div id="settings" class="screen hidden">
   <div class="panel">
     <h2>MGA SETTING</h2>
@@ -210,10 +241,12 @@
       <div class="setrow"><span>💪 Hirap</span><div class="seg" data-key="diff"><button data-v="madali">MADALI</button><button data-v="normal">NORMAL</button><button data-v="mahirap">MAHIRAP</button></div></div>
       <div class="setrow"><span>🚗 Pagmamaneho</span><div class="seg" data-key="drive"><button data-v="madali">MADALI</button><button data-v="classic">CLASSIC</button></div></div>
       <div class="setrow"><span>🖼 Graphics</span><div class="seg" data-key="quality"><button data-v="high">MAGANDA</button><button data-v="low">MABILIS</button></div></div>
-      <div class="setrow"><span>🕹 Laki ng joystick</span><div class="seg" data-key="joy"><button data-v="0.8">MALIIT</button><button data-v="1">NORMAL</button><button data-v="1.25">MALAKI</button></div></div>
+      <div class="setrow"><span>📱 Kontrol sa phone</span><div class="seg" data-key="touchCtl"><button data-v="joystick">JOYSTICK</button><button data-v="dpad">ARROWS ▲▼◀▶</button></div></div>
+      <div class="setrow"><span>🕹 Laki ng joystick / arrows</span><div class="seg" data-key="joy"><button data-v="0.8">MALIIT</button><button data-v="1">NORMAL</button><button data-v="1.25">MALAKI</button></div></div>
       <div class="setrow"><span>✋ Kaliwete (palit puwesto ng controls)</span><div class="seg" data-key="lefty"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
       <div class="setrow"><span>💡 Mga tip</span><div class="seg" data-key="tipsOn"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
       <button id="set-resettips" class="mbtn small">IPAKITA ULIT ANG MGA TIP</button>
+      <button id="set-dev" class="mbtn small dev">🛠 DEVELOPER MODE</button>
     </div>
     <button id="btn-setclose" class="mbtn primary">TAPOS</button>
   </div>
@@ -231,8 +264,8 @@
 <div id="ending" class="screen hidden">
   <div class="panel wide endpanel">
     <div class="stars-deco">★★★★★★</div>
-    <h2>IKAW ANG HARI NG KALSADA!</h2>
-    <p>Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Nabawi ang lupa ng pamilya Dela Cruz sa Samar.</p>
+    <h2 id="end-title">IKAW ANG HARI NG KALSADA!</h2>
+    <p id="end-text">Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Nabawi ang lupa ng pamilya Dela Cruz sa Samar.</p>
     <div id="end-stats"></div>
     <p class="credits">Salamat sa paglalaro!<br>Pwede ka pang mag-free roam: pasada, karera sa kalye, at hanapin ang lahat ng Gintong Tsinelas.</p>
     <button id="btn-endclose" class="mbtn primary">MAG-FREE ROAM</button>
@@ -256,6 +289,7 @@
 <script src="js/economy.js"></script>
 <script src="js/jobs.js"></script>
 <script src="js/save.js"></script>
+<script src="js/tutorial.js"></script>
 <script src="js/missions.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/game.js"></script>

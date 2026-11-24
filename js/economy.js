@@ -155,7 +155,10 @@ function drawSticker(g, v, hl, hw) {
 // ===== Achievements & completion =====
 const ACH_LIST = [
   ['first_mission', '🥇', 'Unang Hakbang', 'Tapusin ang unang misyon', () => MS.idx >= 1],
-  ['story', '👑', 'Hari ng Kalsada', 'Tapusin ang buong kuwento', () => MS.idx >= MISSIONS.length],
+  ['story', '👑', 'Hari ng Kalsada', 'Tapusin ang Kabanata 1 (Maynila)', () => MS.idx >= 8],
+  ['chapter2', '🌾', 'Anak ng Bukid', 'Tapusin ang Kabanata 2 (San Isidro)', () => MS.idx >= MISSIONS.length],
+  ['endingA', '⚖️', 'Lupa ng Bayan', 'Makuha ang Ending A', () => G.flags && G.flags.ending2 === 'A'],
+  ['endingB', '💰', 'Ang Presyo', 'Makuha ang Ending B', () => G.flags && G.flags.ending2 === 'B'],
   ['escape3', '🏃', 'Madulas', 'Takasan ang 3 bituin o higit pa', () => ACH.flags.escape3],
   ['escape6', '🌪', 'Imposible', 'Takasan ang 6 na bituin', () => ACH.flags.escape6],
   ['ts10', '🩴', 'Tsinelas Hunter', 'Makakuha ng 10 Gintong Tsinelas', () => G.tsinelas.size >= 10],

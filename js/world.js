@@ -303,3 +303,80 @@ class BoatCop {
     if (Math.abs(v.fwd()) < 20 && v.throttle > 0) { this.stuckT += dt; if (this.stuckT > 1.2) { this.revT = 1; this.stuckT = 0; } } else this.stuckT = 0;
   }
 }
+
+// ===== Province (San Isidro): path drivers, goons, villagers, highway traffic =====
+class PathDriver {
+  // follows a list of points; loop=false stops at the end (finished=true)
+  constructor(v, pts, opt = {}) { this.v = v; this.pts = pts; this.i = opt.start || 0; this.cruise = opt.cruise || 180; this.loop = !!opt.loop; this.finished = false; this.solid = !!opt.solid; this.stuckT = 0; this.revT = 0; }
+  update(dt) {
+    const v = this.v;
+    if (v.dead || this.finished) { v.throttle = v.fwd() > 10 ? -1 : 0; v.steer = 0; return; }
+    let p = this.pts[this.i];
+    if (U.dist(v.x, v.y, p.x, p.y) < 60) {
+      this.i++;
+      if (this.i >= this.pts.length) { if (this.loop) this.i = 0; else { this.finished = true; return; } }
+      p = this.pts[this.i];
+    }
+    const diff = U.angDiff(v.a, Math.atan2(p.y - v.y, p.x - v.x)), fs = v.fwd();
+    if (this.revT > 0) { this.revT -= dt; v.throttle = -0.8; v.steer = -Math.sign(diff); return; }
+    v.steer = U.clamp(diff * 2.4, -1, 1);
+    let tgt = Math.abs(diff) > 0.5 ? Math.min(this.cruise, 110) : this.cruise;
+    if (!this.solid) { const ob = RoadDriver.prototype.obstacle.call(this); if (ob < 1e9) tgt = Math.min(tgt, Math.max(0, (ob - 14) * 2)); }
+    v.throttle = fs < tgt - 10 ? 1 : fs > tgt + 30 ? -0.6 : 0;
+    if (tgt > 40 && Math.abs(fs) < 12) { this.stuckT += dt; if (this.stuckT > 2) { this.revT = 0.8; this.stuckT = 0; } } else this.stuckT = 0;
+  }
+}
+// Don Severo's men: ram their target (a convoy vehicle or the player)
+class GoonDriver {
+  constructor(v, target) { this.v = v; this.target = target; this.stuckT = 0; this.revT = 0; }
+  update(dt) {
+    const v = this.v;
+    if (v.dead) { v.throttle = 0; return; }
+    const tg = typeof this.target === 'function' ? this.target() : this.target;
+    if (!tg) { v.throttle = 0; v.hand = true; return; }
+    const lead = 0.35, tx = tg.x + (tg.vx || 0) * lead, ty = tg.y + (tg.vy || 0) * lead;
+    const diff = U.angDiff(v.a, Math.atan2(ty - v.y, tx - v.x)), fs = v.fwd();
+    if (this.revT > 0) { this.revT -= dt; v.throttle = -1; v.steer = -Math.sign(diff) || 1; return; }
+    v.steer = U.clamp(diff * 2.4, -1, 1);
+    v.throttle = Math.abs(diff) > 1.3 && fs > 220 ? -0.6 : 1;
+    v.hand = Math.abs(diff) > 1.5 && fs > 240;
+    if (Math.abs(fs) < 25) { this.stuckT += dt; if (this.stuckT > 1.1) { this.revT = 0.8; this.stuckT = 0; } } else this.stuckT = Math.max(0, this.stuckT - dt);
+  }
+}
+const PROV = {
+  t: 0, folk: [], cars: [],
+  near() { return MAP.prov && G.player.x > (CITY_W - 30) * T; },
+  update(dt) {
+    this.t -= dt; if (this.t > 0) return; this.t = 1;
+    const P = G.player, pr = MAP.prov;
+    if (!pr) return;
+    const near = this.near();
+    // villagers around town & farms
+    this.folk = this.folk.filter(p => { if (p.remove) return false; if (!near || U.dist(p.x, p.y, P.x, P.y) > 1800) { p.remove = true; return false; } return true; });
+    let tries = 0;
+    while (near && this.folk.length < 14 && tries++ < 20) {
+      const homes = [{ x: (pr.tcx + 0.5) * T, y: (pr.tcy - 2) * T }, ...pr.farms];
+      const h = U.choice(homes), x = h.x + U.rand(-260, 260), y = h.y + U.rand(-200, 200);
+      const t = MAP.tileAt(x, y);
+      if (!(t === TL.GRASS || t === TL.PLAZA || t === TL.SIDE || t === TL.DIRT) || TRAFFIC.inView(x, y, 30)) continue;
+      const p = new Person(x, y, 'ped'); p.state = 'wander'; p.home = { x, y }; p.keep = true; p.amb = true; p.speed = 40;
+      if (Math.random() < 0.5) { p.look.hair = U.choice(['bucket', 'bucket', 'cap_red', 'buzz']); p.look.pat = U.choice(['sando', 'plain']); }
+      this.folk.push(p); G.peds.push(p);
+    }
+    // highway & farm-road traffic
+    this.cars = this.cars.filter(v => { if (v.remove) return false; if (v.ai && v.ai.finished || U.dist(v.x, v.y, P.x, P.y) > 2200) { if (!TRAFFIC.inView(v.x, v.y, 60)) v.remove = true; return !v.remove; } return true; });
+    if (near && this.cars.length < 6) {
+      const east = Math.random() < 0.5, y = (pr.hy + (east ? 3 : 1)) * T;
+      const x0 = (MAP.rs(8) + RW + 2) * T, x1 = (MW - 3) * T;
+      const x = U.rand(x0, x1);
+      if (!TRAFFIC.inView(x, y, 120) && U.dist(x, y, P.x, P.y) < 1800 && !G.vehicles.some(o => U.d2(o.x, o.y, x, y) < 140 * 140)) {
+        const type = U.choice(['jeepney', 'tricycle', 'kuliglig', 'sedan', 'van', 'motor', 'suv']);
+        const v = new Vehicle(type, x, y, east ? 0 : Math.PI); v.driver = 'ai';
+        v.ai = new PathDriver(v, [{ x: east ? x1 : x0, y }], { cruise: type === 'kuliglig' ? 150 : 230 });
+        v.vx = Math.cos(v.a) * 150; v.vy = Math.sin(v.a) * 150;
+        this.cars.push(v); G.vehicles.push(v);
+      }
+    }
+  },
+  reset() { this.folk = []; this.cars = []; },
+};

@@ -11,6 +11,17 @@ const ICONS = {
 
 // what's new in each version (newest first)
 const CHANGES = [
+  { v: '1.5', title: 'Kabanata 2: Probinsya', date: 'Nobyembre 2026', items: [
+    '🌾 <b>KABANATA 2</b> — bagong lugar: ang bayan ng <b>San Isidro</b> sa silangan (highway, palayan, plaza, hacienda)',
+    '📖 <b>6 na bagong misyon</b>: Pauwi sa Probinsya, Ani ng Bayan, Karera ng Kuliglig, Mga Bantay ni Don Severo, Ang Titulo, Lupa ng Bayan',
+    '⚖️ <b>Ikaw ang magpapasya</b> — may pagpipilian sa kuwento at <b>2 magkaibang wakas</b>',
+    '🎞 <b>Comic cutscenes</b> sa simula at dulo ng kabanata',
+    '🚜 Bagong sasakyan: <b>Kuliglig</b> · 🕵️ <b>stealth</b> — iwasan ang dilaw na tingin ng mga bantay',
+    '🎓 <b>Tutorial</b> para sa bagong laro (pwedeng ulitin sa ❓ Paano)',
+    '⬆️ <b>Arrow buttons</b> ▲▼◀▶ — pumili ng Joystick o Arrows sa Settings',
+    '🛠 <b>Developer Mode</b> (may password) — simulan ang kahit anong misyon',
+    '🧹 Mas malinis na home page',
+  ] },
   { v: '1.4', title: 'Bagong Home Page at Madaling Laro', date: 'Nobyembre 2026', items: [
     '🏠 <b>Bagong home page</b> — may live na habulan sa likod, card ng huling laro (misyon, pera, % kumpleto) at mabilis na ITULOY',
     '💪 <b>Pumili ng hirap</b> bago maglaro: 😎 Madali, 🙂 Normal, 🔥 Mahirap',
@@ -88,6 +99,10 @@ const UI = {
     $('btn-shopclose').onclick = () => { this.hide('shop'); if ($('pause').classList.contains('hidden')) G.paused = false; };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };
     $('btn-howto').onclick = () => this.show('help');
+    $('set-dev').onclick = () => DEV.open();
+    $('tut-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.next(); });
+    $('tut-skip').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.end(true); });
+    $('btn-tut').onclick = () => { this.hide('help'); if (G.started) { this.hide('pause'); G.paused = false; TUT.start(); } else { this.hide('help'); this.openNewGame(); } };
     $('btn-version').onclick = () => this.openWhatsNew();
     $('btn-pnew').onclick = () => this.openWhatsNew();
     $('t-ver').textContent = `v${GAME_VERSION}`;
@@ -141,16 +156,41 @@ const UI = {
       $('t-save-l2').textContent = `${pct}% kumpleto · ${d.line2}`;
       $('t-save-bar').style.width = pct + '%';
     }
-    const df = D();
-    $('t-diff').textContent = `Hirap: ${df.icon} ${df.name} · Pagmamaneho: ${SETTINGS.drive === 'madali' ? 'Madali' : 'Classic'}`;
   },
   openNewGame() {
     const opt = (key, val, ic, name, desc, rec) => `<button class="ng-opt ${SETTINGS[key] === val ? 'on' : ''}" data-k="${key}" data-v="${val}"><span class="ic">${ic}</span><b>${name}</b><small>${desc}</small>${rec ? '<span class="rec">REKOMENDADO</span>' : ''}</button>`;
     $('ng-diff').innerHTML = Object.entries(DIFFS).map(([k, d]) => opt('diff', k, d.icon, d.name, d.desc, k === 'madali')).join('');
     $('ng-drive').innerHTML = opt('drive', 'madali', '🧭', 'Madali', 'Ituro lang kung SAAN pupunta — kusang liliko, may tulong sa manibela at preno.', true)
       + opt('drive', 'classic', '🏎', 'Classic', 'Gas, preno at liko mismo (W/S/A/D). Para sa sanay na.');
-    document.querySelectorAll('#newgame .ng-opt').forEach(b => b.onclick = () => { SETTINGS[b.dataset.k] = b.dataset.v; AUD.click(); this.openNewGame(); });
+    $('ng-ctl').innerHTML = opt('touchCtl', 'joystick', '🕹', 'Joystick', 'I-drag ang daliri kahit saan sa kaliwa ng screen.')
+      + opt('touchCtl', 'dpad', '⬆️', 'Arrows', 'Apat na button ▲▼◀▶ — pindutin o i-slide.');
+    document.querySelectorAll('#newgame .ctlrow').forEach(e => e.classList.toggle('hidden', !INPUT.touch));
+    document.querySelectorAll('#newgame .ng-opt').forEach(b => b.onclick = () => { SETTINGS[b.dataset.k] = b.dataset.v; SETTINGS.apply(); AUD.click(); this.openNewGame(); });
     this.show('newgame');
+  },
+  // comic-strip cutscene: panels = [[art, caption], ...]
+  comic(panels, done) {
+    this.talking = true; G.paused = true;
+    let i = 0;
+    const strip = $('comic-strip');
+    strip.innerHTML = panels.map(([art, cap], k) => `<div class="cpanel" style="--d:${k}"><div class="cart">${art}</div><div class="ccap">${cap}</div></div>`).join('');
+    const cells = [...strip.children];
+    const show = () => { cells.forEach((c, k) => c.classList.toggle('on', k <= i)); $('comic-next').textContent = i >= cells.length - 1 ? 'SIGE ▶' : 'TULOY ▶'; };
+    $('comic-next').onclick = () => {
+      AUD.click();
+      if (i < cells.length - 1) { i++; show(); return; }
+      this.hide('comic'); this.talking = false; G.paused = false; if (done) done();
+    };
+    show(); this.show('comic');
+    AUD.tone(523, 0.2, 'triangle', 0.08); AUD.tone(659, 0.3, 'triangle', 0.08, 0, 0.15);
+  },
+  // story choice: opts = [{ label, desc }]
+  choice(q, opts, cb) {
+    G.paused = true;
+    $('choice-q').textContent = q;
+    $('choice-opts').innerHTML = opts.map((o, k) => `<button class="copt" data-k="${k}"><b>${o.label}</b><small>${o.desc}</small></button>`).join('');
+    $('choice-opts').querySelectorAll('.copt').forEach(b => b.onclick = () => { this.hide('choice'); G.paused = false; AUD.success(); cb(+b.dataset.k); });
+    this.show('choice');
   },
   openSettings() { this.syncSettings(); this.show('settings'); },
   syncSettings() {
@@ -408,14 +448,23 @@ const UI = {
   },
   openMissions() {
     this.show('missions');
+    let ch = 0;
     $('mission-list').innerHTML = MISSIONS.map((m, i) => {
+      let head = '';
+      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : 'PROBINSYA (SAN ISIDRO)'}</div>`; }
       const st = i < MS.idx ? 'done' : i === MS.idx ? 'next' : 'locked';
       const label = st === 'done' ? '✓ TAPOS' : st === 'next' ? (MS.active === m ? 'GINAGAWA' : 'SUSUNOD') : '🔒';
-      return `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}</div></div>`;
+      return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}</div></div>`;
     }).join('');
   },
-  ending() {
+  ending(kind = 'ch1') {
     G.paused = true;
+    const E = {
+      ch1: ['TAPOS ANG KABANATA 1!', 'Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Pero may sulat mula sa probinsya... BUKAS NA ANG KABANATA 2 — puntahan si Tito Boy!'],
+      ch2a: ['🌾 BAYANI NG SAN ISIDRO!', 'Nakulong si Don Severo at nabawi ng mga magsasaka ang kanilang lupa. Ito ang tunay na pagtatapos (Ending A). Ikaw ang Hari ng Kalsada!'],
+      ch2b: ['💰 ANG PRESYO', 'Mayaman ka na, pero nawalan ng lupa ang San Isidro (Ending B). Maglaro ulit mula sa Slot o Developer Mode para makita ang ibang wakas.'],
+    }[kind] || [];
+    $('end-title').textContent = E[0]; $('end-text').textContent = E[1];
     $('end-stats').innerHTML = [
       ['PERA', U.money(G.player.money)], ['TSINELAS', `${G.tsinelas.size}/${MAP.tsinelas.length}`], ['NAKATAKAS', G.stats.escapes], ['NABENTA', G.stats.sold],
     ].map(([a, b]) => `<div><span>${a}</span>${b}</div>`).join('');
@@ -466,6 +515,19 @@ const INPUT = {
       base.classList.remove('active');
     };
     zone.addEventListener('pointerup', end); zone.addEventListener('pointercancel', end);
+    // D-pad (arrow buttons): slide your thumb around; diagonals allowed
+    const dp = $('dpad');
+    const dpMove = (e) => {
+      const r = dp.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      const t = r.width * 0.14, k = this.keys;
+      k.ArrowLeft = dx < -t; k.ArrowRight = dx > t; k.ArrowUp = dy < -t; k.ArrowDown = dy > t;
+      dp.querySelector('.up').classList.toggle('on', k.ArrowUp); dp.querySelector('.down').classList.toggle('on', k.ArrowDown);
+      dp.querySelector('.left').classList.toggle('on', k.ArrowLeft); dp.querySelector('.right').classList.toggle('on', k.ArrowRight);
+    };
+    dp.addEventListener('pointerdown', (e) => { e.preventDefault(); AUD.init(); AUD.resume(); this.dpId = e.pointerId; dp.setPointerCapture(e.pointerId); dpMove(e); });
+    dp.addEventListener('pointermove', (e) => { if (e.pointerId === this.dpId) dpMove(e); });
+    const dpEnd = (e) => { if (e.pointerId === this.dpId) this.releaseDpad(); };
+    dp.addEventListener('pointerup', dpEnd); dp.addEventListener('pointercancel', dpEnd);
     const btn = (id, down, up) => {
       const b = $(id);
       b.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); AUD.init(); AUD.resume(); b.classList.add('pressed'); down(); b.setPointerCapture(e.pointerId); });
@@ -480,6 +542,11 @@ const INPUT = {
     btn('tb-job', () => JOBS.toggle());
     // desktop click on canvas resumes audio
     addEventListener('pointerdown', () => { AUD.init(); AUD.resume(); });
+  },
+  releaseDpad() {
+    this.dpId = null;
+    for (const k of ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']) this.keys[k] = false;
+    document.querySelectorAll('#dpad .dp').forEach(d => d.classList.remove('on'));
   },
   setTouch(v) { this.touch = v; document.body.classList.toggle('touch', v); if (G.started) $('touch').classList.toggle('hidden', !v); },
   state() {

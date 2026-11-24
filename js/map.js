@@ -5,17 +5,19 @@ const NR = 9;          // roads per axis
 const PER = 20;        // tiles between road starts
 const RW = 4;          // road width (tiles)
 const OX = 72, OY = 16;   // OX leaves room for Manila Bay + Isla Maligaya on the west
-const MW = OX + (NR - 1) * PER + RW + 16;
+const CITY_W = OX + (NR - 1) * PER + RW + 16;   // city width in tiles
+const PROV_W = 72;                                // province (San Isidro) to the east
+const MW = CITY_W + PROV_W;
 const MH = OY + (NR - 1) * PER + RW + 16;
 const WORLD_W = MW * T, WORLD_H = MH * T;
 const LO = 32;         // lane offset from road centre
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]; // E S W N
 
-const TL = { WATER: 0, ROAD: 1, SIDE: 2, BLD: 3, GRASS: 4, PLAZA: 5, PIER: 6, WALL: 7, ALLEY: 8, TREE: 9, PROM: 10, LOT: 11, SAND: 12 };
+const TL = { WATER: 0, ROAD: 1, SIDE: 2, BLD: 3, GRASS: 4, PLAZA: 5, PIER: 6, WALL: 7, ALLEY: 8, TREE: 9, PROM: 10, LOT: 11, SAND: 12, PADDY: 13, DIRT: 14 };
 const SOLID = new Uint8Array(256); SOLID[0] = 1; SOLID[3] = 1; SOLID[7] = 1; SOLID[9] = 1; SOLID[255] = 1;
-const DRIVE_COST = new Uint8Array(256); [0, 1, 3, 0, 4, 2, 2, 0, 0, 0, 2, 2, 4].forEach((v, i) => DRIVE_COST[i] = v);
-const WALK_COST = new Uint8Array(256); [0, 2, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1].forEach((v, i) => WALK_COST[i] = v);
-const GROUND = ['#132a42', '#232937', '#313849', '#2a303e', '#2a4231', '#363c4b', '#4d3d2c', '#4a4640', '#2a303e', '#2a4231', '#3c3b45', '#2b3140', '#6b5e44'];
+const DRIVE_COST = new Uint8Array(256); [0, 1, 3, 0, 4, 2, 2, 0, 0, 0, 2, 2, 4, 4, 1].forEach((v, i) => DRIVE_COST[i] = v);
+const WALK_COST = new Uint8Array(256); [0, 2, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1].forEach((v, i) => WALK_COST[i] = v);
+const GROUND = ['#132a42', '#232937', '#313849', '#2a303e', '#2a4231', '#363c4b', '#4d3d2c', '#4a4640', '#2a303e', '#2a4231', '#3c3b45', '#2b3140', '#6b5e44', '#2b4628', '#4a3c2a'];
 
 const PAL = {
   comm: ['#5f6347', '#454c5c', '#4d4562', '#5e4636', '#3b5556', '#4f5361', '#584a5a'],
@@ -70,7 +72,7 @@ const MAP = {
   nodeExists(i, j) { for (let d = 0; d < 4; d++) if (this.segOK(i, j, d)) return true; return false; },
   blockRect(bi, bj) {
     const x0 = bi < 0 ? 0 : this.rs(bi) + RW;
-    const x1 = bi >= NR - 1 ? MW - 1 : this.rs(bi + 1) - 1;
+    const x1 = bi >= NR - 1 ? CITY_W - 1 : this.rs(bi + 1) - 1;
     const y0 = bj < 0 ? 0 : this.rsy(bj) + RW;
     const y1 = bj >= NR - 1 ? MH - 1 : this.rsy(bj + 1) - 1;
     return [x0, y0, x1 - x0 + 1, y1 - y0 + 1];
@@ -148,6 +150,7 @@ const MAP = {
     this.makeCourts();
     this.makeLights();
     this.makeFloods();
+    this.makeProvince();
     this.makeLabels();
     this.makeMini();
   },
@@ -383,6 +386,94 @@ const MAP = {
       else this.floods.push({ x: (this.rs(i) + RW) * T, y: (this.rsy(j) - 1) * T, w: (PER - RW) * T, h: (RW + 2) * T });
     }
   },
+  // ---------- San Isidro (province, Chapter 2) ----------
+  makeProvince() {
+    const fill = this.fill, R = U.rng(555), P0 = CITY_W, hy = this.rsy(4);
+    const tcx = P0 + 34, tcy = hy + 2;
+    this.prov = { x0: P0, hy, tcx, tcy };
+    // base: rice paddies with grass borders
+    for (let y = 1; y < MH - 1; y++) for (let x = P0; x < MW - 1; x++) this.set(x, y, (x % 9 === 0 || y % 11 === 0) ? TL.GRASS : TL.PADDY);
+    for (let y = 0; y < MH; y++) { this.set(MW - 1, y, TL.TREE); this.set(P0, y, TL.GRASS); }
+    // highway from the city out to the province
+    fill(this.rs(8) + RW, hy, MW - 1 - (this.rs(8) + RW), RW, TL.ROAD);
+    // town streets
+    fill(tcx - 12, tcy - 16, 4, 34, TL.ROAD); fill(tcx + 10, tcy - 16, 4, 34, TL.ROAD);
+    fill(tcx - 12, tcy - 16, 26, 4, TL.ROAD); fill(tcx - 12, tcy + 14, 26, 4, TL.ROAD);
+    const ring = (x0, y0, w, h, inner) => { for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) this.set(x, y, (x === x0 || y === y0 || x === x0 + w - 1 || y === y0 + h - 1) ? TL.SIDE : inner); };
+    // north block: church plaza
+    ring(tcx - 8, tcy - 12, 18, 10, TL.PLAZA);
+    this.addBld(tcx - 3, tcy - 11, 8, 5, '#8a7a62', 'church');
+    this.addTree(tcx - 6, tcy - 10); this.addTree(tcx + 7, tcy - 10);
+    this.addBld(tcx, tcy - 5, 2, 2, '#9aa3ad', 'monument');
+    // south block: municipal hall, market, sari-sari
+    ring(tcx - 8, tcy + 2, 18, 12, TL.PLAZA);
+    this.addBld(tcx - 6, tcy + 3, 10, 5, '#d8d2c4', 'hall');
+    for (let k = 0; k < 4; k++) this.addBld(tcx - 6 + k * 3, tcy + 10, 2, 1, U.pick(PAL.stall, R), 'stall');
+    this.addBld(tcx + 6, tcy + 3, 3, 4, '#6b5650', 'resid');
+    // rice mill west of town
+    ring(P0 + 4, tcy + 2, 14, 9, TL.PLAZA);
+    this.addBld(P0 + 6, tcy + 3, 8, 4, '#7a6a52', 'mill');
+    // dirt road north to the hacienda
+    fill(tcx - 1, 44, 3, tcy - 16 - 44, TL.DIRT);
+    // Hacienda Severo (walled)
+    const hx0 = tcx - 14, hy0 = 12, hw = 31, hh = 32;
+    for (let y = hy0; y < hy0 + hh; y++) for (let x = hx0; x < hx0 + hw; x++) this.set(x, y, (x === hx0 || y === hy0 || x === hx0 + hw - 1 || y === hy0 + hh - 1) ? TL.WALL : TL.GRASS);
+    fill(tcx - 1, hy0 + hh - 1, 3, 1, TL.PLAZA); fill(tcx - 1, hy0 + 12, 3, hh - 13, TL.PLAZA); fill(hx0 + 2, hy0 + 26, hw - 4, 3, TL.PLAZA);
+    this.addBld(tcx - 5, hy0 + 3, 11, 8, '#d8cdb0', 'mansion');
+    this.addBld(tcx + 6, hy0 + 18, 5, 4, '#5b5f66', 'hoffice');
+    this.addBld(hx0 + 3, hy0 + 20, 4, 4, '#4a4f58', 'hoffice');
+    this.addBld(hx0 + 3, hy0 + 4, 6, 3, '#5b5f66', 'container');
+    this.addBld(tcx + 10, hy0 + 4, 2, 2, '#4f88a8', 'fountain');
+    for (const [x, y] of [[hx0 + 2, hy0 + 2], [hx0 + hw - 3, hy0 + 2], [hx0 + 12, hy0 + 15], [hx0 + hw - 4, hy0 + 14]]) this.addTree(x, y);
+    this.prov.hacienda = { x0: hx0 * T, y0: hy0 * T, x1: (hx0 + hw) * T, y1: (hy0 + hh) * T };
+    // farm loop (dirt) south of town
+    fill(tcx - 1, tcy + 18, 3, 128 - (tcy + 18), TL.DIRT);
+    const fx0 = P0 + 6, fx1 = MW - 8, fy0 = 128, fy1 = 168;
+    fill(fx0, fy0, fx1 - fx0 + 3, 3, TL.DIRT); fill(fx0, fy1, fx1 - fx0 + 3, 3, TL.DIRT);
+    fill(fx0, fy0, 3, fy1 - fy0 + 3, TL.DIRT); fill(fx1, fy0, 3, fy1 - fy0 + 3, TL.DIRT);
+    this.prov.loop = [[tcx + 0.5, fy0 + 1.5], [fx1 + 1.5, fy0 + 1.5], [fx1 + 1.5, fy1 + 1.5], [fx0 + 1.5, fy1 + 1.5], [fx0 + 1.5, fy0 + 1.5]].map(([x, y]) => ({ x: x * T, y: y * T }));
+    // farmhouses
+    const huts = [[P0 + 12, fy0 - 4], [fx1 - 8, fy0 + 4], [P0 + 22, fy1 - 4], [fx1 - 16, fy1 + 4], [tcx + 8, fy0 + 5]];
+    this.prov.farms = [];
+    for (const [x, y] of huts) {
+      fill(x - 1, y - 1, 5, 4, TL.GRASS);
+      this.addBld(x, y, 3, 2, U.pick(['#7a6440', '#86704a'], R), 'nipa');
+      this.prov.farms.push({ x: (x + 1.5) * T, y: (y + 2.6) * T });
+    }
+    // Lola Isyang's house east on the highway
+    fill(MW - 16, hy - 6, 8, 6, TL.GRASS);
+    this.addBld(MW - 14, hy - 5, 4, 3, '#86704a', 'nipa');
+    this.addTree(MW - 9, hy - 5);
+    // coconut palms
+    for (let y = 2; y < MH - 2; y++) for (let x = P0 + 1; x < MW - 2; x++) {
+      const t = this.get(x, y);
+      if ((t === TL.GRASS && R() < 0.06) || (t === TL.PADDY && R() < 0.004)) {
+        let free = true;
+        for (let k = 0; k < 4; k++) { const n = this.get(x + DIRS[k][0], y + DIRS[k][1]); if (n !== TL.GRASS && n !== TL.PADDY) free = false; }
+        if (free) { this.set(x, y, TL.TREE); this.trees.push({ x: (x + 0.5) * T, y: (y + 0.5) * T, r: 16, palm: true }); }
+      }
+    }
+    // lamps along the highway & in town
+    for (let x = this.rs(8) + RW + 4; x < MW - 2; x += 9) { this.lamps.push({ x: x * T, y: (hy - 0.5) * T }); this.lamps.push({ x: x * T, y: (hy + RW + 0.5) * T }); }
+    // spawn points for police / traffic in the province
+    this.prov.pts = [];
+    for (let x = P0 + 4; x < MW - 6; x += 8) this.prov.pts.push({ x: x * T, y: (hy + 1) * T, a: Math.PI }, { x: x * T, y: (hy + 3) * T, a: 0 });
+    for (const p of this.prov.loop) this.prov.pts.push(Object.assign({ a: 0 }, p));
+    // places
+    const add = (key, x, y, type, label, icon) => { this.pois[key] = { key, x: x * T, y: y * T, type, label, icon }; };
+    add('plaza', tcx + 0.5, tcy - 2.5, 'spot', 'Plaza ng San Isidro', '⛪');
+    add('lola', MW - 12, hy - 1.2, 'npc', 'Lola Isyang', 'L');
+    add('mill', P0 + 10, tcy + 8.5, 'spot', 'Kiskisan (Rice Mill)', '🌾');
+    add('munhall', tcx - 1, tcy + 8.5, 'spot', 'Munisipyo', '🏛');
+    add('luz', tcx + 3, tcy + 8.5, 'npc', 'Kapitana Luz', 'K');
+    add('ditas', tcx + 5, tcy - 2.5, 'npc', 'Mang Ditas', 'D');
+    add('hacgate', tcx + 0.5, hy0 + hh + 1.5, 'spot', 'Hacienda Severo', '🏰');
+    add('office', tcx + 8.5, hy0 + 22.5, 'spot', 'Opisina ni Don Severo', '📁');
+    add('provsari', tcx + 7.5, tcy + 8.5, 'sari', 'Tindahan sa Bayan', '🏪');
+    this.decor.push({ type: 'sign', x: this.pois.provsari.x, y: this.pois.provsari.y, color: '#27ae60', text: 'SARI-SARI' });
+    this.decor.push({ type: 'flags', x0: (tcx - 9) * T, y0: (tcy - 13.5) * T, x1: (tcx + 11) * T, y1: (tcy - 13.5) * T });
+  },
+  inProvince(x) { return x > (CITY_W - 2) * T; },
   floodAt(x, y) { for (const f of this.floods) if (x > f.x && x < f.x + f.w && y > f.y && y < f.y + f.h) return f; return null; },
 
   makePOIs() {
@@ -440,7 +531,7 @@ const MAP = {
   },
   makeTsinelas(R) {
     const cands = [];
-    for (let y = 2; y < MH - 2; y++) for (let x = OX; x < MW - 2; x++) {
+    for (let y = 2; y < MH - 2; y++) for (let x = OX; x < CITY_W - 2; x++) {
       const t = this.get(x, y);
       if ((t === TL.ALLEY || t === TL.GRASS || t === TL.PLAZA) && R() < 0.05) cands.push([x, y]);
     }
@@ -463,8 +554,9 @@ const MAP = {
       const fx = bi - i0, fy = bj - j0;
       this.labels.push({ name: n, x: (x0 + w / 2) * T + fx * PER * T, y: (y0 + h / 2) * T + fy * PER * T });
     }
+    if (this.prov) { this.labels.push({ name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 20) * T }, { name: 'HACIENDA SEVERO', x: (this.prov.tcx + 0.5) * T, y: 10 * T }, { name: 'PALAYAN', x: (this.prov.tcx + 0.5) * T, y: 150 * T }); }
     this.labels.push({ name: 'MANILA BAY', x: (OX - 8) * T, y: this.cy(5), vert: true });
-    this.labels.push({ name: 'ISLA MALIGAYA', x: this.island.cx * T, y: (this.island.cy - 38) * T });
+    this.labels.push({ name: 'ISLA MALIGAYA', x: (this.island.cx + 5) * T, y: (this.island.cy - 38) * T });
   },
 
   // ---------- minimap image ----------
@@ -472,7 +564,7 @@ const MAP = {
     const c = document.createElement('canvas'); c.width = MW; c.height = MH;
     const g = c.getContext('2d');
     const img = g.createImageData(MW, MH);
-    const col = { 0: [22, 52, 84], 1: [98, 106, 128], 2: [64, 72, 90], 4: [40, 74, 52], 5: [70, 76, 92], 6: [96, 78, 56], 7: [96, 88, 76], 8: [44, 50, 64], 9: [36, 70, 46], 10: [80, 78, 88], 11: [52, 58, 74], 12: [138, 122, 86] };
+    const col = { 0: [22, 52, 84], 1: [98, 106, 128], 2: [64, 72, 90], 4: [40, 74, 52], 5: [70, 76, 92], 6: [96, 78, 56], 7: [96, 88, 76], 8: [44, 50, 64], 9: [36, 70, 46], 10: [80, 78, 88], 11: [52, 58, 74], 12: [138, 122, 86], 13: [52, 92, 46], 14: [112, 90, 60] };
     for (let i = 0; i < MW * MH; i++) {
       let c3;
       const t = this.tiles[i];
@@ -523,6 +615,12 @@ const MAP = {
             else if (k === 2) g.fillRect(x, y, 5, T); else g.fillRect(x, y, T, 5);
           }
         }
+      } else if (t === TL.PADDY) {
+        g.fillStyle = 'rgba(120,180,90,0.16)'; for (let k = 4; k < T; k += 8) g.fillRect(x + 2, y + k, T - 4, 2);
+        g.fillStyle = 'rgba(80,140,170,0.10)'; if (h < 0.3) g.fillRect(x + 4, y + 6, 10, 4);
+      } else if (t === TL.DIRT) {
+        g.fillStyle = 'rgba(0,0,0,0.12)'; if (h < 0.5) g.fillRect(x + h * 24, y + (1 - h) * 22, 4, 3);
+        g.fillStyle = 'rgba(255,230,190,0.06)'; if (h > 0.6) g.fillRect(x + (1 - h) * 20, y + h * 18, 6, 2);
       } else if (t === TL.SAND) {
         g.fillStyle = 'rgba(255,240,200,0.08)'; if (h < 0.6) g.fillRect(x + h * 26, y + (1 - h) * 26, 2, 2);
         g.fillStyle = 'rgba(0,0,0,0.06)'; if (h > 0.5) g.fillRect(x + (1 - h) * 24, y + h * 20, 3, 2);

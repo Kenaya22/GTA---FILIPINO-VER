@@ -132,6 +132,17 @@ class Person {
   }
   updateCop(dt) {
     const p = G.player;
+    if (this.role === 'guard' && WANTED.stars === 0) {
+      const pt = this.patrol[this.pi || 0];
+      if (this.pause > 0) { this.pause -= dt; this.vx = this.vy = 0; this.moveAmt = 0; this.a += Math.sin(G.time * 1.5 + this.x) * dt * 1.2; }
+      else if (this.walkTo(pt.x, pt.y, 55, dt) < 8) { this.pi = 1 - (this.pi || 0); this.pause = U.rand(1.5, 3); }
+      const tg = p.vehicle || p, d = U.dist(this.x, this.y, tg.x, tg.y);
+      const seen = d < 250 && Math.abs(U.angDiff(this.a, Math.atan2(tg.y - this.y, tg.x - this.x))) < 0.6 && MAP.los(this.x, this.y, tg.x, tg.y);
+      this.seeT = seen ? (this.seeT || 0) + dt : 0;
+      this.susp = Math.min(1, (this.seeT || 0) / 0.5);
+      if (this.seeT > 0.5) { this.susp = 0; WANTED.setStars(3); WANTED.spotted('cop', d); UI.toast('👀 Nakita ka ng bantay ni Don Severo!'); }
+      return;
+    }
     if (this.role === 'enforcer' && this.state !== 'chase') {
       this.vx = this.vy = 0; this.moveAmt = 0;
       if (this.post) this.a = Math.atan2(MAP.cy(this.post.j) - this.y, MAP.cx(this.post.i) - this.x) + Math.sin(G.time * 0.8 + this.x) * 0.6;
@@ -181,7 +192,7 @@ class Player extends Person {
   }
   faceId() { return this.look.hair; }
   hurt(n, fx, fy) {
-    if (this.downed || G.cutscene) return;
+    if (this.downed || G.cutscene || DEV.god) return;
     this.hp -= n * D().dmg; this.hurtT = 0.3;
     G.shake(3);
     if (this.hp <= 0) this.knockout('hp');

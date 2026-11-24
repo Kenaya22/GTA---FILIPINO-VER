@@ -218,6 +218,17 @@ const WANTED = {
   },
   spawnUnit(type) {
     const cx = this.mode === 'search' ? this.lastX : G.player.x, cy = this.mode === 'search' ? this.lastY : G.player.y;
+    if (MAP.prov && cx > (CITY_W - 20) * T) {
+      // province: spawn on the highway / farm roads
+      for (let tries = 0; tries < 16; tries++) {
+        const p = U.choice(MAP.prov.pts), d = U.dist(p.x, p.y, cx, cy);
+        if (d < 800 || d > 1700 || TRAFFIC.inView(p.x, p.y, 100) || G.vehicles.some(v => U.d2(v.x, v.y, p.x, p.y) < 120 * 120)) continue;
+        const v = new Vehicle(type, p.x, p.y, Math.atan2(cy - p.y, cx - p.x));
+        v.driver = 'cop'; v.unit = true; v.siren = true; v.ai = new CopDriver(v); G.vehicles.push(v);
+        return v;
+      }
+      return null;
+    }
     for (let tries = 0; tries < 12; tries++) {
       const i = U.randi(0, NR - 1), j = U.randi(0, NR - 1), d = U.randi(0, 3);
       if (!MAP.segOK(i, j, d)) continue;
@@ -318,10 +329,14 @@ class CopDriver {
     let tx, ty, field;
     if (WANTED.mode === 'chase') {
       tx = tgt.x + (P.vehicle ? P.vehicle.vx * 0.3 : 0); ty = tgt.y + (P.vehicle ? P.vehicle.vy * 0.3 : 0);
-      field = G.copField; this.road = null;
+      field = G.copField; this.road = null; this.ptgt = null;
     } else {
       tx = WANTED.lastX; ty = WANTED.lastY; field = G.copField;
-      if (U.dist(v.x, v.y, tx, ty) < 320 || this.road) {
+      if (MAP.prov && v.x > (CITY_W - 4) * T && (U.dist(v.x, v.y, tx, ty) < 320 || this.ptgt)) {
+        // province search: wander between nearby farm/highway points
+        if (!this.ptgt || U.dist(v.x, v.y, this.ptgt.x, this.ptgt.y) < 80) this.ptgt = U.choice(MAP.prov.pts.filter(p => U.dist(p.x, p.y, tx, ty) < 1400)) || MAP.prov.pts[0];
+        tx = this.ptgt.x; ty = this.ptgt.y; field = null;
+      } else if (U.dist(v.x, v.y, tx, ty) < 320 || this.road) {
         if (!this.road) this.road = new RoadDriver(v, { cruise: 300, ignoreLights: true });
         this.road.update(dt);
         return;
@@ -330,7 +345,7 @@ class CopDriver {
     const d = U.dist(v.x, v.y, tgt.x, tgt.y);
     let ax = tx, ay = ty;
     if (!(d < 320 && MAP.los(v.x, v.y, tx, ty) && WANTED.mode === 'chase')) {
-      const n = MAP.fieldNext(field, v.x, v.y, 4);
+      const n = field ? MAP.fieldNext(field, v.x, v.y, 4) : null;
       if (n) { ax = n.x; ay = n.y; }
     }
     const desired = Math.atan2(ay - v.y, ax - v.x);

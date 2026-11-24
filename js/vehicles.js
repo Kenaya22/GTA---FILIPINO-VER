@@ -18,6 +18,7 @@ const VT = {
   army: { name: 'Army Truck', L: 96, W: 40, max: 470, acc: 380, brake: 800, grip: 9, steer: 2.1, mass: 3.6, hp: 420, cruise: 230, value: 1000, draw: 'army', cop: 1, armor: 2 },
   bangka: { name: 'Bangka', L: 74, W: 18, max: 430, acc: 300, brake: 300, grip: 2.2, steer: 1.9, mass: 1.2, hp: 120, cruise: 200, value: 300, draw: 'bangka', boat: 1 },
   policeboat: { name: 'Police Boat', L: 72, W: 26, max: 470, acc: 360, brake: 320, grip: 2.4, steer: 2.0, mass: 1.6, hp: 180, cruise: 250, value: 600, draw: 'pboat', boat: 1, cop: 1 },
+  kuliglig: { name: 'Kuliglig', L: 70, W: 26, max: 280, acc: 300, brake: 700, grip: 9, steer: 2.6, mass: 1.2, hp: 140, cruise: 160, value: 150, draw: 'kuliglig' },
   tow: { name: 'Tow Truck', L: 92, W: 36, max: 450, acc: 360, brake: 850, grip: 8.5, steer: 2.2, mass: 2.4, hp: 220, cruise: 200, value: 700, draw: 'tow' },
   armored: { name: 'Armored Van', L: 84, W: 40, max: 440, acc: 340, brake: 800, grip: 8.5, steer: 2.2, mass: 3, hp: 600, cruise: 200, value: 0, draw: 'armored', armor: 2 },
 };
@@ -57,7 +58,7 @@ class Vehicle {
     let ca = Math.cos(this.a), sa = Math.sin(this.a);
     let vf = this.vx * ca + this.vy * sa, vr = -this.vx * sa + this.vy * ca;
     const tile = MAP.tileAt(this.x, this.y);
-    let terrain = tile === TL.GRASS ? 0.72 : tile === TL.SAND ? 0.6 : 1;
+    let terrain = tile === TL.GRASS ? 0.72 : tile === TL.SAND ? 0.6 : tile === TL.PADDY ? 0.5 : tile === TL.DIRT ? (this.type === 'kuliglig' ? 1 : 0.85) : 1;
     if (!t.boat && WORLD.flood > 0.05) {
       const f = MAP.floodAt(this.x, this.y);
       if (f) { terrain *= 1 - 0.55 * WORLD.flood; if (this.speed > 120 && Math.random() < 0.5) G.particle('splash', this.x + U.rand(-20, 20), this.y + U.rand(-20, 20)); }
@@ -138,7 +139,7 @@ class Vehicle {
     if (this.lastImpact > 0) { if (sp <= this.lastSp) return; dmg = (sp - this.lastSp) * 0.055; this.lastSp = sp; }
     else { dmg = (sp - 130) * 0.055; this.lastSp = sp; }
     dmg /= (this.t.armor || 1);
-    if (this.driver === 'player') dmg *= D().carDmg;
+    if (this.driver === 'player') dmg *= DEV.god ? 0 : D().carDmg;
     if (!this.invuln) this.hp -= dmg;
     if (this.lastImpact <= 0) {
       this.lastImpact = 0.35;
@@ -182,6 +183,7 @@ function drawVehicle(g, v, now) {
     case 'armored': drawBox(g, v, '#5c6670', hl, hw, now, false); break;
     case 'bangka': drawBangka(g, v, col, hl, hw); break;
     case 'tow': drawTow(g, v, col, hl, hw, now); break;
+    case 'kuliglig': drawKuliglig(g, v, col, hl, hw); break;
     case 'pboat': drawPBoat(g, v, hl, hw, now); break;
   }
   if (v.upg) drawSticker(g, v, hl, hw);
@@ -328,6 +330,17 @@ function drawArmy(g, v, hl, hw) {
   lightsFrontBack(g, v, hl, hw);
 }
 
+function drawKuliglig(g, v, col, hl, hw) {
+  // engine + handlebars in front, wooden trailer behind
+  g.fillStyle = v.burnt ? '#2a2826' : '#b83a2e'; U.rr(g, hl * 0.45, -9, hl * 0.5, 18, 4); g.fill();
+  g.fillStyle = '#222'; g.beginPath(); g.arc(hl * 0.62, -12, 5, 0, TAU); g.arc(hl * 0.62, 12, 5, 0, TAU); g.fill();
+  g.strokeStyle = '#999'; g.lineWidth = 2; g.beginPath(); g.moveTo(hl * 0.42, -11); g.lineTo(hl * 0.1, -14); g.moveTo(hl * 0.42, 11); g.lineTo(hl * 0.1, 14); g.stroke();
+  g.fillStyle = v.burnt ? '#2a2826' : '#8a6a3a'; U.rr(g, -hl, -hw, hl * 1.35, hw * 2, 3); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.3)'; g.lineWidth = 1.5; for (let x = -hl + 6; x < hl * 0.3; x += 7) { g.beginPath(); g.moveTo(x, -hw + 2); g.lineTo(x, hw - 2); g.stroke(); }
+  const n = v.cargo || 0;
+  for (let k = 0; k < n; k++) { g.fillStyle = '#d9c9a0'; U.rr(g, -hl + 4 + (k % 3) * 13, -hw + 4 + Math.floor(k / 3) * 13, 11, 10, 3); g.fill(); }
+  if (v.driver) { g.fillStyle = v.driver === 'player' ? G.player.look.shirt : '#6b5650'; g.beginPath(); g.ellipse(hl * 0.25, 0, 6, 8, 0, 0, TAU); g.fill(); }
+}
 function drawTow(g, v, col, hl, hw, now) {
   const c = v.burnt ? '#2a2826' : '#d4ac0d';
   g.fillStyle = c; U.rr(g, hl * 0.35, -hw, hl * 0.65, hw * 2, 6); g.fill();

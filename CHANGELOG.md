@@ -1,5 +1,15 @@
 # Changelog — Hari ng Kalsada
 
+## v1.5: Kabanata 2 — Probinsya (2026-11-24)
+- 🌾 **Chapter 2**: a new province east of Manila, the town of **San Isidro**. A highway out of the city, rice paddies, dirt farm roads, a town plaza with church and municipal hall, a rice mill, and the walled **Hacienda Severo**
+- 📖 **6 new missions**: Pauwi sa Probinsya, Ani ng Bayan, Karera ng Kuliglig, Mga Bantay ni Don Severo, Ang Titulo (stealth), Lupa ng Bayan
+- ⚖️ **Story choice with 2 endings**: give the land titles to the town (Ending A, escort the farmers' convoy) or sell them to Don Severo for ₱30,000 (Ending B, escape his goons)
+- 🎞 **Comic-panel cutscenes**; 🚜 new **kuliglig** vehicle; 🕵️ guards with visible vision cones; black SUV goons; province traffic, villagers and police
+- 🎓 **Tutorial** for new games (8 guided steps, skippable, replayable from ❓ How to play)
+- ⬆️ **Arrow buttons (D-pad)** as an alternative to the joystick (new-game screen + Settings)
+- 🛠 **Developer Mode** (password protected) in Settings: start any mission, +₱100k, god mode, clear wanted, change time/weather, teleport
+- 🧹 Cleaner home page (removed the feature chips and the difficulty line); 3 new achievements
+
 ## v1.4: Bagong Home Page at Madaling Laro / New Home & Easier Play (2026-11-24)
 - 🏠 **New home page**: live police-chase scene in the background, "last game" card (missions, money, % complete), big ITULOY button, quick Settings / How-to / What's-new buttons, responsive for phones
 - 💪 **Choose difficulty** when starting a new game: 😎 Madali (recommended), 🙂 Normal, 🔥 Mahirap
