@@ -18,6 +18,7 @@ const VT = {
   army: { name: 'Army Truck', L: 96, W: 40, max: 470, acc: 380, brake: 800, grip: 9, steer: 2.1, mass: 3.6, hp: 420, cruise: 230, value: 1000, draw: 'army', cop: 1, armor: 2 },
   bangka: { name: 'Bangka', L: 74, W: 18, max: 430, acc: 300, brake: 300, grip: 2.2, steer: 1.9, mass: 1.2, hp: 120, cruise: 200, value: 300, draw: 'bangka', boat: 1 },
   policeboat: { name: 'Police Boat', L: 72, W: 26, max: 470, acc: 360, brake: 320, grip: 2.4, steer: 2.0, mass: 1.6, hp: 180, cruise: 250, value: 600, draw: 'pboat', boat: 1, cop: 1 },
+  tow: { name: 'Tow Truck', L: 92, W: 36, max: 450, acc: 360, brake: 850, grip: 8.5, steer: 2.2, mass: 2.4, hp: 220, cruise: 200, value: 700, draw: 'tow' },
   armored: { name: 'Armored Van', L: 84, W: 40, max: 440, acc: 340, brake: 800, grip: 8.5, steer: 2.2, mass: 3, hp: 600, cruise: 200, value: 0, draw: 'armored', armor: 2 },
 };
 const CAR_COLORS = ['#e8e8e8', '#c0392b', '#2e86c1', '#1c1f26', '#7f8c8d', '#d35400', '#27ae60', '#f1c40f', '#8e44ad', '#16a085', '#bdc3c7', '#a0522d', '#f28c28', '#5b6ee1'];
@@ -180,8 +181,10 @@ function drawVehicle(g, v, now) {
     case 'army': drawArmy(g, v, hl, hw); break;
     case 'armored': drawBox(g, v, '#5c6670', hl, hw, now, false); break;
     case 'bangka': drawBangka(g, v, col, hl, hw); break;
+    case 'tow': drawTow(g, v, col, hl, hw, now); break;
     case 'pboat': drawPBoat(g, v, hl, hw, now); break;
   }
+  if (v.upg) drawSticker(g, v, hl, hw);
   if (v.burnt) { g.fillStyle = 'rgba(0,0,0,0.45)'; U.rr(g, -hl, -hw, L, W, 6); g.fill(); }
   g.restore();
 }
@@ -284,6 +287,7 @@ function drawMoto(g, v, col, hl, hw) {
   g.fillStyle = '#1a1a1a'; U.rr(g, -hl, -3, hl * 2, 6, 3); g.fill();
   g.fillStyle = col; U.rr(g, -hl * 0.5, -hw, hl * 1.2, hw * 2, 5); g.fill();
   if (v.isCop) { g.fillStyle = '#1d3f8f'; g.fillRect(-hl * 0.3, -2, hl * 0.6, 4); }
+  if (v.rider) { g.fillStyle = '#e8641e'; U.rr(g, -hl - 4, -9, 14, 18, 3); g.fill(); g.fillStyle = '#fff'; g.fillRect(-hl + 1, -2, 4, 4); }
   g.fillStyle = '#666'; g.fillRect(hl * 0.45, -hw - 4, 3, hw * 2 + 8);
   if (v.driver) {
     g.fillStyle = v.isCop ? '#1f3b73' : (G.player && v.driver === 'player' ? G.player.look.shirt : '#7a3e3e');
@@ -324,6 +328,18 @@ function drawArmy(g, v, hl, hw) {
   lightsFrontBack(g, v, hl, hw);
 }
 
+function drawTow(g, v, col, hl, hw, now) {
+  const c = v.burnt ? '#2a2826' : '#d4ac0d';
+  g.fillStyle = c; U.rr(g, hl * 0.35, -hw, hl * 0.65, hw * 2, 6); g.fill();
+  g.fillStyle = '#18202d'; g.fillRect(hl * 0.42, -hw + 4, 7, hw * 2 - 8);
+  g.fillStyle = '#4a4f58'; U.rr(g, -hl, -hw + 2, hl * 1.33, hw * 2 - 4, 3); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.4)'; g.lineWidth = 2;
+  for (let x = -hl + 8; x < hl * 0.3; x += 10) { g.beginPath(); g.moveTo(x, -hw + 4); g.lineTo(x, hw - 4); g.stroke(); }
+  g.fillStyle = '#c0392b'; g.fillRect(-hl * 0.6, -3, hl * 0.8, 6);
+  g.fillStyle = '#222'; g.fillRect(-hl - 3, -4, 6, 8);
+  const ph = Math.floor(now * 4) % 2; g.fillStyle = ph ? '#ffb300' : '#7a5200'; g.fillRect(hl * 0.5, -hw + 2, 5, 5); g.fillRect(hl * 0.5, hw - 7, 5, 5);
+  lightsFrontBack(g, v, hl, hw);
+}
 function drawBangka(g, v, col, hl, hw) {
   // outriggers
   g.strokeStyle = '#c9b48a'; g.lineWidth = 3;

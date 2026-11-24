@@ -49,6 +49,10 @@ const TIPS = {
   island: () => ['🏝 Isla Maligaya', 'May isla sa Manila Bay! Sumakay ng ferry (₱50) sa pantalan o mag-drive ng BANGKA. Walang kotse ng pulis sa isla — pero may police boat.'],
   vendor: () => ['🥣 Taho at Balut', 'May naglalakong taho sa umaga at balut sa gabi. Lapitan at bumili para sa dagdag na buhay (₱20).'],
   daynight: () => ['🌅 Araw at Gabi', 'Umiikot ang oras (tingnan ang orasan sa itaas). May rush hour (7–9 AM, 5–7 PM) na mas trapik, at iba-iba ang tao sa kalye depende sa oras.'],
+  save: () => ['💾 Save at Load', 'Awtomatikong nase-save ang laro kapag umalis ka. Pwede ring mag-save sa 3 slot: ☰ → I-SAVE. Ang mga ari-arian mo ay safehouse din.'],
+  jobs: () => ['💼 Side Jobs', 'Sa taxi, police car, delivery motor (🛵 Rider Hub) o tow truck (🛻 Impound), pindutin ang J / 💼 para kumita. Sa gabi, may 🏁 underground race sa Baywalk.'],
+  weapons: () => ['🔨 Armas', 'Sa Hardware may pamalo, tirador at water gun. Q / 🔄 para magpalit. Krimen pa rin ang pagtama sa tao!'],
+  property: () => ['🔑 Ari-arian', 'May mga ibinebentang lugar (🔑). Kapag nabili mo, may kita ka tuwing 6 AM, at nagiging safehouse ito.'],
   retry: () => ['🔁 Checkpoint', 'Nabigo ang misyon? Pindutin ang ULITIN para bumalik sa checkpoint — hindi na kailangang ulitin ang usapan.'],
 };
 const TIP = {
@@ -86,10 +90,15 @@ const TIP = {
     if (G.frame > 2400) this.show('daynight');
     if (P.vehicle && P.vehicle.t.boat) this.show('island');
     if (G.frame % 20 === 0) {
+      const sh = SHOP.near();
+      if (G.frame > 600) this.show('save');
+      if (JOBS.avail()) this.show('jobs');
+      if (sh && sh.type === 'weapon') this.show('weapons');
+      if (sh && sh.type === 'property') this.show('property');
       if (WORLD.nearVendor() || WORLD.vendors.some(v => U.d2(v.x, v.y, P.x, P.y) < 250 * 250)) this.show('vendor');
       for (const c of MAP.cctv) if (U.d2(c.x, c.y, P.x, P.y) < 300 * 300) { this.show('cctv'); break; }
       for (const s of MAP.tsinelas) if (!G.tsinelas.has(s.id) && U.d2(s.x, s.y, P.x, P.y) < 450 * 450) { this.show('tsinelas'); break; }
-      const sh = SHOP.near(); if (sh && ['ukay', 'barber', 'paint'].includes(sh.type)) this.show('shop');
+      if (sh && ['ukay', 'barber', 'paint'].includes(sh.type)) this.show('shop');
     }
   },
 };

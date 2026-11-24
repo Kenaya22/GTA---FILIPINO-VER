@@ -4,14 +4,15 @@ const SAVE_KEY = 'harinkalsada_v1';
 
 const G = {
   started: false, paused: false, cutscene: false, time: 0, dt: 1 / 60, frame: 0,
-  vehicles: [], peds: [], pickups: [], particles: [], skids: [],
+  vehicles: [], peds: [], pickups: [], particles: [], skids: [], projectiles: [],
   cam: { x: 0, y: 0, zoom: 1, vw: 1000, vh: 1000, shake: 0, sx: 0, sy: 0 },
-  unlock: { sports: false, gold: false }, tsinelas: new Set(), stats: { sold: 0, pasada: 0, escapes: 0 },
+  unlock: { sports: false, gold: false }, tsinelas: new Set(), stats: { sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 },
   copField: null, walkField: null, gpsField: null, gpsPath: null, target: null,
   fieldT: 0, walkT: 0, gpsT: 0, gpsKey: '', ramCd: 0, nearVeh: null, shopNear: null, lightMul: 1,
 
   boot() {
     SETTINGS.load();
+    SAVE.migrate();
     this.canvas = document.getElementById('game');
     this.ctx = this.canvas.getContext('2d');
     addEventListener('resize', () => this.resize());
@@ -53,20 +54,14 @@ const G = {
   },
 
   // ---------- game lifecycle ----------
-  hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } },
-  save() {
-    if (!this.started) return;
-    try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify({
-        clock: WORLD.clock, m: MS.idx, money: this.player.money, look: this.player.look, ts: [...this.tsinelas], stats: this.stats, unlock: this.unlock,
-      }));
-    } catch (e) { }
-  },
-  load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return null; } },
+  hasSave() { return !!SAVE.latest(); },
+  save() { if (this.started) SAVE.write('auto', true); },
   resetWorld() {
-    this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = [];
+    this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
+    if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
+    ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
     TRAFFIC.spawnParked();
   },
   beginPlay() {
@@ -81,9 +76,8 @@ const G = {
     for (let k = 0; k < 40; k++) { TRAFFIC.spawnCar(); TRAFFIC.spawnPed(); }
   },
   newGame() {
-    try { localStorage.removeItem(SAVE_KEY); } catch (e) { }
     this.resetWorld();
-    this.tsinelas = new Set(); this.stats = { sold: 0, pasada: 0, escapes: 0 }; this.unlock = { sports: false, gold: false };
+    this.tsinelas = new Set(); this.stats = { sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 }; this.unlock = { sports: false, gold: false };
     const b = MAP.pois.busterm;
     this.player.x = b.x; this.player.y = b.y - 40; this.player.a = -Math.PI / 2; this.player.money = 200;
     // a tricycle to borrow
@@ -95,16 +89,9 @@ const G = {
     this.save();
   },
   continueGame() {
-    const s = this.load();
-    if (!s) return this.newGame();
-    this.resetWorld();
-    MS.idx = s.m || 0; this.player.money = s.money || 0; if (s.clock !== undefined) WORLD.clock = s.clock;
-    if (s.look) Object.assign(this.player.look, s.look);
-    this.tsinelas = new Set(s.ts || []); this.stats = Object.assign({ sold: 0, pasada: 0, escapes: 0 }, s.stats || {}); this.unlock = Object.assign({ sports: false, gold: false }, s.unlock || {});
-    const h = MAP.pois.home; this.player.x = h.x; this.player.y = h.y; this.player.a = Math.PI / 2;
-    this.beginPlay();
-    this.spawnHomeCars();
-    UI.big('MAYNILA', MS.idx >= MISSIONS.length ? 'Free roam' : `Susunod: ${MISSIONS[MS.idx].title}`, 2);
+    const l = SAVE.latest();
+    if (!l) return this.newGame();
+    SAVE.apply(l.data);
   },
   spawnHomeCars() {
     const h = MAP.pois.home;
@@ -139,9 +126,11 @@ const G = {
     }
     if (this.paused) return;
     if (code === 'KeyE' || code === 'KeyF' || code === 'Enter') this.action();
-    else if (code === 'Space') { if (UI.talking) UI.nextLine(); else if (!this.player.vehicle) this.player.punch(); }
+    else if (code === 'Space') { if (UI.talking) UI.nextLine(); else if (!this.player.vehicle) ARMS.attack(); }
     else if (code === 'KeyH') this.horn();
     else if (code === 'KeyR') MUSIC.nextStation();
+    else if (code === 'KeyQ') { if (!this.player.vehicle) ARMS.cycle(); }
+    else if (code === 'KeyJ') JOBS.toggle();
   },
   action() {
     if (!this.started || this.paused || this.cutscene || this.player.downed) return;
@@ -156,7 +145,7 @@ const G = {
   },
   horn() {
     const v = this.player.vehicle; if (!v) return;
-    AUD.horn(v.isBig());
+    AUD.horn(v.isBig(), v.upg && v.upg.horn);
     const ca = Math.cos(v.a), sa = Math.sin(v.a);
     for (const p of this.peds) {
       if (p.npc || p.kind === 'cop' || p.state === 'down') continue;
@@ -250,6 +239,7 @@ const G = {
   // ---------- effects ----------
   addMoney(n, sound) {
     this.player.money = Math.max(0, this.player.money + n);
+    if (n > 0) this.stats.earned = (this.stats.earned || 0) + n;
     const m = document.getElementById('money'); m.classList.remove('pulse'); void m.offsetWidth; m.classList.add('pulse');
     if (sound && n > 0) AUD.cash();
   },
@@ -357,6 +347,14 @@ const G = {
     for (const v of this.vehicles) {
       const far = Math.abs(v.x - cx) > 2400 || Math.abs(v.y - cy) > 2400;
       if (far && !v.mission && !v.unit) continue;
+      if (v.towedBy) {
+        const tr = v.towedBy;
+        if (tr.remove || tr.burnt) { v.towedBy = null; continue; }
+        v.a += U.angDiff(v.a, tr.a) * Math.min(1, dt * 4);
+        const back = tr.L / 2 + v.L / 2 + 4;
+        v.x = tr.x - Math.cos(tr.a) * back; v.y = tr.y - Math.sin(tr.a) * back; v.vx = tr.vx; v.vy = tr.vy;
+        continue;
+      }
       if (v.ai && v.driver !== 'player') v.ai.update(dt);
       if (v.parked && !v.driver && v.vx === 0 && v.vy === 0 && !v.dead) continue;
       v.update(dt);
@@ -382,6 +380,10 @@ const G = {
     TRAFFIC.update(dt);
     MS.update(dt);
     PASADA.update(dt);
+    JOBS.update(dt);
+    ARMS.update(dt);
+    ACH.update(dt);
+    SAVE.update(dt);
     this.updateGPS(dt);
     this.updatePickups(dt);
     this.updateArrest(dt);
@@ -422,6 +424,7 @@ const G = {
       const a = act[i];
       for (let j = i + 1; j < act.length; j++) {
         const b = act[j];
+        if (a.towedBy === b || b.towedBy === a) continue;
         const lim = (a.L + b.L) / 2;
         const dx0 = b.x - a.x, dy0 = b.y - a.y;
         if (dx0 * dx0 + dy0 * dy0 > lim * lim) continue;
@@ -456,7 +459,7 @@ const G = {
           if (pl && hit > 90 && this.ramCd <= 0) {
             this.ramCd = 1;
             if (other.isCop && other.driver) { other.lastHitByPlayer = true; WANTED.crime(2, other.x, other.y, true); }
-            else if (hit > 260 && other.driver) WANTED.crime(1, other.x, other.y);
+            else if (hit > 260 && other.driver && !other.criminal) WANTED.crime(1, other.x, other.y);
             if (other.ai instanceof RoadDriver && Math.random() < 0.5) AUD.horn(other.isBig());
           }
         }
@@ -514,6 +517,7 @@ const G = {
   },
   updateGPS(dt) {
     let t = MS.target();
+    if (!t && JOBS.active) t = JOBS.target();
     if (!t && PASADA.mode && PASADA.pt) t = Object.assign({ stop: true }, PASADA.pt);
     this.target = t;
     this.gpsT -= dt;
@@ -626,6 +630,7 @@ const G = {
     for (const p of this.peds) if (p.state !== 'down' && inV(p.x, p.y, 30)) drawPerson(g, p, now);
     const P = this.player;
     if (!P.vehicle) drawPerson(g, P, now);
+    ARMS.draw(g, inV);
     // particles
     for (const p of this.particles) {
       if (!inV(p.x, p.y, 40)) continue;
@@ -744,3 +749,7 @@ const G = {
 };
 
 window.addEventListener('load', () => G.boot());
+// leave anytime: autosave when the tab/app is hidden or closed
+const leaveSave = () => { if (G.started && !G.cutscene && !G.player.downed) SAVE.write('auto', true); };
+window.addEventListener('pagehide', leaveSave);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') leaveSave(); });

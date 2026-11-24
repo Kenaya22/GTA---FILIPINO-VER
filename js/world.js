@@ -29,7 +29,9 @@ const WORLD = {
   copVision() { return 1 - this.rain * 0.3; },
   onIsland(x, y) { return x < (OX - 3) * T; },
   update(dt) {
+    const prev = this.clock;
     this.clock = (this.clock + dt * 2) % 1440;           // 1 real second = 2 game minutes (12-min day)
+    if (prev < 360 && this.clock >= 360) ECON.payday();
     // weather
     this.weatherT -= dt * 2;
     if (this.weatherT <= 0) {

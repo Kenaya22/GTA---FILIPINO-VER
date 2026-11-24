@@ -67,6 +67,7 @@ const WANTED = {
   setStars(n) {
     n = U.clamp(n, 0, 6);
     if (n > this.stars) {
+      this.peak = Math.max(this.peak || 0, n);
       AUD.star(); UI.flashStars();
       if (n === 6) UI.big('6 BITUIN!', 'Lahat ng pulis at sundalo, hinahabol ka!', 2.2);
       else if (this.stars === 0) UI.toast('🚨 Hinahabol ka ng pulis!');
@@ -89,7 +90,13 @@ const WANTED = {
     this.prof = { car: null, clothes: null, face: null }; this.cctvT = 0; this.susp = 0; this.spikes = [];
     for (const p of G.peds) p.susp = 0;
     for (const h of this.helis) h.leaving = true;
-    if (had && msg) { UI.big('NAKATAKAS KA!', 'Nawala na ang mga pulis', 1.8); AUD.escaped(); G.stats.escapes++; }
+    if (had && msg) {
+      UI.big('NAKATAKAS KA!', 'Nawala na ang mga pulis', 1.8); AUD.escaped(); G.stats.escapes++;
+      if ((this.peak || 0) >= 3) ACH.flags.escape3 = true;
+      if ((this.peak || 0) >= 6) ACH.flags.escape6 = true;
+      ACH.check();
+    }
+    this.peak = 0;
   },
   update(dt) {
     const P = G.player;

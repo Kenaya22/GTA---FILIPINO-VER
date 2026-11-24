@@ -155,6 +155,7 @@ class Person {
         if (!p.vehicle) { p.hurt(6, this.x, this.y); AUD.punch(); }
       }
       if (this.punchT > 0) this.punchT -= dt;
+      ARMS.copFire(this, dt);
     } else if (this.fromCar) {
       // return to car / wander off
       this.state = 'walk';
@@ -176,6 +177,7 @@ class Player extends Person {
     super(x, y, 'player', { skin: '#c68b59', shirt: '#f28c28', pat: 'floral', outfit: 'floral_orange', hair: 'short', hairCol: '#1b1410', pants: '#2b3a55' });
     this.hp = 100; this.vehicle = null; this.punchCd = 0; this.arrest = 0; this.money = 0; this.r = 9;
     this.state = 'player'; this.outT = 0; this.hurtT = 0; this.downed = false;
+    this.weapons = { fists: true }; this.weapon = 'fists'; this.swingT = 0;
   }
   faceId() { return this.look.hair; }
   hurt(n, fx, fy) {
@@ -230,6 +232,8 @@ class Player extends Person {
       this.moveAmt = Math.min(1, sp * m / 130);
     } else { this.vx *= 0.7; this.vy *= 0.7; this.moveAmt = 0; }
     this.phase += dt * this.moveAmt * 13;
+    if (this.swingT > 0) this.swingT -= dt;
+    if (this.weapon === 'watergun' && (INPUT.keys.Space || INPUT.bHeld) && !UI.talking && !G.cutscene) ARMS.spray(dt);
     this.move(dt);
   }
   punch() {
@@ -282,6 +286,14 @@ function drawPerson(g, p, now) {
   g.beginPath(); g.arc(-sw * 0.7, -9.5, 3.6, 0, TAU); g.arc(sw * 0.7 + pt * 12, 9.5 - pt * 3, 3.6, 0, TAU); g.fill();
   g.fillStyle = L.skin;
   g.beginPath(); g.arc(-sw * 0.7 + 2, -10, 2.4, 0, TAU); g.arc(sw * 0.7 + 2 + pt * 12, 10 - pt * 3, 2.4, 0, TAU); g.fill();
+  if (p.weapon && p.weapon !== 'fists') {
+    const hx = sw * 0.7 + 3 + pt * 10, hy = 10 - pt * 3;
+    g.save(); g.translate(hx, hy);
+    if (p.weapon === 'pamalo') { g.rotate(p.swingT > 0 ? -1.4 + (0.25 - p.swingT) * 9 : -0.5); g.fillStyle = '#8a5a2b'; U.rr(g, 0, -2, 22, 4, 2); g.fill(); }
+    else if (p.weapon === 'tirador') { g.strokeStyle = '#7a4a22'; g.lineWidth = 2; g.beginPath(); g.moveTo(0, 0); g.lineTo(6, 0); g.moveTo(6, 0); g.lineTo(10, -4); g.moveTo(6, 0); g.lineTo(10, 4); g.stroke(); }
+    else if (p.weapon === 'watergun') { g.fillStyle = '#ff8c1a'; U.rr(g, 0, -3, 12, 6, 2); g.fill(); g.fillStyle = '#3aa0ff'; g.beginPath(); g.arc(4, 0, 3.5, 0, TAU); g.fill(); }
+    g.restore();
+  }
   // torso
   g.fillStyle = L.shirt; g.beginPath(); g.ellipse(0, 0, 7.5, 10.5, 0, 0, TAU); g.fill();
   if (L.pat === 'floral') {

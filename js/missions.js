@@ -555,7 +555,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'weapon', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -569,7 +569,13 @@ const SHOP = {
     switch (p.type) {
       case 'ukay': return P.vehicle ? null : `Ukay-Ukay — Bagong damit (${c(150)})`;
       case 'barber': return P.vehicle ? null : `Barberya — Bagong gupit (${c(100)})`;
-      case 'paint': return P.vehicle ? `Pintura — Repaint + ayos + bagong plaka (${c(300)})` : null;
+      case 'paint': return P.vehicle ? `Pintura — kulay, makina, armor, sticker, busina` : null;
+      case 'weapon': return P.vehicle ? null : ARMS.shopLabel();
+      case 'property': return ECON.propLabel(p);
+      case 'garage': return P.vehicle ? 'I-park ang sasakyan sa garahe' : `Buksan ang garahe (${ECON.garage.length} sasakyan)`;
+      case 'rider': return P.vehicle ? null : 'Food Rider — kumuha ng delivery motor at magsimula';
+      case 'tow': return P.vehicle ? (P.vehicle.type === 'tow' ? null : null) : 'Impound — kumuha ng tow truck at magsimula';
+      case 'race': return JOBS.active ? null : JOBS.raceLabel();
       case 'sari': return P.vehicle ? null : `Sari-sari — Tinapay at softdrinks +40 buhay (${c(30)})`;
       case 'hospital': return P.vehicle ? null : `Ospital — Full heal (${c(100)})`;
       case 'chop': return P.vehicle && MS.idx >= 2 && !(MS.active && MS.active.giver === 'ben') ? `Ibenta kay Mang Ben (~${U.money(this.value(P.vehicle))})` : null;
@@ -609,13 +615,19 @@ const SHOP = {
         P.look.hair = h.id; P.look.hairCol = U.choice(HAIR_COLS);
         AUD.snip(); UI.toast(`💈 Bagong itsura: ${h.name}`); G.fadeFlash(); break;
       }
-      case 'paint': {
-        const v = P.vehicle; if (!v) return;
-        if (!this.pay(300)) return;
-        let col; do { col = U.choice(CAR_COLORS); } while (col === v.color);
-        v.color = col; v.color2 = U.choice(JEEP_COLORS); v.color3 = U.choice(JEEP_COLORS);
-        v.hp = v.maxhp; v.popped = false; v.plate = U.plate(); v.ident = ++VID;
-        AUD.spray(); UI.toast(`🎨 Bagong kulay at plaka: ${v.plate}`); G.fadeFlash(); break;
+      case 'paint': { if (P.vehicle) ECON.openCustom(); break; }
+      case 'weapon': ARMS.openShop(); break;
+      case 'property': ECON.propUse(p); break;
+      case 'garage': if (P.vehicle) ECON.store(P.vehicle); else ECON.openGarage(p); break;
+      case 'race': JOBS.raceStart(); break;
+      case 'rider': case 'tow': {
+        if (JOBS.active || MS.active) { UI.toast('Tapusin muna ang ginagawa mo.'); return; }
+        let x = p.x, y = p.y;
+        for (const [ox, oy] of [[0, -70], [0, 70], [70, 0], [-70, 0]]) if (!MAP.solidAt(p.x + ox, p.y + oy) && !MAP.solidAt(p.x + ox * 1.4, p.y + oy * 1.4)) { x = p.x + ox; y = p.y + oy; break; }
+        const v = new Vehicle(p.type === 'rider' ? 'motor' : 'tow', x, y, 0, { color: p.type === 'rider' ? '#c0392b' : undefined });
+        if (p.type === 'rider') v.rider = true;
+        G.vehicles.push(v); P.x = x; P.y = y; G.enterVehicle(v);
+        JOBS.start(p.type === 'rider' ? 'rider' : 'tow'); break;
       }
       case 'sari': {
         if (P.hp >= 100) { UI.toast('Busog ka pa!'); return; }

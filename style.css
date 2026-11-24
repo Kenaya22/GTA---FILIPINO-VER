@@ -234,3 +234,36 @@ body.lefty.touch #status { left: auto; right: max(12px, env(safe-area-inset-righ
 .vtabs button .new { position: absolute; top: -7px; right: -7px; background: var(--red); color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 6px; }
 .changelog { min-height: 200px; }
 body.touch #clock { font-size: 11px; }
+
+/* ===== Phase 3: slots, shop, achievements ===== */
+.note { margin: 0; color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
+.menurow { display: flex; gap: 8px; } .menurow .mbtn { flex: 1; }
+.slotlist { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.slot { text-align: left; border: 2px solid rgba(255,255,255,0.08); background: var(--panel2); color: var(--ink); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+.slot b { font-size: 15px; } .slot span { font-weight: 800; font-size: 13px; color: var(--accent2); } .slot small { color: var(--muted); font-weight: 700; font-size: 11px; }
+.slot.empty span { color: var(--muted); } .slot:active { transform: scale(0.98); }
+.shoplist { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.shoprow { display: flex; align-items: center; gap: 10px; background: var(--panel2); border-radius: 10px; padding: 8px 10px; }
+.shoprow .ic { font-size: 24px; width: 32px; text-align: center; }
+.shoprow div { flex: 1; } .shoprow b { display: block; font-size: 14px; } .shoprow small { color: var(--muted); font-weight: 700; font-size: 11px; }
+.shoprow button, .chips button { border: 0; border-radius: 8px; background: var(--accent); color: #1a1205; font-weight: 900; font-size: 11px; padding: 8px 10px; white-space: nowrap; }
+.shoprow button[disabled] { background: #2c3550; color: var(--muted); }
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.sw { width: 34px; height: 34px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.4); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.chips button { background: var(--panel2); color: var(--ink); border: 1px solid rgba(255,255,255,0.15); }
+.chips button.on { background: var(--accent); color: #1a1205; }
+.pct { font-family: var(--font-display); font-size: 24px; color: var(--good); }
+.achlist { width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.ach { display: flex; gap: 10px; align-items: center; background: var(--panel2); border-radius: 10px; padding: 8px 10px; opacity: .5; }
+.ach.got { opacity: 1; border: 1px solid var(--good); }
+.ach span { font-size: 22px; } .ach b { display: block; font-size: 13px; } .ach small { color: var(--muted); font-weight: 700; font-size: 11px; }
+#weapon { font-weight: 900; font-size: 12px; text-shadow: 0 1px 3px #000; }
+#tb-weap { grid-column: 1; grid-row: 3; justify-self: center; font-size: 20px; }
+#tb-job { grid-column: 1; grid-row: 1; justify-self: start; font-size: 20px; }
+#tbtns { grid-template-columns: auto auto auto; }
+.tbtn.big { grid-column: 3; grid-row: 1 / span 2; }
+#tb-b { grid-column: 2; grid-row: 2; }
+#tb-horn, #tb-weap { grid-column: 2; grid-row: 1; justify-self: center; align-self: end; }
+#tb-radio { grid-column: 3; grid-row: 3; justify-self: center; }
+#tb-job { grid-column: 1; grid-row: 2; justify-self: end; align-self: end; }

@@ -102,7 +102,11 @@ const AUD = {
     s.connect(f); f.connect(g); g.connect(this.master);
     s.start(t, Math.random()); s.stop(t + dur + 0.05);
   },
-  horn(big) {
+  horn(big, type) {
+    if (type === 'jeep') { this.tone(311, 0.5, 'sawtooth', 0.07); this.tone(392, 0.5, 'sawtooth', 0.06); this.tone(466, 0.5, 'sawtooth', 0.05); return; }
+    if (type === 'tri') { [660, 880, 1046].forEach((f, i) => this.tone(f, 0.14, 'square', 0.06, 0, i * 0.12)); return; }
+    if (type === 'moo') { this.tone(180, 0.9, 'sawtooth', 0.08, 120); this.tone(270, 0.9, 'triangle', 0.04, 180); return; }
+    if (type === 'tiktilaok') { [700, 900, 1100, 900].forEach((f, i) => this.tone(f, i === 3 ? 0.5 : 0.12, 'square', 0.05, i === 3 ? 600 : 0, i * 0.13)); return; }
     if (big) { this.tone(330, 0.35, 'square', 0.08); this.tone(415, 0.35, 'square', 0.08); }
     else { this.tone(440, 0.25, 'square', 0.07); this.tone(554, 0.25, 'square', 0.06); }
   },

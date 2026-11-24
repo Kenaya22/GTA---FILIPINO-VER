@@ -166,7 +166,14 @@ map and minimap with a GPS route.
 * **Street life**: taho (5–11 AM) and balut (6 PM–3 AM) vendors, kids at 7 basketball courts, Quiapo devotees, traffic enforcers (witnesses), island villagers.
 * **Isla Maligaya**: island west of the city with a sand ring, village, resort, lighthouse with a rotating beam, a dock, a ferry, and bangka boats. Police cars can't reach it, but police boats can.
 
-## 9. Technical
+## 9. Phase 3 additions (v1.3)
+* **Save/Load**: localStorage slots `auto`, `1`–`3`; full snapshot (position, vehicle + upgrades, active mission → checkpoint, economy, achievements). Autosave every 45 s when not wanted, and on `pagehide`/`visibilitychange`.
+* **Weapons**: non-lethal and cartoonish; hits are still crimes if witnessed. Police use rubber pellets only at 5–6★.
+* **Economy**: 5 properties (₱5k–₱50k), daily payday at 6:00, garage (6 cars), customization (engine/armor 3 levels, stickers, horns).
+* **Side jobs**: Taxi (fare + speed tip), Food Rider (5-order shifts), Tow (hook illegally parked cars → impound), Vigilante (ram carnappers, levels up), Underground Race (night only, bet up to ₱1,000, x2 payout).
+* **Achievements**: 20; completion % = missions 40 + tsinelas 15 + properties 15 + achievements 30.
+
+## 10. Technical
 * `index.html` + `style.css` + `js/*.js` — no build step, no external assets; open `index.html` or host on GitHub Pages.
 * Procedural city generated from a fixed seed → same map every time.
 * Map rendered into cached 512 px chunks; additive light pass for lamps/headlights/sirens.

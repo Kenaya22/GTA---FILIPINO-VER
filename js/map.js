@@ -410,10 +410,21 @@ const MAP = {
     add('mansion', { x: (this.rs(8) + RW + 1.5) * T, y: (this.rsy(2) + RW + 8.5) * T }, 'spot', 'Mansyon ni Mayor', '🏛');
     add('ferry1', { x: (OX - 13) * T, y: 27.5 * T }, 'ferry', 'Ferry papuntang Isla Maligaya', '⛴');
     add('ferry2', this.island.dock, 'ferry', 'Ferry pabalik sa Maynila', '⛴');
+    add('hardware1', this.door(3, 0, 'N', 3), 'weapon', 'Hardware ni Mang Tonyo', '🔨');
+    add('hardware2', this.door(5, 5, 'E'), 'weapon', 'Hardware ni Mang Tonyo', '🔨');
+    add('prop_sari', this.door(1, 2, 'S'), 'property', 'Sari-sari Store (Ibinebenta)', '🔑');
+    add('prop_carin', this.door(4, 2, 'S'), 'property', 'Carinderia (Ibinebenta)', '🔑');
+    add('prop_talyer', this.door(4, 5, 'N'), 'property', 'Talyer sa Paco (Ibinebenta)', '🔑');
+    add('prop_resort', { x: (this.island.cx - 1.5) * T, y: (this.island.cy + 18.5) * T }, 'property', 'Beach Resort (Ibinebenta)', '🔑');
+    add('prop_condo', this.door(7, 7, 'N'), 'property', 'Condo sa Makati (Ibinebenta)', '🔑');
+    add('garage_home', this.door(2, 1, 'S', 6), 'garage', 'Garahe ni Tito Boy', '🅿️');
+    add('riderhub', this.door(2, 5, 'N'), 'rider', 'Food Rider Hub', '🛵');
+    add('towyard', this.door(5, 7, 'S'), 'tow', 'Impound Lot (Tow Truck)', '🛻');
+    add('racespot', { x: (OX - 1.5) * T, y: this.cy(7) - 2 * T }, 'race', 'Underground Race', '🏁');
     add('islandstore', { x: (this.island.cx + 3.5) * T, y: (this.island.cy + 1) * T }, 'sari', 'Tindahan sa Isla', '🏪');
     add('bodega', { x: (this.rs(0) + RW + 5.5) * T, y: 8 * T }, 'spot', 'Bodega ni Mayor', '📦');
     // signs (awnings) for shops
-    const awn = { ukay: ['#e84393', 'UKAY-UKAY'], barber: ['#2e86c1', 'BARBERYA'], paint: ['#e67e22', 'PINTURA'], sari: ['#27ae60', 'SARI-SARI'], chop: ['#c0392b', 'TALYER'], hospital: ['#c0392b', 'OSPITAL'], police: ['#2c5aa0', 'PRESINTO'], home: ['#d4ac0d', 'JEEPNEY TERMINAL'] };
+    const awn = { ukay: ['#e84393', 'UKAY-UKAY'], barber: ['#2e86c1', 'BARBERYA'], paint: ['#e67e22', 'PINTURA'], sari: ['#27ae60', 'SARI-SARI'], chop: ['#c0392b', 'TALYER'], hospital: ['#c0392b', 'OSPITAL'], police: ['#2c5aa0', 'PRESINTO'], home: ['#d4ac0d', 'JEEPNEY TERMINAL'], weapon: ['#6c7a89', 'HARDWARE'], rider: ['#e8641e', 'RIDER HUB'], tow: ['#b7950b', 'IMPOUND LOT'], garage: ['#5d6d7e', 'GARAHE'] };
     for (const k in P) {
       const p = P[k];
       const a = awn[p.type];

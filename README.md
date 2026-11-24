@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila — v1.2
+# 👑 HARI NG KALSADA: Maynila — v1.3
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -22,6 +22,8 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 | Enter / exit / use shop | E or F | **SAKAY / BABA / GAMIT** |
 | Punch / handbrake | Space | **SUNTOK / PRENO** |
 | Horn | H | **BUSINA** |
+| Switch weapon | Q | **🔄** |
+| Start/stop side job | J | **💼** |
 | Change radio station | R | **📻** |
 | Map / Pause | M / Esc | 🗺 / ☰ |
 
@@ -33,6 +35,11 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 * Change clothes at the **Ukay-Ukay**, get a haircut at the **Barberya**, repaint at **Pintura**, or just
   switch cars. If a cop spots you and nothing matches the profile, they ignore you.
 * 1★ patrols → 3★ roadblocks → 4★ SWAT → 5★ helicopter + spike strips → 6★ army trucks.
+
+## 💼 Business, jobs & saving (v1.3)
+* **Save anytime**: ☰ → I-SAVE (3 slots) or just leave. The Auto-save remembers where you were, your car and your mission.
+* **Weapons** (Hardware): pamalo, tirador, water gun. **Properties** with daily income. A **garage** and **car upgrades**.
+* **Side jobs**: Food Rider, Taxi, Tow Truck, Vigilante, Underground Race. **20 achievements** and % completion.
 
 ## 🌆 A living city (v1.2)
 * **Day and night** on a 12-minute cycle, **rain** with lightning, **floods** on some streets, **traffic lights** and **rush hour**.
@@ -79,4 +86,8 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/audio.js` | Synthesized sound effects (WebAudio) |
 | `js/music.js` | Music engine: 6 songs, radio stations, DJ lines |
 | `js/settings.js` | Settings, difficulty, tutorial tips |
+| `js/save.js` | Save slots, autosave, load |
+| `js/weapons.js` | Weapons, projectiles, hardware shop |
+| `js/economy.js` | Properties, garage, car customization, achievements |
+| `js/jobs.js` | Side jobs: rider, taxi, tow, vigilante, race |
 | `js/world.js` | Day/night, weather, floods, traffic lights, street life, police boats |

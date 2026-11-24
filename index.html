@@ -38,6 +38,7 @@
     <div class="bars">
       <div class="bar"><div id="hpbar"></div></div>
       <div class="bar car hidden" id="carbarwrap"><div id="carbar"></div></div>
+      <div id="weapon"></div>
     </div>
   </div>
   <div id="speedo" class="hidden"><span id="kmh">0</span><small>km/h</small></div>
@@ -56,6 +57,8 @@
     <button id="tb-b" class="tbtn">SUNTOK</button>
     <button id="tb-horn" class="tbtn small hidden">BUSINA</button>
     <button id="tb-radio" class="tbtn small hidden">📻</button>
+    <button id="tb-weap" class="tbtn small hidden">🔄</button>
+    <button id="tb-job" class="tbtn small hidden">💼</button>
   </div>
 </div>
 
@@ -70,6 +73,7 @@
     <div class="menu">
       <button id="btn-new" class="mbtn primary">BAGONG LARO</button>
       <button id="btn-continue" class="mbtn hidden">ITULOY</button>
+      <button id="btn-load" class="mbtn hidden">I-LOAD</button>
       <button id="btn-howto" class="mbtn">PAANO LARUIN</button>
       <button id="btn-settings" class="mbtn">MGA SETTING</button>
     </div>
@@ -85,6 +89,8 @@
     <div class="suspect" id="suspect-board"></div>
     <div class="menu">
       <button id="btn-resume" class="mbtn primary">ITULOY</button>
+      <div class="menurow"><button id="btn-psave" class="mbtn">💾 I-SAVE</button><button id="btn-pload" class="mbtn">📂 I-LOAD</button></div>
+      <button id="btn-pach" class="mbtn">🏆 MGA TAGUMPAY</button>
       <button id="btn-pmap" class="mbtn">MAPA</button>
       <button id="btn-missions" class="mbtn">MGA MISYON</button>
       <button id="btn-phelp" class="mbtn">PAANO LARUIN</button>
@@ -99,7 +105,7 @@
 <div id="mapscreen" class="screen hidden">
   <canvas id="bigmap"></canvas>
   <div class="maplegend">
-    <span>🟡 Misyon</span><span>🏠 Bahay</span><span>👕 Ukay</span><span>💈 Barberya</span><span>🎨 Pintura</span><span>🔧 Talyer</span><span>🏪 Sari-sari</span><span>🏥 Ospital</span><span>🚓 Presinto</span><span style="color:#ffd23f">● Gintong Tsinelas</span>
+    <span>🟡 Misyon</span><span>🏠 Bahay</span><span>👕 Ukay</span><span>💈 Barberya</span><span>🎨 Pintura</span><span>🔧 Talyer</span><span>🏪 Sari-sari</span><span>🏥 Ospital</span><span>🚓 Presinto</span><span>🔨 Hardware</span><span>🔑 Ibinebenta</span><span>🅿️ Garahe</span><span>🛵 Rider</span><span>🛻 Impound</span><span>🏁 Karera</span><span>⛴ Ferry</span><span style="color:#ffd23f">● Gintong Tsinelas</span>
   </div>
   <button id="btn-mapclose" class="mbtn closebtn">ISARA ✕</button>
 </div>
@@ -126,9 +132,9 @@
       </div>
       <div>
         <h3>⌨️ Keyboard</h3>
-        <p><b>WASD / Arrows</b> — lakad / maneho<br><b>Shift</b> — takbo<br><b>E / F</b> — sumakay, bumaba, gamitin<br><b>Space</b> — suntok / handbrake<br><b>H</b> — busina<br><b>R</b> — palit istasyon ng radyo<br><b>M</b> — mapa · <b>Esc</b> — pause</p>
+        <p><b>WASD / Arrows</b> — lakad / maneho<br><b>Shift</b> — takbo<br><b>E / F</b> — sumakay, bumaba, gamitin<br><b>Space</b> — suntok / handbrake<br><b>H</b> — busina<br><b>Q</b> — palit armas<br><b>J</b> — simulan/tapusin ang side job<br><b>R</b> — palit istasyon ng radyo<br><b>M</b> — mapa · <b>Esc</b> — pause</p>
         <h3>📱 Touch</h3>
-        <p><b>Kaliwang joystick</b> — lakad. Sa sasakyan, ituro kung saan pupunta (sa likod = atras).<br><b>SAKAY</b> — sumakay/bumaba/gamitin<br><b>SUNTOK / PRENO</b> — suntok o handbrake<br><b>BUSINA</b> — busina<br><b>📻</b> — palit istasyon ng radyo</p>
+        <p><b>Kaliwang joystick</b> — lakad. Sa sasakyan, ituro kung saan pupunta (sa likod = atras).<br><b>SAKAY</b> — sumakay/bumaba/gamitin<br><b>SUNTOK / PRENO</b> — suntok o handbrake<br><b>BUSINA</b> — busina<br><b>🔄</b> — palit armas · <b>💼</b> — side job<br><b>📻</b> — palit istasyon ng radyo</p>
         <h3>💰 Kita</h3>
         <p>Misyon · <b>Pasada</b> sa kahit anong jeepney · Ibenta ang kotse kay <b>Mang Ben</b> · Pera ng mga nasuntok</p>
         <h3>🏝 Lungsod at Isla</h3>
@@ -136,6 +142,32 @@
       </div>
     </div>
     <button id="btn-hclose" class="mbtn primary">SIGE!</button>
+  </div>
+</div>
+
+<div id="slots" class="screen hidden">
+  <div class="panel">
+    <h2 id="slot-title">I-SAVE</h2>
+    <p class="note">Pwede kang umalis anumang oras — awtomatikong nase-save ang laro sa Auto-save.</p>
+    <div id="slot-list" class="slotlist"></div>
+    <button id="btn-slotclose" class="mbtn primary">BUMALIK</button>
+  </div>
+</div>
+
+<div id="shop" class="screen hidden">
+  <div class="panel wide">
+    <h2 id="shop-title">TINDAHAN</h2>
+    <div id="shop-list" class="shoplist"></div>
+    <button id="btn-shopclose" class="mbtn primary">TAPOS</button>
+  </div>
+</div>
+
+<div id="achievements" class="screen hidden">
+  <div class="panel wide">
+    <h2>MGA TAGUMPAY</h2>
+    <div id="ach-pct" class="pct"></div>
+    <div id="ach-list" class="achlist"></div>
+    <button id="btn-achclose" class="mbtn primary">ISARA</button>
   </div>
 </div>
 
@@ -190,6 +222,10 @@
 <script src="js/traffic.js"></script>
 <script src="js/police.js"></script>
 <script src="js/world.js"></script>
+<script src="js/weapons.js"></script>
+<script src="js/economy.js"></script>
+<script src="js/jobs.js"></script>
+<script src="js/save.js"></script>
 <script src="js/missions.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/game.js"></script>

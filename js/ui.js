@@ -11,6 +11,17 @@ const ICONS = {
 
 // what's new in each version (newest first)
 const CHANGES = [
+  { v: '1.3', title: 'Negosyo, Trabaho at Save', date: 'Nobyembre 2026', items: [
+    '💾 <b>Save at Load</b> — 3 save slot + Auto-save. Pwede kang umalis anumang oras; nase-save ang lugar, sasakyan at misyon mo',
+    '🔨 <b>Armas</b> sa Hardware: 🏏 pamalo, 🎯 tirador (auto-aim) at 💦 water gun. Q / 🔄 para magpalit',
+    '🔑 <b>Ari-arian</b> — bumili ng Sari-sari, Carinderia, Talyer, Beach Resort at Condo. May kita tuwing 6 AM at safehouse',
+    '🅿️ <b>Garahe</b> — mag-imbak ng hanggang 6 na sasakyan',
+    '🎨 <b>Pintura upgrades</b> — kulay, makina, armor, sticker (apoy, araw, bulaklak...) at busina (kalabaw! tandang!)',
+    '🛵 <b>Food Rider</b>, 🚕 <b>Taxi</b>, 🛻 <b>Tow Truck</b>, 🚨 <b>Pulis Vigilante</b> — side jobs (J / 💼)',
+    '🏁 <b>Underground Race</b> sa Baywalk tuwing gabi — pumusta at manalo x2',
+    '🏆 <b>20 Tagumpay</b> at <b>% Kumpleto</b> — tingnan sa ☰ → MGA TAGUMPAY',
+    '🚔 Sa 5–6 na bituin, nagpapaputok na ang pulis ng rubber pellets',
+  ] },
   { v: '1.2', title: 'Buhay na Lungsod', date: 'Nobyembre 2026', items: [
     '🌅 <b>Araw at gabi</b> — umiikot na ang oras (orasan sa itaas). Maliwanag sa umaga, may takipsilim, at gabi na may ilaw ng poste',
     '🌧 <b>Tag-ulan</b> — ulan, kidlat at kulog. Madulas ang daan at mas mahirap kang makita ng pulis',
@@ -45,7 +56,7 @@ const UI = {
   talking: false, lines: [], lineT: 0, toasts: [], bigT: 0, last: {},
   init() {
     this.el = {};
-    for (const id of ['radio', 'tip', 'tip-title', 'tip-body', 'tb-radio', 'hud', 'objective', 'sidejob', 'stars', 'clues', 'wanted-note', 'money', 'vehname', 'minimap', 'hpbar', 'carbar', 'carbarwrap', 'speedo', 'kmh', 'arrest', 'arrestbar', 'prompt', 'subtitle', 'sub-name', 'sub-text', 'toasts', 'bigmsg', 'big-title', 'big-sub', 'touch', 'tb-b', 'tb-horn', 'tb-act'])
+    for (const id of ['weapon', 'tb-weap', 'tb-job', 'radio', 'tip', 'tip-title', 'tip-body', 'tb-radio', 'hud', 'objective', 'sidejob', 'stars', 'clues', 'wanted-note', 'money', 'vehname', 'minimap', 'hpbar', 'carbar', 'carbarwrap', 'speedo', 'kmh', 'arrest', 'arrestbar', 'prompt', 'subtitle', 'sub-name', 'sub-text', 'toasts', 'bigmsg', 'big-title', 'big-sub', 'touch', 'tb-b', 'tb-horn', 'tb-act'])
       this.el[id] = $(id);
     this.el.stars.innerHTML = STAR_SVG.repeat(6);
     this.starEls = [...this.el.stars.querySelectorAll('.star')];
@@ -54,7 +65,14 @@ const UI = {
     this.mctx = this.el.minimap.getContext('2d');
     this.el.subtitle.addEventListener('pointerdown', (e) => { e.stopPropagation(); this.nextLine(); });
     // menu buttons
-    $('btn-new').onclick = () => { AUD.init(); AUD.resume(); if (G.hasSave() && !confirm('Magsisimula ng bagong laro. Mabubura ang lumang save. Sigurado ka?')) return; G.newGame(); };
+    $('btn-new').onclick = () => { AUD.init(); AUD.resume(); if (G.hasSave() && !confirm('Magsisimula ng bagong laro. Papalitan ang Auto-save (ligtas ang Slot 1–3). Sigurado ka?')) return; G.newGame(); };
+    $('btn-load').onclick = () => { AUD.init(); SAVE.open('load'); };
+    $('btn-psave').onclick = () => SAVE.open('save');
+    $('btn-pload').onclick = () => SAVE.open('load');
+    $('btn-slotclose').onclick = () => this.hide('slots');
+    $('btn-pach').onclick = () => ACH.open();
+    $('btn-achclose').onclick = () => this.hide('achievements');
+    $('btn-shopclose').onclick = () => { this.hide('shop'); if ($('pause').classList.contains('hidden')) G.paused = false; };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };
     $('btn-howto').onclick = () => this.show('help');
     $('btn-version').onclick = () => this.openWhatsNew();
@@ -89,7 +107,7 @@ const UI = {
     $('btn-mapclose').onclick = () => { this.hide('mapscreen'); if (!$('pause').classList.contains('hidden')) return; G.paused = false; };
     $('btn-mclose').onclick = () => this.hide('missions');
     $('btn-endclose').onclick = () => { this.hide('ending'); G.paused = false; };
-    if (G.hasSave()) $('btn-continue').classList.remove('hidden');
+    if (G.hasSave()) { $('btn-continue').classList.remove('hidden'); $('btn-load').classList.remove('hidden'); }
     INPUT.init();
   },
   openWhatsNew(v) {
@@ -210,7 +228,9 @@ const UI = {
     const obj = MS.objText();
     this.el.objective.classList.toggle('hidden', !obj);
     this.set('obj', this.el.objective, 'textContent', obj);
-    let side = PASADA.objText();
+    this.set('weap', this.el.weapon, 'textContent', v ? '' : ARMS.label());
+    let side = JOBS.objText() || PASADA.objText();
+    if (!side && JOBS.avail()) side = `💼 Pindutin ang ${INPUT.touch ? '💼' : 'J'} para sa side job: ${JOB_NAMES[JOBS.avail()]}`;
     if (!MS.active && !side && MS.idx < MISSIONS.length) side = `Susunod na misyon: ${MISSIONS[MS.idx].title} — puntahan si ${CHARS[MISSIONS[MS.idx].giver].name} (${CHARS[MISSIONS[MS.idx].giver].name[0]} sa mapa)`;
     this.el.sidejob.classList.toggle('hidden', !side);
     this.set('side', this.el.sidejob, 'textContent', side);
@@ -223,9 +243,12 @@ const UI = {
     if (pr) this.set('prompt', this.el.prompt, 'innerHTML', (INPUT.touch ? '' : '<kbd>E</kbd>') + pr);
     // touch button labels
     if (INPUT.touch) {
-      this.set('tbb', this.el['tb-b'], 'textContent', v ? 'PRENO' : 'SUNTOK');
+      this.set('tbb', this.el['tb-b'], 'textContent', v ? 'PRENO' : ({ fists: 'SUNTOK', pamalo: 'PALO', tirador: 'TIRA', watergun: 'BASA' })[P.weapon] || 'SUNTOK');
       this.el['tb-horn'].classList.toggle('hidden', !v);
       this.el['tb-radio'].classList.toggle('hidden', !v);
+      const owned = Object.keys(P.weapons || {}).length;
+      this.el['tb-weap'].classList.toggle('hidden', !!v || owned < 2);
+      this.el['tb-job'].classList.toggle('hidden', !(JOBS.active || JOBS.avail()));
       this.set('tba', this.el['tb-act'], 'textContent', MS.canRetry() ? 'ULITIN' : pr ? (v && !G.shopNear ? 'BABA' : 'GAMIT') : v ? 'BABA' : 'SAKAY');
     }
     this.drawMinimap();
@@ -336,6 +359,7 @@ const UI = {
       ['MISYON', `${done} / ${MISSIONS.length}`], ['PERA', U.money(G.player.money)],
       ['GINTONG TSINELAS', `${G.tsinelas.size} / ${MAP.tsinelas.length}`], ['NABENTANG KOTSE', G.stats.sold],
       ['PASADA', G.stats.pasada], ['NAKATAKAS SA PULIS', G.stats.escapes],
+      ['ARI-ARIAN', `${ECON.owned.size} / ${PROPS.length}`], ['KUMPLETO', `${ACH.percent()}%`],
     ].map(([a, b]) => `<div><span>${a}</span>${b}</div>`).join('');
     const W = WANTED, cur = W.current();
     const card = (k, ic, label) => {
@@ -415,9 +439,11 @@ const INPUT = {
       b.addEventListener('pointerup', u); b.addEventListener('pointercancel', u);
     };
     btn('tb-act', () => G.action());
-    btn('tb-b', () => { this.bHeld = true; if (!G.player.vehicle) G.player.punch(); }, () => { this.bHeld = false; });
+    btn('tb-b', () => { this.bHeld = true; if (!G.player.vehicle) ARMS.attack(); }, () => { this.bHeld = false; });
     btn('tb-horn', () => G.horn());
     btn('tb-radio', () => MUSIC.nextStation());
+    btn('tb-weap', () => ARMS.cycle());
+    btn('tb-job', () => JOBS.toggle());
     // desktop click on canvas resumes audio
     addEventListener('pointerdown', () => { AUD.init(); AUD.resume(); });
   },
