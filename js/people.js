@@ -409,6 +409,16 @@ function drawPerson(g, p, now) {
     for (let k = 0; k < 6; k++) { const a = k * TAU / 6; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * 15, Math.sin(a) * 15); g.stroke(); }
     g.restore();
   }
+  // fiesta costumes
+  if (p.fiesta === 'dancer') {
+    g.save(); g.translate(p.x, p.y); g.rotate(p.a);
+    for (let k = -2; k <= 2; k++) { g.fillStyle = ['#e74c3c', '#f1c40f', '#27ae60', '#2e86c1', '#e84393'][k + 2]; g.beginPath(); g.ellipse(-8, k * 3.5, 6, 2, k * 0.3, 0, TAU); g.fill(); }
+    g.restore();
+  } else if (p.fiesta === 'band') {
+    g.save(); g.translate(p.x, p.y); g.rotate(p.a);
+    g.fillStyle = '#ecf0f1'; g.beginPath(); g.arc(9, 0, 6, 0, TAU); g.fill(); g.strokeStyle = '#c0392b'; g.lineWidth = 2; g.stroke();
+    g.restore();
+  }
   // armed gang member marker
   if (p.kind === 'goon' && !p.ko) {
     g.strokeStyle = p.hostile ? 'rgba(255,60,60,0.85)' : 'rgba(255,170,60,0.55)'; g.lineWidth = 2.5;

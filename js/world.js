@@ -1,7 +1,7 @@
 'use strict';
 // ===== Living city: day/night clock, weather & floods, street life =====
 const WORLD = {
-  clock: 19 * 60, rain: 0, rainTarget: 0, weatherT: 150, flood: 0, lightning: 0, thunderT: -1, npcT: 0,
+  clock: 19 * 60, day: 1, rain: 0, rainTarget: 0, weatherT: 150, flood: 0, lightning: 0, thunderT: -1, npcT: 0,
   drops: [], vendors: [], kids: [], devotees: [], enforcers: [], islanders: [],
   reset(clock) {
     this.clock = clock === undefined ? 19 * 60 : clock;
@@ -32,6 +32,7 @@ const WORLD = {
     const prev = this.clock;
     this.clock = (this.clock + dt * 2) % 1440;           // 1 real second = 2 game minutes (12-min day)
     if (prev < 360 && this.clock >= 360) ECON.payday();
+    if (this.clock < prev) this.day++;
     // weather
     this.weatherT -= dt * 2;
     if (this.weatherT <= 0) {
@@ -228,7 +229,7 @@ const WORLD = {
   },
   drawFloods(g, inV, now) {
     if (this.flood < 0.03) return;
-    for (const f of MAP.floods) {
+    for (const f of TYPHOON.flooded() ? MAP.floods.concat(MAP.tfloods) : MAP.floods) {
       if (!inV(f.x + f.w / 2, f.y + f.h / 2, Math.max(f.w, f.h))) continue;
       g.fillStyle = `rgba(70,105,140,${0.5 * this.flood})`;
       g.fillRect(f.x, f.y, f.w, f.h);
@@ -268,11 +269,13 @@ const WORLD = {
     const dk = this.dusk();
     if (dk > 0) { g.fillStyle = `rgba(255,115,40,${dk * 0.14})`; g.fillRect(x0, y0, w, h); }
     if (this.rain > 0.01) { g.fillStyle = `rgba(12,20,34,${this.rain * 0.22})`; g.fillRect(x0, y0, w, h); }
+    TYPHOON.drawOverlay(g, x0, y0, w, h);
   },
   drawRain(g, W, H, dpr) {
     if (this.drops.length) {
       g.strokeStyle = 'rgba(180,200,230,0.35)'; g.lineWidth = 1.2 * dpr; g.beginPath();
-      for (const d of this.drops) { const x = d.x * W, y = d.y * H; g.moveTo(x, y); g.lineTo(x - 5 * dpr * d.s, y + 22 * dpr * d.s); }
+      const sl = TYPHOON.wind()[0] * 0.09;
+      for (const d of this.drops) { const x = d.x * W, y = d.y * H; g.moveTo(x, y); g.lineTo(x + (sl - 5) * dpr * d.s, y + 22 * dpr * d.s); }
       g.stroke();
     }
     if (this.lightning > 0) { g.fillStyle = `rgba(230,240,255,${this.lightning * 0.45})`; g.fillRect(0, 0, W, H); }

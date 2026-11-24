@@ -73,7 +73,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); G.flags = {}; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = [];
+    PROV.reset(); G.flags = {}; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -409,6 +409,8 @@ const G = {
     this.collidePeople();
     WANTED.update(dt);
     WORLD.update(dt);
+    TYPHOON.update(dt);
+    FIESTA.update(dt);
     // fields
     this.fieldT -= dt;
     if (WANTED.stars > 0 && this.fieldT <= 0) {
@@ -693,6 +695,8 @@ const G = {
     ARMS.draw(g, inV);
     GUNS.draw(g, inV);
     JOBS.drawExtra(g, inV, now);
+    TYPHOON.draw(g, inV);
+    FIESTA.draw(g, inV, now);
     // particles
     for (const p of this.particles) {
       if (!inV(p.x, p.y, 40)) continue;
@@ -715,6 +719,7 @@ const G = {
     for (const l of MAP.lamps) if (inV(l.x, l.y, 130)) g.drawImage(S.lamp, l.x - 120, l.y - 120, 240, 240);
     g.globalAlpha = 1;
     for (const v of this.vehicles) if (inV(v.x, v.y, 200)) drawVehicleLights(g, v, now, S);
+    FIESTA.drawLights(g, inV, S);
     for (const p of this.particles) {
       if ((p.type === 'fire' || p.type === 'boom') && inV(p.x, p.y, 60)) { const t = p.life / p.max; g.globalAlpha = t; g.drawImage(S.fire, p.x - p.size * 1.5, p.y - p.size * 1.5, p.size * 3, p.size * 3); }
     }

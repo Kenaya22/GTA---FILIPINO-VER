@@ -300,6 +300,9 @@ const UI = {
     // money + clock
     this.set('money', this.el.money, 'textContent', U.money(P.money));
     this.set('clock', $('clock'), 'textContent', `${WORLD.icon()} ${WORLD.timeStr()}`);
+    const evt = TYPHOON.banner() || FIESTA.banner();
+    $('event').classList.toggle('hidden', !evt);
+    this.set('evt', $('event'), 'textContent', evt);
     this.el.hpbar.style.width = Math.max(0, P.hp) + '%';
     this.el.hpbar.style.background = P.hp < 30 ? 'linear-gradient(90deg,#c0392b,#ff6b5a)' : '';
     const v = P.vehicle;

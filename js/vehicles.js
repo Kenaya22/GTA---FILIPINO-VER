@@ -25,6 +25,7 @@ const VT = {
   garbage: { name: 'Trak ng Basura', L: 98, W: 38, max: 380, acc: 280, brake: 760, grip: 8, steer: 2.0, mass: 2.8, hp: 260, cruise: 180, value: 400, draw: 'garbage', color: '#2e7d32' },
   padyak: { name: 'Padyak', L: 44, W: 30, max: 210, acc: 260, brake: 700, grip: 9, steer: 3.4, mass: 0.45, hp: 50, cruise: 120, value: 60, draw: 'padyak', quiet: 1 },
   pickup: { name: 'Pickup', L: 72, W: 33, max: 560, acc: 470, brake: 900, grip: 9, steer: 2.6, mass: 1.45, hp: 160, cruise: 240, value: 650, draw: 'pickup' },
+  float: { name: 'Karosa', L: 90, W: 42, max: 140, acc: 120, brake: 500, grip: 9, steer: 2.0, mass: 6, hp: 9999, cruise: 55, value: 0, draw: 'float' },
   armored: { name: 'Armored Van', L: 84, W: 40, max: 440, acc: 340, brake: 800, grip: 8.5, steer: 2.2, mass: 3, hp: 600, cruise: 200, value: 0, draw: 'armored', armor: 2 },
 };
 const CAR_COLORS = ['#e8e8e8', '#c0392b', '#2e86c1', '#1c1f26', '#7f8c8d', '#d35400', '#27ae60', '#f1c40f', '#8e44ad', '#16a085', '#bdc3c7', '#a0522d', '#f28c28', '#5b6ee1'];
@@ -195,6 +196,7 @@ function drawVehicle(g, v, now) {
     case 'garbage': drawGarbage(g, v, col, hl, hw); break;
     case 'padyak': drawPadyak(g, v, col, hl, hw, now); break;
     case 'pickup': drawPickup(g, v, col, hl, hw); break;
+    case 'float': drawFloat(g, v, col, hl, hw, now); break;
   }
   if (v.upg) drawSticker(g, v, hl, hw);
   if (v.burnt) { g.fillStyle = 'rgba(0,0,0,0.45)'; U.rr(g, -hl, -hw, L, W, 6); g.fill(); }
@@ -432,6 +434,19 @@ function drawPickup(g, v, col, hl, hw) {
   // roll bar
   g.fillStyle = '#333'; g.fillRect(-hl * 0.2, -hw + 2, 3, hw * 2 - 4);
   lightsFrontBack(g, v, hl, hw);
+}
+function drawFloat(g, v, col, hl, hw, now) {
+  // parade float (karosa): flower-covered platform with a saint / fiesta queen
+  g.fillStyle = U.shade(col, -0.25); U.rr(g, -hl, -hw, hl * 2, hw * 2, 10); g.fill();
+  const fl = ['#ffffff', '#f1c40f', '#e84393', '#ff7675', '#55efc4'];
+  for (let k = 0; k < 26; k++) { const a = k / 26 * TAU; g.fillStyle = fl[k % 5]; g.beginPath(); g.arc(Math.cos(a) * (hl - 6), Math.sin(a) * (hw - 6), 5, 0, TAU); g.fill(); }
+  g.fillStyle = col; U.rr(g, -hl + 12, -hw + 10, hl * 2 - 24, hw * 2 - 20, 8); g.fill();
+  // arch + figure
+  g.strokeStyle = '#f1c40f'; g.lineWidth = 3; g.beginPath(); g.arc(-hl * 0.2, 0, hw * 0.62, -Math.PI * 0.5, Math.PI * 0.5); g.stroke();
+  g.fillStyle = v.fk === 1 ? '#f5e6c8' : '#8e44ad'; g.beginPath(); g.arc(-hl * 0.15, 0, 8, 0, TAU); g.fill();
+  g.fillStyle = '#f1c40f'; g.beginPath(); g.arc(-hl * 0.15, 0, 4, 0, TAU); g.fill();
+  // banderitas
+  for (let k = 0; k < 8; k++) { g.fillStyle = JEEP_COLORS[k % JEEP_COLORS.length]; const x = -hl + 8 + k * (hl * 2 - 16) / 7; g.beginPath(); g.moveTo(x - 4, -hw); g.lineTo(x + 4, -hw); g.lineTo(x, -hw + 7 + Math.sin(now * 6 + k) * 1.5); g.fill(); }
 }
 function drawBangka(g, v, col, hl, hw) {
   // outriggers

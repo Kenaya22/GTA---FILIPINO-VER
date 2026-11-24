@@ -43,6 +43,7 @@ const JOBS = {
   avail() {
     const P = G.player, v = P.vehicle;
     if (this.active || MS.active || !v || v.dead) return null;
+    if (TYPHOON.storm() && RESCUE_CAP[v.type]) return 'rescue';
     if (v.type === 'taxi') return 'taxi';
     if (v.type === 'tow') return 'tow';
     if (v.type === 'ambulance') return 'medic';

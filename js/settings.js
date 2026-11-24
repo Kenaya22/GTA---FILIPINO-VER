@@ -61,6 +61,7 @@ const TIPS = {
   daynight: () => ['🌅 Araw at Gabi', 'Umiikot ang oras (tingnan ang orasan sa itaas). May rush hour (7–9 AM, 5–7 PM) na mas trapik, at iba-iba ang tao sa kalye depende sa oras.'],
   save: () => ['💾 Save at Load', 'Awtomatikong nase-save ang laro kapag umalis ka. Pwede ring mag-save sa 3 slot: ☰ → I-SAVE. Ang mga ari-arian mo ay safehouse din.'],
   jobs: () => ['💼 Side Jobs', 'Sa taxi, police car, ambulansya (🚑), fire truck (🚒), trak ng basura (🗑), delivery motor (🛵 Rider Hub) o tow truck (🛻 Impound), pindutin ang J / 💼 para kumita. Sa gabi, may 🏁 underground race sa Baywalk.'],
+  typhoon: () => ['🌀 Bagyo!', 'Itutulak ng hangin ang sasakyan mo at may lumilipad na yero — ingat! Maraming kalye ang baha. Sumakay sa jeepney, van, bus o bangka at pindutin ang J / 💼 para sa 🌀 Rescue: dalhin ang mga tao sa ⛺ Evacuation Center.'],
   guns: () => ['🔫 Baril', 'Kaliwang click / Space para bumaril (hawakan para sa SMG at Riple), G para mag-reload. Sa sasakyan: click, X o 🔫 para sa drive-by (Pistola o SMG). Sa phone, kusang tumututok. Mag-ingat — naririnig ng pulis ang putok!'],
   kuta: () => ['☠️ Kuta ng Sindikato', 'May mga kuta ng armadong sindikato (☠️ sa mapa). Talunin silang lahat para sa ₱3,000 — hindi krimen ang labanan sila, pero huwag tamaan ang inosente!'],
   weapons: () => ['🔨 Armas', 'Sa Hardware may pamalo, tirador at water gun. Q / 🔄 para magpalit. Krimen pa rin ang pagtama sa tao!'],

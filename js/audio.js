@@ -47,6 +47,12 @@ const AUD = {
       const rf = c.createBiquadFilter(); rf.type = 'highpass'; rf.frequency.value = 1200;
       this.rainG = c.createGain(); this.rainG.gain.value = 0;
       rn.connect(rf); rf.connect(this.rainG); this.rainG.connect(this.master); rn.start();
+      // wind loop (typhoon): low band-passed noise with a slow howl
+      const wn = c.createBufferSource(); wn.buffer = buf; wn.loop = true;
+      const wf = c.createBiquadFilter(); wf.type = 'bandpass'; wf.frequency.value = 420; wf.Q.value = 1.6;
+      const wl = c.createOscillator(), wlg = c.createGain(); wl.frequency.value = 0.18; wlg.gain.value = 220; wl.connect(wlg); wlg.connect(wf.frequency); wl.start();
+      this.windG = c.createGain(); this.windG.gain.value = 0;
+      wn.connect(wf); wf.connect(this.windG); this.windG.connect(this.master); wn.start();
     } catch (e) { this.ctx = null; }
   },
   resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
@@ -74,6 +80,7 @@ const AUD = {
     if (!this.ctx) return;
     this.heliG.gain.setTargetAtTime(vol * 0.5, this.t(), 0.3);
   },
+  windLoop(v) { if (this.windG) this.windG.gain.setTargetAtTime(v * 0.32, this.t(), 0.6); },
   rainLoop(v) { if (this.rainG) this.rainG.gain.setTargetAtTime(v * 0.14, this.t(), 0.5); },
   thunder() { this.noise(2.8, 0.55, 160); this.tone(42, 1.6, 'sine', 0.35, 28); },
   call(type) {

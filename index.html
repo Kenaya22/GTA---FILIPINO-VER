@@ -40,6 +40,7 @@
   <div id="topright">
     <div id="money">₱0</div>
     <div id="clock"></div>
+    <div id="event" class="hidden"></div>
     <div id="vehname"></div>
     <button id="btn-map" class="iconbtn" title="Mapa (M)">🗺</button>
     <button id="btn-pause" class="iconbtn" title="Pause (Esc)">☰</button>
@@ -261,6 +262,10 @@
       <button class="mbtn small" onclick="DEV.setTime(13)">☀️ Tanghali</button>
       <button class="mbtn small" onclick="DEV.setTime(21)">🌙 Gabi</button>
       <button class="mbtn small" onclick="DEV.rain()">🌧 Ulan on/off</button>
+      <button class="mbtn small" onclick="FIESTA.force.parade = !FIESTA.paradeTime(); UI.toast('🛠 Parada: ' + (FIESTA.force.parade ? 'ON' : 'OFF'))">🎉 Parada on/off</button>
+      <button class="mbtn small" onclick="FIESTA.force.pasko = !FIESTA.pasko(); UI.toast('🛠 Pasko: ' + (FIESTA.force.pasko ? 'ON' : 'OFF'))">🎄 Pasko on/off</button>
+      <button class="mbtn small" onclick="FIESTA.force.undas = !FIESTA.undas(); UI.toast('🛠 Undas: ' + (FIESTA.force.undas ? 'ON' : 'OFF'))">🕯 Undas on/off</button>
+      <button class="mbtn small" onclick="TYPHOON.s ? (TYPHOON.s.phase='after', TYPHOON.s.t=1, WORLD.rainTarget=0) : TYPHOON.start(true); UI.hide('devpanel'); G.paused=false">🌀 Bagyo on/off</button>
       <select id="dev-tp" onchange="DEV.teleport(this.value)"></select>
     </div>
     <div class="menurow" style="width:min(420px,90vw)"><button class="mbtn danger" onclick="DEV.lock()">🔒 I-LOCK</button><button class="mbtn primary" onclick="UI.hide('devpanel')">ISARA</button></div>
@@ -328,6 +333,7 @@
 <script src="js/guns.js"></script>
 <script src="js/economy.js"></script>
 <script src="js/jobs.js"></script>
+<script src="js/events.js"></script>
 <script src="js/save.js"></script>
 <script src="js/tutorial.js"></script>
 <script src="js/portraits.js"></script>

@@ -36,7 +36,7 @@ const SAVE = {
       m: MS.idx, active: MS.active ? MISSIONS.indexOf(MS.active) : -1,
       money: P.money, hp: Math.round(P.hp), look: P.look, pos: { x: Math.round(P.x), y: Math.round(P.y), a: P.a },
       veh: P.vehicle && !P.vehicle.dead && !P.vehicle.mission && !P.vehicle.isCop ? this.vehData(P.vehicle) : null,
-      clock: WORLD.clock, rain: WORLD.rainTarget,
+      clock: WORLD.clock, day: WORLD.day, rain: WORLD.rainTarget,
       ts: [...G.tsinelas], stats: G.stats, unlock: G.unlock,
       weapons: P.weapons, weapon: P.weapon, mags: P.mags, armor: Math.round(P.armor || 0),
       flags: G.flags, props: [...ECON.owned], garage: ECON.garage, ach: [...ACH.got], visited: [...ACH.visited], drove: [...ACH.drove],
@@ -61,6 +61,7 @@ const SAVE = {
     P.money = s.money || 0; P.hp = s.hp || 100;
     if (s.look) Object.assign(P.look, s.look);
     if (s.clock !== undefined) WORLD.clock = s.clock;
+    WORLD.day = s.day || 1;
     if (s.rain) { WORLD.rainTarget = s.rain; WORLD.rain = s.rain; }
     G.tsinelas = new Set(s.ts || []);
     G.stats = Object.assign({ sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 }, s.stats || {});

@@ -379,6 +379,14 @@ const MAP = {
   },
   makeFloods() {
     const list = [['v', 1, 0], ['h', 1, 1], ['v', 6, 0], ['h', 0, 6], ['v', 3, 7], ['h', 8, 2], ['h', 6, 4], ['v', 2, 2], ['h', 2, 6]];
+    // extra streets that only flood during a typhoon
+    this.tfloods = [];
+    for (const [ax, i, j] of [['v', 0, 5], ['h', 3, 0], ['v', 4, 1], ['h', 4, 3], ['v', 5, 5], ['h', 1, 7], ['v', 7, 3], ['h', 5, 8], ['v', 2, 6], ['h', 6, 6], ['v', 8, 1], ['h', 0, 2]]) {
+      if (ax === 'v' && (i >= NR || j >= NR - 1 || !this.vSeg[i][j])) continue;
+      if (ax === 'h' && (j >= NR || i >= NR - 1 || !this.hSeg[j][i])) continue;
+      if (ax === 'v') this.tfloods.push({ x: (this.rs(i) - 1) * T, y: (this.rsy(j) + RW) * T, w: (RW + 2) * T, h: (PER - RW) * T });
+      else this.tfloods.push({ x: (this.rs(i) + RW) * T, y: (this.rsy(j) - 1) * T, w: (PER - RW) * T, h: (RW + 2) * T });
+    }
     for (const [ax, i, j] of list) {
       if (ax === 'v' && !this.vSeg[i][j]) continue;
       if (ax === 'h' && !this.hSeg[j][i]) continue;
@@ -474,7 +482,11 @@ const MAP = {
     this.decor.push({ type: 'flags', x0: (tcx - 9) * T, y0: (tcy - 13.5) * T, x1: (tcx + 11) * T, y1: (tcy - 13.5) * T });
   },
   inProvince(x) { return x > (CITY_W - 2) * T; },
-  floodAt(x, y) { for (const f of this.floods) if (x > f.x && x < f.x + f.w && y > f.y && y < f.y + f.h) return f; return null; },
+  floodAt(x, y) {
+    for (const f of this.floods) if (x > f.x && x < f.x + f.w && y > f.y && y < f.y + f.h) return f;
+    if (TYPHOON.flooded()) for (const f of this.tfloods) if (x > f.x && x < f.x + f.w && y > f.y && y < f.y + f.h) return f;
+    return null;
+  },
 
   makePOIs() {
     const P = this.pois;
@@ -505,6 +517,7 @@ const MAP = {
     add('hardware2', this.door(5, 5, 'E'), 'weapon', 'Hardware ni Mang Tonyo', '🔨');
     add('gunshop1', this.door(2, 2, 'N'), 'gunshop', 'Armas ni Kabo', '🔫');
     add('gunshop2', this.door(6, 5, 'S'), 'gunshop', 'Armas ni Kabo', '🔫');
+    add('evac', this.door(6, 1, 'S'), 'evac', 'Evacuation Center', '⛺');
     // depots: a parking spot reserved for city vehicles (they respawn there)
     const depot = (key, pt, label, icon) => {
       let best = null, bd = 1e18;
