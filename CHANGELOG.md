@@ -1,5 +1,20 @@
 # Changelog — Hari ng Kalsada
 
+## v1.7: Baril, Bagyo at Pista / Guns, Typhoons & Fiestas (2026-11-24)
+- 🔫 **Guns**: Pistola, Shotgun, SMG (auto), Riple (auto) and Granada. Magazines, reserve ammo, reload (`G`), tracers, muzzle flash and shell casings. Desktop: aim with the mouse, click / `X` to fire (hold for automatics). Touch: the fire button auto-aims at the nearest threat
+- 🚗 **Drive-by**: fire the Pistola or SMG from any vehicle (mouse, `X`, or the new 🔫 touch button)
+- 🦺 **Bulletproof vest** (absorbs 70% of damage, blue HUD bar) and **🔫 Armas ni Kabo** gun shops (2 locations, open after Mission 2) with damage/rate/range stats
+- 🚓 Police notice **gunfire within earshot**. At high stars cops fire **real bullets** instead of rubber pellets (Normal 5★, Mahirap 4★, never on Madali)
+- ☠️ **3 Kuta ng Sindikato** (gang hideouts) with armed goons. Fighting them isn't a crime; clear one for ₱3,000. 🥫 **Shooting range** mini-game at the gun shop
+- 🚑 **5 new vehicles**: Ambulansya, Fire Truck, Trak ng Basura, Padyak (pedicab) and Pickup. Emergency vehicles use sirens in traffic; press `H` to toggle your own siren. Depots respawn them
+- 💼 **New side jobs**: 🚑 Paramedic (patients to the hospital), 🚒 Bumbero (park near the fire and the hose sprays automatically), 🗑 Basurero (garbage route to the dump)
+- 🌀 **Typhoons**: a PAGASA-style warning, then a storm with wind that pushes cars and people, flying yero and branches, heavy rain, lightning and **citywide flooding** (12 extra streets). 🛟 **Rescue** job: carry stranded people to the ⛺ Evacuation Center in a jeepney, van, bus or bangka
+- 🎉 **Pista sa Tondo** parade every third day at 4–7 PM (floats, a marching band, dancers and crowds; walk with the parade for tips). 🎄 **Parols** on lamp posts during the "ber" months; 🕯 **Undas** candles around the church (Oct 28 – Nov 2)
+- 🎤 **Videoke** rhythm game (3 original songs with lyrics, scored 0–100 like a real machine) and 🏀 **3-Point Shootout** at basketball courts
+- 👗 **Wardrobe**: the Ukay-Ukay is now a shop where you choose. 8 new outfits (Filipiniana terno, Gilas jersey, camo, flannel...) and 7 accessories (salakot, shades, bandana, face mask, headphones, gold chain, bimpo). Owned items are free to re-wear, and head accessories change your **face** clue for the police
+- 📷 **Photo Mode** (`O` or the pause menu): freeze time, hide the HUD, pan/zoom, 6 filters, optional frame, save as PNG
+- 🏆 **15 new achievements** (38 total); a day counter; typhoon/fiesta toggles in Developer Mode
+
 ## v1.6: Polish & Release (2026-11-24)
 - 🌐 **English language option** (home page 🌐 button or Settings). All dialogue, missions, menus, tips and the tutorial are translated
 - 🖼 **Character portraits** in every dialogue box

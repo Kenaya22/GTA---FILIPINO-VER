@@ -11,6 +11,20 @@ const ICONS = {
 
 // what's new in each version (newest first)
 const CHANGES = [
+  { v: '1.7', title: 'Baril, Bagyo at Pista', date: 'Nobyembre 2026', items: [
+    '🔫 <b>Mga baril</b>: Pistola, Shotgun, SMG, Riple at Granada — may bala, reload, tracer at <b>drive-by</b>. Sa PC: tumutok gamit ang mouse',
+    '🦺 <b>Bulletproof vest</b> (asul na bar) at <b>🔫 Armas ni Kabo</b> — 2 tindahan ng baril na may stats ng bawat armas',
+    '☠️ <b>3 Kuta ng Sindikato</b> na may armadong kalaban — linisin para sa ₱3,000 · 🥫 <b>Shooting range</b>',
+    '🚓 Sa mataas na bituin, <b>totoong baril</b> na ang gamit ng pulis (depende sa hirap)',
+    '🚑 <b>Bagong sasakyan</b>: Ambulansya, Fire Truck, Trak ng Basura, Padyak at Pickup — may sirena (H)',
+    '💼 <b>Bagong side jobs</b>: 🚑 Paramedic, 🚒 Bumbero (patayin ang sunog), 🗑 Basurero',
+    '🌀 <b>BAGYO!</b> — hangin na nagtutulak ng sasakyan, lumilipad na yero, baha sa buong lungsod at 🛟 <b>Rescue</b> papuntang ⛺ Evacuation Center',
+    '🎉 <b>Pista sa Tondo</b> na may parada, banda at karosa · 🎄 <b>Parol</b> tuwing "ber months" · 🕯 <b>Undas</b>',
+    '🎤 <b>Videoke</b> (rhythm game, 3 kanta) at 🏀 <b>3-Point Shootout</b> sa mga basketball court',
+    '👗 <b>Ukay-Ukay na may pagpipilian</b>: 8 bagong damit at 7 aksesorya (salakot, shades, bandana...) — ang nasa ulo ay nagbabago ng "mukha" mo para sa pulis',
+    '📷 <b>Photo Mode</b> (O o ☰) — may filters, zoom at frame; i-save bilang larawan',
+    '🏆 <b>15 bagong tagumpay</b>',
+  ] },
   { v: '1.6', title: 'Polish at Release', date: 'Nobyembre 2026', items: [
     '🌐 <b>English</b> — pwede nang laruin sa English (🌐 sa home page o sa Settings)',
     '🖼 <b>Mukha ng mga tauhan</b> sa bawat usapan — si Nonoy, Tito Boy, Lola Isyang, Don Severo at iba pa',

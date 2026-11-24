@@ -412,3 +412,7 @@ EXTRA_T = [
  ("{0} sasakyan", "{0} vehicles"),
  ("Hirap: {0} · Pagmamaneho: {1}", "Difficulty: {0} · Driving: {1}"),
 ]
+
+from en_v17 import EXTRA17, EXTRA_T17
+EXTRA.update(EXTRA17)
+EXTRA_T += EXTRA_T17

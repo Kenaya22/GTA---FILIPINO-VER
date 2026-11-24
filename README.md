@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila — v1.6
+# 👑 HARI NG KALSADA: Maynila — v1.7
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -19,6 +19,12 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 ## 📲 Install it like an app
 Open the game link on your phone and tap **📲 I-INSTALL ANG APP** on the home page (Android/Chrome), or **Share → Add to Home Screen** (iPhone). It opens fullscreen and works without internet. Back up your saves anytime: ☰ → I-SAVE → **📤 I-EXPORT**.
 
+## 🔫 Guns, typhoons & fiestas (v1.7)
+* **Guns** at **🔫 Armas ni Kabo**: pistol, shotgun, SMG, rifle, grenades and a bulletproof vest. Aim with the mouse on PC (auto-aim on touch) and do **drive-bys**. Clear 3 **☠️ gang hideouts**.
+* **5 new vehicles** (ambulance, fire truck, garbage truck, padyak, pickup) and jobs: **Paramedic, Bumbero, Basurero**.
+* **Typhoons** with wind, flying debris and citywide floods, plus a **Rescue** job. The **Tondo fiesta parade**, **parols** in the "ber" months and **Undas** candles.
+* Mini-games: **Videoke**, **3-Point Shootout** and a **shooting range**. A **wardrobe** with accessories, and **Photo Mode**.
+
 ## 🌾 Chapter 2: Probinsya (v1.5)
 After the Manila story, drive the highway east to **San Isidro** and help Lola Isyang against the land-grabbing **Don Severo**. 6 missions, a stealth mission, and a **choice with two endings**.
 
@@ -32,7 +38,9 @@ Point where you want to go (arrow keys / WASD or the joystick) and the car steer
 | Run | Shift | Push the joystick all the way |
 | Enter / exit / use shop | E or F | **SAKAY / BABA / GAMIT** |
 | Punch / handbrake | Space | **SUNTOK / PRENO** |
-| Horn | H | **BUSINA** |
+| Aim / shoot / reload | Mouse / Click or X / G | **BARIL** (auto-aim), **🔫** in a car |
+| Photo mode | O | ☰ → 📷 |
+| Horn / siren | H | **BUSINA** |
 | Switch weapon | Q | **🔄** |
 | Start/stop side job | J | **💼** |
 | Change radio station | R | **📻** |
@@ -87,7 +95,7 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | File | What |
 |---|---|
 | `js/map.js` | Procedural city, chunked rendering, path-finding flow fields |
-| `js/vehicles.js` | 16 vehicle types, arcade physics, damage, drawing |
+| `js/vehicles.js` | 22 vehicle types, arcade physics, damage, drawing |
 | `js/people.js` | Pedestrians, cops on foot, player |
 | `js/traffic.js` | Lane-following traffic AI, spawning |
 | `js/police.js` | 6-star wanted system, suspect profile, cop AI, helicopter, roadblocks |
@@ -98,9 +106,13 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/music.js` | Music engine: 6 songs, radio stations, DJ lines |
 | `js/settings.js` | Settings, difficulty, tutorial tips |
 | `js/save.js` | Save slots, autosave, load |
-| `js/weapons.js` | Weapons, projectiles, hardware shop |
+| `js/weapons.js` | Melee weapons, projectiles, hardware shop |
+| `js/guns.js` | Guns, grenades, armor, gun shop, gang hideouts, shooting range |
+| `js/events.js` | Typhoons + rescue job, fiesta parade, Pasko, Undas |
+| `js/minigames.js` | Videoke and 3-point shootout |
+| `js/wardrobe.js` | Wardrobe/accessories and photo mode |
 | `js/economy.js` | Properties, garage, car customization, achievements |
-| `js/jobs.js` | Side jobs: rider, taxi, tow, vigilante, race |
+| `js/jobs.js` | Side jobs: rider, taxi, tow, vigilante, race, paramedic, bumbero, basurero |
 | `js/i18n.js`, `js/lang_en.js` | English language option |
 | `js/portraits.js` | Character portraits |
 | `js/pwa.js`, `sw.js`, `manifest.json` | Installable offline app |
