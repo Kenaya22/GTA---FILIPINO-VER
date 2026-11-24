@@ -20,6 +20,11 @@ const VT = {
   policeboat: { name: 'Police Boat', L: 72, W: 26, max: 470, acc: 360, brake: 320, grip: 2.4, steer: 2.0, mass: 1.6, hp: 180, cruise: 250, value: 600, draw: 'pboat', boat: 1, cop: 1 },
   kuliglig: { name: 'Kuliglig', L: 70, W: 26, max: 280, acc: 300, brake: 700, grip: 9, steer: 2.6, mass: 1.2, hp: 140, cruise: 160, value: 150, draw: 'kuliglig' },
   tow: { name: 'Tow Truck', L: 92, W: 36, max: 450, acc: 360, brake: 850, grip: 8.5, steer: 2.2, mass: 2.4, hp: 220, cruise: 200, value: 700, draw: 'tow' },
+  ambulance: { name: 'Ambulansya', L: 72, W: 33, max: 540, acc: 450, brake: 900, grip: 9, steer: 2.6, mass: 1.6, hp: 170, cruise: 240, value: 600, draw: 'ambulance', emerg: 1, color: '#f4f4f0' },
+  firetruck: { name: 'Fire Truck', L: 112, W: 40, max: 440, acc: 320, brake: 780, grip: 8.5, steer: 2.0, mass: 3.2, hp: 320, cruise: 210, value: 900, draw: 'fire', emerg: 1, color: '#c62828' },
+  garbage: { name: 'Trak ng Basura', L: 98, W: 38, max: 380, acc: 280, brake: 760, grip: 8, steer: 2.0, mass: 2.8, hp: 260, cruise: 180, value: 400, draw: 'garbage', color: '#2e7d32' },
+  padyak: { name: 'Padyak', L: 44, W: 30, max: 210, acc: 260, brake: 700, grip: 9, steer: 3.4, mass: 0.45, hp: 50, cruise: 120, value: 60, draw: 'padyak', quiet: 1 },
+  pickup: { name: 'Pickup', L: 72, W: 33, max: 560, acc: 470, brake: 900, grip: 9, steer: 2.6, mass: 1.45, hp: 160, cruise: 240, value: 650, draw: 'pickup' },
   armored: { name: 'Armored Van', L: 84, W: 40, max: 440, acc: 340, brake: 800, grip: 8.5, steer: 2.2, mass: 3, hp: 600, cruise: 200, value: 0, draw: 'armored', armor: 2 },
 };
 const CAR_COLORS = ['#e8e8e8', '#c0392b', '#2e86c1', '#1c1f26', '#7f8c8d', '#d35400', '#27ae60', '#f1c40f', '#8e44ad', '#16a085', '#bdc3c7', '#a0522d', '#f28c28', '#5b6ee1'];
@@ -185,6 +190,11 @@ function drawVehicle(g, v, now) {
     case 'tow': drawTow(g, v, col, hl, hw, now); break;
     case 'kuliglig': drawKuliglig(g, v, col, hl, hw); break;
     case 'pboat': drawPBoat(g, v, hl, hw, now); break;
+    case 'ambulance': drawAmbulance(g, v, col, hl, hw, now); break;
+    case 'fire': drawFire(g, v, col, hl, hw, now); break;
+    case 'garbage': drawGarbage(g, v, col, hl, hw); break;
+    case 'padyak': drawPadyak(g, v, col, hl, hw, now); break;
+    case 'pickup': drawPickup(g, v, col, hl, hw); break;
   }
   if (v.upg) drawSticker(g, v, hl, hw);
   if (v.burnt) { g.fillStyle = 'rgba(0,0,0,0.45)'; U.rr(g, -hl, -hw, L, W, 6); g.fill(); }
@@ -351,6 +361,76 @@ function drawTow(g, v, col, hl, hw, now) {
   g.fillStyle = '#c0392b'; g.fillRect(-hl * 0.6, -3, hl * 0.8, 6);
   g.fillStyle = '#222'; g.fillRect(-hl - 3, -4, 6, 8);
   const ph = Math.floor(now * 4) % 2; g.fillStyle = ph ? '#ffb300' : '#7a5200'; g.fillRect(hl * 0.5, -hw + 2, 5, 5); g.fillRect(hl * 0.5, hw - 7, 5, 5);
+  lightsFrontBack(g, v, hl, hw);
+}
+function emergBar(g, v, x, hw, now, c1, c2) {
+  const on = v.siren && !v.dead, ph = Math.floor(now * 8) % 2;
+  g.fillStyle = '#222'; g.fillRect(x - 3, -hw + 3, 7, hw * 2 - 6);
+  g.fillStyle = on && ph ? c1 : U.shade(c1, -0.5); g.fillRect(x - 2, -hw + 4, 5, hw - 5);
+  g.fillStyle = on && !ph ? c2 : U.shade(c2, -0.5); g.fillRect(x - 2, 1, 5, hw - 5);
+}
+function drawAmbulance(g, v, col, hl, hw, now) {
+  g.fillStyle = col; U.rr(g, -hl, -hw, hl * 2, hw * 2, 6); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.3)'; g.lineWidth = 1.5; g.stroke();
+  g.fillStyle = '#18202d'; g.fillRect(hl * 0.6, -hw + 3, hl * 0.2, hw * 2 - 6);
+  g.fillStyle = v.burnt ? '#2a2826' : '#d32f2f'; g.fillRect(-hl, -hw, hl * 1.6, 4); g.fillRect(-hl, hw - 4, hl * 1.6, 4);
+  g.fillStyle = U.shade(col, -0.04); U.rr(g, -hl + 3, -hw + 5, hl * 1.5, hw * 2 - 10, 3); g.fill();
+  if (!v.burnt) { g.fillStyle = '#d32f2f'; g.fillRect(-hl * 0.42, -9, 7, 18); g.fillRect(-hl * 0.42 - 5.5, -3.5, 18, 7); }
+  emergBar(g, v, hl * 0.45, hw, now, '#ff3030', '#ffffff');
+  lightsFrontBack(g, v, hl, hw);
+}
+function drawFire(g, v, col, hl, hw, now) {
+  g.fillStyle = col; U.rr(g, -hl, -hw, hl * 2, hw * 2, 6); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.35)'; g.lineWidth = 1.5; g.stroke();
+  g.fillStyle = '#18202d'; g.fillRect(hl * 0.7, -hw + 4, hl * 0.14, hw * 2 - 8);
+  g.fillStyle = U.shade(col, -0.18); U.rr(g, -hl + 3, -hw + 3, hl * 1.55, hw * 2 - 6, 3); g.fill();
+  // ladder
+  g.fillStyle = '#c9ccd1'; g.fillRect(-hl + 6, -7, hl * 1.4, 3); g.fillRect(-hl + 6, 4, hl * 1.4, 3);
+  for (let x = -hl + 8; x < hl * 0.4 + 6; x += 7) g.fillRect(x, -5, 2, 10);
+  // hose reel + stripe
+  g.fillStyle = '#f2c14e'; g.fillRect(-hl, -hw, hl * 2, 3); g.fillRect(-hl, hw - 3, hl * 2, 3);
+  g.fillStyle = '#ddd'; g.beginPath(); g.arc(hl * 0.48, -hw + 9, 5, 0, TAU); g.fill();
+  emergBar(g, v, hl * 0.62, hw, now, '#ff3030', '#ff9800');
+  lightsFrontBack(g, v, hl, hw);
+}
+function drawGarbage(g, v, col, hl, hw) {
+  g.fillStyle = col; U.rr(g, hl * 0.42, -hw + 2, hl * 0.58, hw * 2 - 4, 5); g.fill();
+  g.fillStyle = '#18202d'; g.fillRect(hl * 0.5, -hw + 5, 6, hw * 2 - 10);
+  g.fillStyle = v.burnt ? '#2a2826' : '#5d6b4f'; U.rr(g, -hl, -hw, hl * 1.4, hw * 2, 6); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.3)'; g.lineWidth = 2;
+  for (let x = -hl + 12; x < hl * 0.35; x += 14) { g.beginPath(); g.moveTo(x, -hw + 3); g.lineTo(x, hw - 3); g.stroke(); }
+  // trash on top
+  if (!v.burnt) { const n = Math.min(8, v.cargo || 0); for (let k = 0; k < n; k++) { g.fillStyle = ['#2b2b2b', '#4a6fa5', '#7a5230', '#3c763d'][k % 4]; g.beginPath(); g.arc(-hl + 10 + (k % 4) * 14, (k < 4 ? -7 : 7), 5, 0, TAU); g.fill(); } }
+  g.fillStyle = '#ffb300'; g.fillRect(hl * 0.62, -hw + 3, 4, 4); g.fillRect(hl * 0.62, hw - 7, 4, 4);
+  lightsFrontBack(g, v, hl, hw);
+}
+function drawPadyak(g, v, col, hl, hw, now) {
+  // bicycle on the left, roofed sidecar on the right
+  g.fillStyle = '#222'; g.fillRect(-hl + 2, -hw + 4, hl * 2 - 6, 3);
+  g.beginPath(); g.arc(hl - 5, -hw + 5.5, 4, 0, TAU); g.arc(-hl + 5, -hw + 5.5, 4, 0, TAU); g.fill();
+  g.fillStyle = v.burnt ? '#2a2826' : col; U.rr(g, -hl + 4, -hw + 11, hl * 1.7, hw * 2 - 12, 4); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.3)'; g.lineWidth = 1.5; g.stroke();
+  g.fillStyle = v.burnt ? '#2a2826' : '#1f5e8c'; U.rr(g, -hl + 6, -hw + 13, hl * 1.2, hw * 2 - 16, 3); g.fill();
+  if (v.driver) {
+    const pedal = Math.sin(now * Math.min(14, v.speed / 12)) * 3;
+    g.fillStyle = v.driver === 'player' ? G.player.look.shirt : '#7a6a3e';
+    g.beginPath(); g.ellipse(-3, -hw + 6, 6, 7, 0, 0, TAU); g.fill();
+    g.fillStyle = '#1b1410'; g.beginPath(); g.arc(0, -hw + 6, 4.5, 0, TAU); g.fill();
+    g.fillStyle = '#333'; g.fillRect(2 + pedal, -hw + 1, 3, 2); g.fillRect(2 - pedal, -hw + 9, 3, 2);
+  }
+}
+function drawPickup(g, v, col, hl, hw) {
+  g.fillStyle = col; U.rr(g, -hl, -hw, hl * 2, hw * 2, 7); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.3)'; g.lineWidth = 1.5; g.stroke();
+  g.fillStyle = 'rgba(255,255,255,0.07)'; g.fillRect(hl * 0.5, -hw + 3, hl * 0.42, hw * 2 - 6);
+  g.fillStyle = '#18202d'; g.fillRect(hl * 0.3, -hw + 3, hl * 0.18, hw * 2 - 6);
+  g.fillStyle = U.shade(col, 0.1); U.rr(g, -hl * 0.12, -hw + 4, hl * 0.42, hw * 2 - 8, 4); g.fill();
+  // open bed
+  g.fillStyle = U.shade(col, -0.35); U.rr(g, -hl + 3, -hw + 4, hl * 0.82, hw * 2 - 8, 2); g.fill();
+  g.strokeStyle = U.shade(col, -0.15); g.lineWidth = 1; for (let y = -hw + 8; y < hw - 6; y += 5) { g.beginPath(); g.moveTo(-hl + 4, y); g.lineTo(-hl * 0.2, y); g.stroke(); }
+  if (v.cargo) { g.fillStyle = '#a0522d'; U.rr(g, -hl + 7, -8, 18, 16, 2); g.fill(); g.fillStyle = '#7fb800'; g.beginPath(); g.arc(-hl * 0.45, 0, 7, 0, TAU); g.fill(); }
+  // roll bar
+  g.fillStyle = '#333'; g.fillRect(-hl * 0.2, -hw + 2, 3, hw * 2 - 4);
   lightsFrontBack(g, v, hl, hw);
 }
 function drawBangka(g, v, col, hl, hw) {

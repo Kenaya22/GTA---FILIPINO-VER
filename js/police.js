@@ -104,7 +104,7 @@ const WANTED = {
     if (this.cctvT > 0) this.cctvT -= dt;
     this.updateHelis(dt);
     this.updateSpikes(dt);
-    if (this.stars === 0) { AUD.siren(0); return; }
+    if (this.stars === 0) { const pv = G.player.vehicle; AUD.siren(pv && pv.siren && pv.t.emerg ? 0.55 : 0); return; }
     if (P.downed) return;
     // who sees the player?
     this.seeT -= dt;

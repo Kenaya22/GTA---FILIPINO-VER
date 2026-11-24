@@ -370,7 +370,7 @@ const PROV = {
       const x0 = (MAP.rs(8) + RW + 2) * T, x1 = (MW - 3) * T;
       const x = U.rand(x0, x1);
       if (!TRAFFIC.inView(x, y, 120) && U.dist(x, y, P.x, P.y) < 1800 && !G.vehicles.some(o => U.d2(o.x, o.y, x, y) < 140 * 140)) {
-        const type = U.choice(['jeepney', 'tricycle', 'kuliglig', 'sedan', 'van', 'motor', 'suv']);
+        const type = U.choice(['jeepney', 'tricycle', 'kuliglig', 'sedan', 'van', 'motor', 'suv', 'pickup', 'pickup']);
         const v = new Vehicle(type, x, y, east ? 0 : Math.PI); v.driver = 'ai';
         v.ai = new PathDriver(v, [{ x: east ? x1 : x0, y }], { cruise: type === 'kuliglig' ? 150 : 230 });
         v.vx = Math.cos(v.a) * 150; v.vy = Math.sin(v.a) * 150;

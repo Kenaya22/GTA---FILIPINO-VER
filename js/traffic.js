@@ -162,14 +162,18 @@ const TRAFFIC = {
     const r = Math.random();
     const avenue = i === 4 || j === 4;
     if (r < 0.26) return 'jeepney';
-    if (r < 0.48) return U.choice(['sedan', 'sedan', 'hatch']);
-    if (r < 0.56) return 'taxi';
-    if (r < 0.67) return avenue ? 'sedan' : 'tricycle';
-    if (r < 0.75) return 'motor';
-    if (r < 0.83) return 'suv';
-    if (r < 0.90) return 'van';
-    if (r < 0.93) return avenue ? 'bus' : 'van';
-    if (r < 0.95) return 'sports';
+    if (r < 0.45) return U.choice(['sedan', 'sedan', 'hatch']);
+    if (r < 0.52) return 'taxi';
+    if (r < 0.63) return avenue ? 'sedan' : (Math.random() < 0.25 ? 'padyak' : 'tricycle');
+    if (r < 0.70) return 'motor';
+    if (r < 0.76) return 'suv';
+    if (r < 0.81) return 'van';
+    if (r < 0.85) return 'pickup';
+    if (r < 0.88) return avenue ? 'bus' : 'van';
+    if (r < 0.90) return 'sports';
+    if (r < 0.92) return 'garbage';
+    if (r < 0.94) return 'ambulance';
+    if (r < 0.95) return avenue ? 'firetruck' : 'pickup';
     return 'police';
   },
   inView(x, y, m) {
@@ -216,6 +220,7 @@ const TRAFFIC = {
       const v = new Vehicle(type, x, y, Math.atan2(D[1], D[0]));
       v.driver = 'ai';
       v.ai = new RoadDriver(v);
+      if (v.t.emerg && Math.random() < 0.45) { v.siren = true; v.ai.cruise *= 1.2; }
       const f = v.ai.cruise * 0.7; v.vx = Math.cos(v.a) * f; v.vy = Math.sin(v.a) * f;
       G.vehicles.push(v);
       return;
@@ -245,11 +250,12 @@ const TRAFFIC = {
   spawnParked() {
     for (const s of MAP.boatSpots) { const b = new Vehicle('bangka', s.x, s.y, s.a, { parked: true, color: U.choice(['#2e86c1', '#c0392b', '#16a085', '#f1c40f']) }); b.keep = true; G.vehicles.push(b); }
     for (const s of MAP.spots) {
+      if (s.depot) continue;
       let type;
       if (s.type === 'jeep') type = 'jeepney';
       else if (s.type === 'bus') type = 'bus';
       else if (s.type === 'police') type = 'police';
-      else { if (Math.random() < 0.35) continue; type = U.choice(['sedan', 'sedan', 'hatch', 'suv', 'van', 'taxi', 'sports', 'motor', 'tricycle']); }
+      else { if (Math.random() < 0.35) continue; type = U.choice(['sedan', 'sedan', 'hatch', 'suv', 'van', 'taxi', 'sports', 'motor', 'tricycle', 'pickup']); }
       if (type === 'sports' && Math.random() < 0.5) type = 'sedan';
       const v = new Vehicle(type, s.x, s.y, s.a, { parked: true });
       v.keep = true;

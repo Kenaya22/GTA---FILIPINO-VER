@@ -505,6 +505,17 @@ const MAP = {
     add('hardware2', this.door(5, 5, 'E'), 'weapon', 'Hardware ni Mang Tonyo', '🔨');
     add('gunshop1', this.door(2, 2, 'N'), 'gunshop', 'Armas ni Kabo', '🔫');
     add('gunshop2', this.door(6, 5, 'S'), 'gunshop', 'Armas ni Kabo', '🔫');
+    // depots: a parking spot reserved for city vehicles (they respawn there)
+    const depot = (key, pt, label, icon) => {
+      let best = null, bd = 1e18;
+      for (const s of this.spots) { if (s.type !== 'car' || s.depot) continue; const d = U.d2(s.x, s.y, pt.x, pt.y); if (d < bd) { bd = d; best = s; } }
+      if (!best) return;
+      for (const s of this.spots) if (U.d2(s.x, s.y, best.x, best.y) < 60 * 60) s.depot = true;
+      add(key, { x: best.x, y: best.y }, 'depot', label, icon, { vx: best.x, vy: best.y, va: best.a });
+    };
+    depot('depot_amb', this.pois.hospital, 'Ambulansya', '🚑');
+    depot('depot_fire', this.door(6, 2, 'S'), 'Istasyon ng Bumbero', '🚒');
+    depot('dump', this.door(4, 6, 'N'), 'Tambakan ng Basura', '🗑');
     add('prop_sari', this.door(1, 2, 'S'), 'property', 'Sari-sari Store (Ibinebenta)', '🔑');
     add('prop_carin', this.door(4, 2, 'S'), 'property', 'Carinderia (Ibinebenta)', '🔑');
     add('prop_talyer', this.door(4, 5, 'N'), 'property', 'Talyer sa Paco (Ibinebenta)', '🔑');

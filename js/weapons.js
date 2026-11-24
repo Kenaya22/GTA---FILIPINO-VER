@@ -107,6 +107,7 @@ const ARMS = {
         }
         continue;
       }
+      if (b.owner === 'hose') { if (Math.random() < 0.3) G.particle('splash', b.x, b.y); continue; }
       for (const p of G.peds) {
         if (p.state === 'down' || U.d2(b.x, b.y, p.x, p.y) > 13 * 13) continue;
         b.life = 0;

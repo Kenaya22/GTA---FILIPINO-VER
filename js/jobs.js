@@ -1,7 +1,7 @@
 'use strict';
 // ===== Side jobs: Food Rider, Taxi, Tow, Underground Race, Vigilante =====
 const EATERIES = ['Lutong Bahay ni Aling Bining', 'Inasal sa Kanto', 'Lugawan 24/7', 'Siomai House ni Ah Beng', 'Pares ni Mang Dado', 'Tapsihan sa Tondo', 'Bilao Pancit Express'];
-const JOB_NAMES = { rider: '🛵 Food Rider', taxi: '🚕 Taxi', tow: '🛻 Tow Truck', race: '🏁 Underground Race', vigil: '🚨 Pulis Vigilante' };
+const JOB_NAMES = { rider: '🛵 Food Rider', taxi: '🚕 Taxi', tow: '🛻 Tow Truck', race: '🏁 Underground Race', vigil: '🚨 Pulis Vigilante', medic: '🚑 Paramedic', fire: '🚒 Bumbero', garbage: '🗑 Basurero', rescue: '🌀 Rescue' };
 
 function racePath(startI, startJ, n) {
   const path = [[startI, startJ]], seen = new Set([startI + ',' + startJ]);
@@ -45,6 +45,9 @@ const JOBS = {
     if (this.active || MS.active || !v || v.dead) return null;
     if (v.type === 'taxi') return 'taxi';
     if (v.type === 'tow') return 'tow';
+    if (v.type === 'ambulance') return 'medic';
+    if (v.type === 'firetruck') return 'fire';
+    if (v.type === 'garbage') return 'garbage';
     if (v.rider) return 'rider';
     if (v.isCop && !v.t.boat) return 'vigil';
     return null;
@@ -68,6 +71,7 @@ const JOBS = {
   stop(msg, good) {
     const c = this.c || {};
     if (c.v && this.active === 'vigil') c.v.siren = false;
+    if (this.active === 'garbage') { MAP.trash = null; if (c.v) c.v.cargo = 0; }
     for (const k of ['waiting', 'riders']) if (c[k]) removePeds(c[k]);
     if (c.towed) { c.towed.towedBy = null; c.towed.remove = true; }
     if (c.target) { c.target.mission = false; c.target.criminal = false; }
@@ -282,3 +286,124 @@ const JOBS = {
     c.tgt = Object.assign({ cp: true, n: c.pi + 1 }, c.cps[c.pi]);
   },
 };
+
+// ===== v1.7 emergency & city jobs: Paramedic, Bumbero, Basurero + vehicle depots =====
+Object.assign(JOBS, {
+  // ---------- PARAMEDIC ----------
+  u_medic(dt, c) {
+    if (!c.stage) {
+      const pt = PASADA.randomStop(500, 1600); if (!pt) return;
+      c.pt = pt; c.stage = 'pick'; c.waiting = [];
+      const p = new Person(pt.x, pt.y, 'ped'); p.npc = true; p.keep = true; p.state = 'down'; p.downT = 1e9; p.umb = null; G.peds.push(p); c.waiting.push(p);
+      const f = new Person(pt.x + 22, pt.y + 6, 'ped'); f.npc = true; f.keep = true; f.state = 'idle'; f.umb = null; G.peds.push(f); c.waiting.push(f);
+      UI.toast('📻 May nasaktan! Puntahan agad.');
+    }
+    if (c.stage === 'pick') {
+      c.obj = `Puntahan ang pasyente (${c.n}/5)`; c.tgt = Object.assign({ stop: true }, c.pt);
+      if (this.stopped(c.pt, 110, 1)) {
+        removePeds(c.waiting); c.waiting = null; AUD.door();
+        c.time = Math.round(U.dist(c.pt.x, c.pt.y, MAP.pois.hospital.x, MAP.pois.hospital.y) / 260 + 22); c.stage = 'drop';
+        UI.toast('🚑 Naisakay ang pasyente! Dalhin sa Ospital — buksan ang sirena (H / BUSINA).');
+      }
+    } else {
+      c.time -= dt;
+      c.obj = `Dalhin sa Ospital ⏱ ${Math.max(0, Math.ceil(c.time))}s (${c.n}/5)`; c.tgt = Object.assign({ stop: true }, MAP.pois.hospital);
+      if (c.time <= 0) { UI.toast('😞 Hindi umabot ang pasyente...'); c.stage = null; return; }
+      if (this.stopped(MAP.pois.hospital, 160, 0.8)) {
+        c.n++; G.stats.medic = (G.stats.medic || 0) + 1;
+        this.pay(150 + c.time * 6 * (c.v.siren ? 1.2 : 1), '🚑 Ligtas ang pasyente!'); c.stage = null;
+        if (c.n >= 5) { this.pay(600, '⭐ Bayani ng Ospital!'); this.stop('Tapos ang shift!'); }
+      }
+    }
+  },
+  // ---------- BUMBERO ----------
+  u_fire(dt, c) {
+    const v = c.v;
+    if (!c.stage) {
+      const pt = PASADA.randomStop(600, 1800); if (!pt) return;
+      c.fire = { x: pt.x, y: pt.y, hp: 100 }; c.time = Math.round(U.dist(v.x, v.y, pt.x, pt.y) / 220 + 30); c.stage = 'go';
+      UI.toast('📻 SUNOG! May nasusunog na bahay — bilisan!');
+    }
+    const f = c.fire;
+    if (f && G.frame % 3 === 0 && U.d2(f.x, f.y, G.cam.x, G.cam.y) < 1400 * 1400) {
+      const k = f.hp / 100;
+      if (Math.random() < 0.4 + k) G.particle('fire', f.x + U.rand(-40, 40) * k, f.y + U.rand(-30, 10) * k);
+      G.particle('smoke', f.x + U.rand(-30, 30), f.y + U.rand(-20, 0));
+    }
+    c.time -= dt;
+    c.obj = `Patayin ang sunog! 🔥 ${Math.ceil(f.hp)}% ⏱ ${Math.max(0, Math.ceil(c.time))}s (${c.n}/5) — huminto malapit`;
+    c.tgt = Object.assign({ stop: true }, f);
+    if (c.time <= 0) { UI.toast('🔥 Lumaki ang sunog... may ibang bumbero na dumating.'); c.fire = null; c.stage = null; return; }
+    const d = U.dist(v.x, v.y, f.x, f.y);
+    if (d < 190 && v.speed < 70 && P_IN(v)) {
+      f.hp -= dt * 22;
+      if (G.frame % 2 === 0) {
+        const a = Math.atan2(f.y - v.y, f.x - v.x) + U.rand(-0.12, 0.12), sx = v.x + Math.cos(v.a) * v.L * 0.3, sy = v.y + Math.sin(v.a) * v.L * 0.3;
+        G.projectiles.push({ x: sx, y: sy, vx: Math.cos(a) * 460, vy: Math.sin(a) * 460, life: Math.min(0.5, d / 460), type: 'water', owner: 'hose' });
+      }
+      if (G.frame % 8 === 0) AUD.noise(0.12, 0.05, 3000, 0, 'highpass');
+      if (f.hp <= 0) {
+        for (let k = 0; k < 12; k++) G.particle('smoke', f.x + U.rand(-40, 40), f.y + U.rand(-30, 10));
+        c.n++; G.stats.fire = (G.stats.fire || 0) + 1;
+        this.pay(250 + Math.max(0, c.time) * 5, '🚒 Napatay ang sunog!'); c.fire = null; c.stage = null;
+        if (c.n >= 5) { this.pay(800, '⭐ Bumbero ng Taon!'); this.stop('Tapos ang shift!'); }
+      }
+    }
+  },
+  // ---------- BASURERO ----------
+  u_garbage(dt, c) {
+    const v = c.v;
+    if (!c.stage) {
+      c.piles = []; let from = { x: v.x, y: v.y };
+      for (let k = 0; k < 6; k++) {
+        let pt = null;
+        for (let t = 0; t < 30 && !pt; t++) { const q = PASADA.randomStop(300, 2400); if (q && U.dist(q.x, q.y, from.x, from.y) > 280 && U.dist(q.x, q.y, from.x, from.y) < 1100) pt = q; }
+        if (!pt) break;
+        c.piles.push({ x: pt.x, y: pt.y, seed: Math.random() * 100 }); from = pt;
+      }
+      if (!c.piles.length) return;
+      c.stage = 'collect'; c.pi = 0; v.cargo = 0; c.time = 150;
+      MAP.trash = c.piles;
+    }
+    c.time -= dt;
+    if (c.stage === 'collect') {
+      const p = c.piles[c.pi];
+      c.obj = `Kolektahin ang basura (${c.pi}/${c.piles.length}) ⏱ ${Math.max(0, Math.ceil(c.time))}s`; c.tgt = Object.assign({ stop: true }, p);
+      if (this.stopped(p, 120, 1.2)) {
+        p.done = true; c.pi++; v.cargo = c.pi; AUD.noise(0.4, 0.15, 500); this.pay(70, '🗑 Nakolekta!');
+        if (c.pi >= c.piles.length) { c.stage = 'dump'; }
+      }
+    } else {
+      c.obj = `Itapon sa Tambakan ⏱ ${Math.max(0, Math.ceil(c.time))}s`; c.tgt = Object.assign({ stop: true }, MAP.pois.dump);
+      if (this.stopped(MAP.pois.dump, 170, 0.8)) {
+        G.stats.garbage = (G.stats.garbage || 0) + 1; v.cargo = 0; MAP.trash = null;
+        this.pay(250 + Math.max(0, c.time) * 3, '♻️ Malinis ang kalye!'); c.stage = null;
+      }
+    }
+    if (c.time <= 0) { MAP.trash = null; this.stop('Naubos ang oras ng ruta.'); }
+  },
+  // parked emergency/city vehicles keep coming back to their depots
+  depotT: 0,
+  depots() {
+    if (!this.dl) this.dl = [['ambulance', MAP.pois.depot_amb], ['firetruck', MAP.pois.depot_fire], ['garbage', MAP.pois.dump]].filter(d => d[1]);
+    return this.dl;
+  },
+  depotTick(dt) {
+    this.depotT -= dt; if (this.depotT > 0) return; this.depotT = 3;
+    const P = G.player;
+    for (const [type, p] of this.depots()) {
+      if (G.vehicles.some(v => v.type === type && U.d2(v.x, v.y, p.vx, p.vy) < 200 * 200)) continue;
+      if (TRAFFIC.inView(p.vx, p.vy, 80) || U.dist(P.x, P.y, p.vx, p.vy) < 500) continue;
+      if (G.vehicles.some(v => U.d2(v.x, v.y, p.vx, p.vy) < 70 * 70)) continue;
+      const v = new Vehicle(type, p.vx, p.vy, p.va, { parked: true }); v.keep = true; G.vehicles.push(v);
+    }
+  },
+  drawExtra(g, inV, now) {
+    if (MAP.trash) for (const p of MAP.trash) {
+      if (p.done || !inV(p.x, p.y, 40)) continue;
+      for (let k = 0; k < 5; k++) { g.fillStyle = ['#2b2b2b', '#4a6fa5', '#7a5230', '#3c763d', '#555'][k]; g.beginPath(); g.arc(p.x + Math.cos(p.seed + k * 2) * 12, p.y + Math.sin(p.seed + k * 1.3) * 9, 7, 0, TAU); g.fill(); }
+      g.fillStyle = 'rgba(120,140,60,0.25)'; g.beginPath(); g.arc(p.x, p.y - 14 - Math.sin(now * 3) * 3, 6, 0, TAU); g.fill();
+    }
+  },
+});
+function P_IN(v) { return G.player.vehicle === v; }

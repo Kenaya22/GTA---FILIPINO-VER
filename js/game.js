@@ -165,6 +165,7 @@ const G = {
   },
   horn() {
     const v = this.player.vehicle; if (!v) return;
+    if (v.t.emerg) { v.siren = !v.siren; UI.toast(v.siren ? '🚨 Sirena: ON' : 'Sirena: OFF'); AUD.click(); if (!v.siren) return; }
     AUD.horn(v.isBig(), v.upg && v.upg.horn);
     const ca = Math.cos(v.a), sa = Math.sin(v.a);
     for (const p of this.peds) {
@@ -421,6 +422,7 @@ const G = {
     MS.update(dt);
     PASADA.update(dt);
     JOBS.update(dt);
+    JOBS.depotTick(dt);
     TUT.update(dt);
     PROV.update(dt);
     ARMS.update(dt);
@@ -456,7 +458,7 @@ const G = {
     if (this.cam.shake > 0) { this.cam.shake *= Math.pow(0.02, dt); if (this.cam.shake < 0.3) this.cam.shake = 0; }
     this.cam.sx = U.rand(-1, 1) * this.cam.shake; this.cam.sy = U.rand(-1, 1) * this.cam.shake;
     // audio
-    if (P.vehicle && !P.vehicle.dead) AUD.engine(true, Math.min(1, Math.abs(P.vehicle.fwd()) / P.vehicle.t.max), P.vehicle.isBig());
+    if (P.vehicle && !P.vehicle.dead && !P.vehicle.t.quiet) AUD.engine(true, Math.min(1, Math.abs(P.vehicle.fwd()) / P.vehicle.t.max), P.vehicle.isBig());
     else AUD.engine(false, 0);
     if (this.ramCd > 0) this.ramCd -= dt;
   },
@@ -690,6 +692,7 @@ const G = {
     }
     ARMS.draw(g, inV);
     GUNS.draw(g, inV);
+    JOBS.drawExtra(g, inV, now);
     // particles
     for (const p of this.particles) {
       if (!inV(p.x, p.y, 40)) continue;
