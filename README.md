@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Manila — v2.3
+# 👑 HARI NG KALSADA: Manila — v2.4
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -119,6 +119,8 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/life.js` | Interiors, street events, pet dog, collectibles |
 | `js/progression.js` | Levels/skills, daily challenges, replays, New Game+ |
 | `js/mapview.js` | Interactive full-screen map |
+| `js/phmap.js` | Philippines overview map (playable cities + coming-soon clouds) |
+| `js/boot.js` | Loading page and K&A Studios splash |
 | `js/ui.js` | HUD, minimap, map, dialogue, menus, touch controls |
 | `js/game.js` | Main loop, collisions, camera, lighting, save/load |
 | `js/audio.js` | Synthesized sound effects (WebAudio) |

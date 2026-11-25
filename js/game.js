@@ -39,6 +39,7 @@ const G = {
     UI.init();
     I18N.init();
     PWA.init();
+    BOOT.start();
     GHOST.checkLink();
     SETTINGS.apply();
     this.last = performance.now();

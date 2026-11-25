@@ -1,5 +1,10 @@
 # Changelog — Hari ng Kalsada
 
+## v2.4: Mapa ng Pilipinas / Map of the Philippines (2026-11-25)
+- 🇵🇭 **Philippines overview map**: tap 🇵🇭 on the map screen (or zoom all the way out) to see the whole country. The playable places — Manila, San Isidro, Baguio, Cebu and Davao — are marked (tap one to jump there on the map); places still to be built (Vigan, Tuguegarao, Batanes, Legazpi, Puerto Galera, Palawan, Boracay, Iloilo, Bacolod, Bohol, Tacloban, Samar, Cagayan de Oro, Zamboanga, Siargao, Sulu) sit under drifting clouds marked "coming soon"
+- 🎬 **Startup**: a loading page, then a **K&A Studios** page with game info (tap to skip), then the home menu
+- 🏠 **Cleaner home menu**: just the logo, a one-line tagline, CONTINUE (with your save summary inside the button) / NEW GAME, and one row of small buttons (Load, NG+, Settings, How to play, What's new). Install lives in Settings
+
 ## v2.3: Mas Madaling Magmaneho / Easier Driving (2026-11-25)
 - 🚗 **Easier driving** (Madali driving setting, the default): lane-keeping eases the car into the right-hand lane when you point along a road, stronger grip and quicker steering response, and the car slides along walls instead of bouncing off them
 - 💬 **Dialogue no longer covered by the touch buttons**: in portrait it sits just above the highest button (or mid-screen), in landscape at the bottom centre between the arrows and the buttons

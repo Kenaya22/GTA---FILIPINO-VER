@@ -17,6 +17,11 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.4', title: 'Mapa ng Pilipinas', date: 'Nobyembre 2026', items: [
+    '🇵🇭 <b>Mapa ng buong Pilipinas</b> — pindutin ang 🇵🇭 sa mapa: makikita ang Manila, San Isidro, Baguio, Cebu at Davao; natatakpan pa ng ulap ang mga lugar na darating pa (Vigan, Boracay, Palawan, Bohol, Siargao at iba pa)',
+    '🎬 Bagong loading screen at pahina ng <b>K&A Studios</b>',
+    '🏠 Mas malinis na home menu',
+  ] },
   { v: '2.3', title: 'Mas Madaling Magmaneho', date: 'Nobyembre 2026', items: [
     '🚗 <b>Mas madaling magmaneho</b> (Madali mode): kusang pumupunta sa tamang linya ng kalsada, mas makapit ang gulong at dumudulas na lang sa pader imbes na tumalbog',
     '💬 Hindi na natatakpan ng mga button ang usapan — nasa itaas na ito ng mga button sa phone',
@@ -246,7 +251,7 @@ const UI = {
     if (l) {
       const d = SAVE.describe(l.data), pct = ACH.percentOf(l.data);
       $('t-save-l1').textContent = d.line1.replace(/ · \d+%$/, '');
-      $('t-save-l2').textContent = `${pct}% kumpleto · ${d.line2}`;
+      $('t-save-l1').textContent = d.line1.replace(/ · \d+%$/, '') + ` · ${pct}%`;
       $('t-save-bar').style.width = pct + '%';
     }
   },

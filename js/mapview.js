@@ -26,7 +26,7 @@ const MAPVIEW = {
     if (!this.bound) this.bind();
     this.draw();
   },
-  close() { UI.hide('mapscreen'); this.hidePop(); if (document.getElementById('pause').classList.contains('hidden')) G.paused = false; },
+  close() { if (PHMAP.on) PHMAP.close(); UI.hide('mapscreen'); this.hidePop(); if (document.getElementById('pause').classList.contains('hidden')) G.paused = false; },
   s0() { return Math.max(Math.min(this.W, this.H) / (150 * T), this.H / (MH * T), this.W / (MW * T)); },            // ~150 tiles across the short side
   sMin() { return Math.min(this.W / (MW * T), this.H / (MH * T)) * 0.95; },
   sMax() { return 14 / T; },
@@ -70,11 +70,11 @@ const MAPVIEW = {
       if (p && !this.moved && this.ptrs.size === 0) { const r = c.getBoundingClientRect(); this.tap(e.clientX - r.left, e.clientY - r.top); }
     };
     c.onpointerup = up; c.onpointercancel = up;
-    c.onwheel = (e) => { e.preventDefault(); const r = c.getBoundingClientRect(); this.zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top); };
-    document.getElementById('mz-in').onclick = () => this.zoomAt(1.4, this.W / 2, this.H / 2);
-    document.getElementById('mz-out').onclick = () => this.zoomAt(1 / 1.4, this.W / 2, this.H / 2);
-    document.getElementById('mz-me').onclick = () => { const P = G.player; this.cx = P.x; this.cy = P.y; this.setS(Math.max(this.s, this.s0())); this.dirty(); };
-    document.getElementById('mz-all').onclick = () => { this.setS(this.sMin()); this.dirty(); };
+    c.onwheel = (e) => { e.preventDefault(); if (e.deltaY > 0 && this.s <= this.sMin() * 1.01) { PHMAP.open(); return; } const r = c.getBoundingClientRect(); this.zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top); };
+    document.getElementById('mz-in').onclick = () => { if (PHMAP.on) { PHMAP.close(); this.dirty(); return; } this.zoomAt(1.4, this.W / 2, this.H / 2); };
+    document.getElementById('mz-out').onclick = () => { if (PHMAP.on) return; if (this.s <= this.sMin() * 1.01) { PHMAP.open(); return; } this.zoomAt(1 / 1.4, this.W / 2, this.H / 2); };
+    document.getElementById('mz-me').onclick = () => { if (PHMAP.on) PHMAP.close(); const P = G.player; this.cx = P.x; this.cy = P.y; this.setS(Math.max(this.s, this.s0())); this.dirty(); };
+    document.getElementById('mz-all').onclick = () => { AUD.click(); PHMAP.on ? PHMAP.close() : PHMAP.open(); };
     document.getElementById('btn-mapclose').onclick = () => this.close();
     addEventListener('resize', () => { if (!document.getElementById('mapscreen').classList.contains('hidden')) { this.resize(); this.setS(this.s); this.dirty(); } });
   },

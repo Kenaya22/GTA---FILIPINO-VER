@@ -129,3 +129,14 @@ EXTRA21.update({
  '🚗 <b>Mas madaling magmaneho</b> (Madali mode): kusang pumupunta sa tamang linya ng kalsada, mas makapit ang gulong at dumudulas na lang sa pader imbes na tumalbog': '🚗 <b>Easier driving</b> (Easy mode): the car eases into the right lane by itself, tires grip harder, and you slide along walls instead of bouncing off',
  '💬 Hindi na natatakpan ng mga button ang usapan — nasa itaas na ito ng mga button sa phone': '💬 Dialogue is no longer hidden behind the buttons — on phones it now sits above them',
 })
+EXTRA21.update({
+ 'v2.4 — Mapa ng Pilipinas': 'v2.4 — Map of the Philippines', 'Mapa ng Pilipinas': 'Map of the Philippines',
+ '🇵🇭 <b>Mapa ng buong Pilipinas</b> — pindutin ang 🇵🇭 sa mapa: makikita ang Manila, San Isidro, Baguio, Cebu at Davao; natatakpan pa ng ulap ang mga lugar na darating pa (Vigan, Boracay, Palawan, Bohol, Siargao at iba pa)': '🇵🇭 <b>Map of the whole Philippines</b> — tap 🇵🇭 on the map: see Manila, San Isidro, Baguio, Cebu and Davao; places still to come are under clouds (Vigan, Boracay, Palawan, Bohol, Siargao and more)',
+ '🎬 Bagong loading screen at pahina ng <b>K&A Studios</b>': '🎬 New loading screen and <b>K&A Studios</b> page', '🏠 Mas malinis na home menu': '🏠 A cleaner home menu',
+ 'Open-world na laro sa Pilipinas': 'An open-world game in the Philippines', '⚠️ Buksan sa Chrome/Safari para may tunog ›': '⚠️ Open in Chrome/Safari for sound ›',
+ 'buong pagmamalaking inihahandog': 'proudly presents', 'Isang orihinal na open-world na laro · Gawa sa Pilipinas 🇵🇭': 'An original open-world game · Made in the Philippines 🇵🇭', 'i-tap para magpatuloy ›': 'tap to continue ›',
+ 'Naglo-load...': 'Loading...', 'Naglo-load ng mapa...': 'Loading the map...', 'Inaayos ang mga kalsada...': 'Paving the roads...', 'Ginigising ang mga jeepney...': 'Waking up the jeepneys...', 'Halos tapos na...': 'Almost there...',
+ '🇵🇭 PILIPINAS': '🇵🇭 PHILIPPINES', 'I-tap ang lungsod para makita · ☁️ = darating pa': 'Tap a city to view it · ☁️ = coming soon',
+ 'LOAD': 'LOAD', 'NG+': 'NG+',
+})
+EXTRA_T21 += [("☁️ {0} — malapit na! Darating sa susunod na update.", "☁️ {0} — coming soon! Arriving in a future update.")]

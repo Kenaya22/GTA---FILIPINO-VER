@@ -23,6 +23,11 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="boot"><div class="bt-logo">👑</div><div class="bt-name">HARI NG KALSADA</div><div class="bt-bar"><div id="bt-fill"></div></div><div id="bt-msg" class="bt-msg">Naglo-load...</div></div>
+<div id="studio" class="hidden"><div class="st-in"><div class="st-mark">K<span>&amp;</span>A</div><div class="st-name">K&amp;A STUDIOS</div><div class="st-pres">buong pagmamalaking inihahandog</div>
+  <div class="st-info"><b>HARI NG KALSADA</b><span id="st-ver"></span><span>Isang orihinal na open-world na laro · Gawa sa Pilipinas 🇵🇭</span></div>
+  <div class="st-tap">i-tap para magpatuloy ›</div></div></div>
+
 <canvas id="game"></canvas>
 <div id="vignette"></div>
 
@@ -85,32 +90,26 @@
   <button id="t-lang" class="t-lang">🌐 English</button>
   <div class="t-wrap">
     <div class="t-hero">
-      <div class="t-badge"><span class="t-dot"></span> OPEN-WORLD · MANILA</div>
-      <div class="t-stars"><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><span class="crown2">👑</span></div>
       <h1 class="t-logo"><span class="crown">👑</span>HARI NG<br><b>KALSADA</b></h1>
-      <p class="t-tag">Magpasada ng jeep, tumakas sa pulis, magnegosyo, at bawiin ang lupa ng pamilya mo mula kay Mayor Kurakot.</p>
+      <p class="t-tag">Open-world na laro sa Pilipinas</p>
     </div>
     <div class="t-card">
-      <div id="t-save" class="t-save hidden">
-        <div class="t-save-h">HULING LARO</div>
-        <div id="t-save-l1" class="t-save-l1"></div>
-        <div id="t-save-l2" class="t-save-l2"></div>
-        <div class="t-bar"><div id="t-save-bar"></div></div>
-      </div>
-      <button id="btn-continue" class="mbtn primary t-big hidden">▶&nbsp; ITULOY</button>
+      <button id="btn-continue" class="mbtn primary t-big hidden">▶&nbsp; ITULOY<small id="t-save-l1" class="t-save-l1"></small></button>
       <button id="btn-new" class="mbtn t-new">✚&nbsp; BAGONG LARO</button>
-      <button id="btn-ngplus" class="mbtn t-ngplus hidden">✨&nbsp; NEW GAME+</button>
-      <button id="btn-load" class="mbtn hidden">📂&nbsp; I-LOAD ANG SAVE</button>
-      <button id="btn-install" class="mbtn t-install hidden">📲&nbsp; I-INSTALL ANG APP</button>
-      <button id="t-inapp" class="t-inapp hidden">⚠️ Nasa Messenger/Facebook ka — buksan sa Chrome/Safari para may tunog at ma-install ›</button>
+      <div id="t-save" class="hidden"><span id="t-save-l2"></span><div class="t-bar"><div id="t-save-bar"></div></div></div>
       <div class="t-row">
+        <button id="btn-load" class="mbtn t-sm hidden">📂<small>LOAD</small></button>
+        <button id="btn-ngplus" class="mbtn t-sm hidden">✨<small>NG+</small></button>
         <button id="btn-settings" class="mbtn t-sm">⚙️<small>SETTING</small></button>
         <button id="btn-howto" class="mbtn t-sm">❓<small>PAANO</small></button>
-        <button id="btn-version" class="mbtn t-sm">✨<small>BAGO</small></button>
+        <button id="btn-version" class="mbtn t-sm">🆕<small>BAGO</small></button>
       </div>
+      <button id="btn-install" class="hidden"></button>
+      <button id="t-inapp" class="t-inapp hidden">⚠️ Buksan sa Chrome/Safari para may tunog ›</button>
     </div>
   </div>
-  <div class="t-foot"><span id="t-ver">v1.4</span> · Isang orihinal na laro · Gawang-Pinoy na ideya</div>
+  <div class="t-foot"><span id="t-ver">v1.4</span> · K&amp;A Studios</div>
+</div>
 </div>
 
 <div id="newgame" class="screen hidden">
@@ -151,7 +150,7 @@
 <div id="mapscreen" class="screen hidden">
   <canvas id="bigmap"></canvas>
   <div class="map-top"><span class="map-title">🗺 MAPA</span><button id="btn-mapclose" class="mbtn small">✕ ISARA</button></div>
-  <div class="map-zoom"><button id="mz-in">＋</button><button id="mz-out">－</button><button id="mz-me" title="Ako">◎</button><button id="mz-all" title="Buong mapa">🌏</button></div>
+  <div class="map-zoom"><button id="mz-in">＋</button><button id="mz-out">－</button><button id="mz-me" title="Ako">◎</button><button id="mz-all" title="Pilipinas">🇵🇭</button></div>
   <div class="map-bottom">
     <div id="mappop" class="mappop hidden"></div>
     <div id="mapsub" class="mapsub hidden"></div>
@@ -409,7 +408,9 @@
 <script src="js/chapter4.js"></script>
 <script src="js/chapter5.js"></script>
 <script src="js/mapview.js"></script>
+<script src="js/phmap.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/boot.js"></script>
 <script src="js/game.js"></script>
 </body>
 </html>
