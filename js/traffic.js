@@ -165,12 +165,14 @@ const TRAFFIC = {
     if (r < 0.45) return U.choice(['sedan', 'sedan', 'hatch']);
     if (r < 0.52) return 'taxi';
     if (r < 0.63) return avenue ? 'sedan' : (Math.random() < 0.25 ? 'padyak' : 'tricycle');
-    if (r < 0.70) return 'motor';
+    if (r < 0.67) return 'motor';
+    if (r < 0.685) return Math.random() < 0.5 ? 'ebike' : 'bisikleta';
+    if (r < 0.70) return 'bigbike';
     if (r < 0.76) return 'suv';
     if (r < 0.81) return 'van';
     if (r < 0.85) return 'pickup';
     if (r < 0.88) return avenue ? 'bus' : 'van';
-    if (r < 0.90) return 'sports';
+    if (r < 0.90) return Math.random() < 0.3 ? 'supercar' : 'sports';
     if (r < 0.92) return 'garbage';
     if (r < 0.94) return 'ambulance';
     if (r < 0.95) return avenue ? 'firetruck' : 'pickup';
@@ -255,8 +257,8 @@ const TRAFFIC = {
       if (s.type === 'jeep') type = 'jeepney';
       else if (s.type === 'bus') type = 'bus';
       else if (s.type === 'police') type = 'police';
-      else { if (Math.random() < 0.35) continue; type = U.choice(['sedan', 'sedan', 'hatch', 'suv', 'van', 'taxi', 'sports', 'motor', 'tricycle', 'pickup']); }
-      if (type === 'sports' && Math.random() < 0.5) type = 'sedan';
+      else { if (Math.random() < 0.35) continue; type = U.choice(['sedan', 'sedan', 'hatch', 'suv', 'van', 'taxi', 'sports', 'motor', 'tricycle', 'pickup', 'bigbike', 'ebike', 'bisikleta', 'supercar']); }
+      if ((type === 'sports' || type === 'supercar') && Math.random() < 0.5) type = 'sedan';
       const v = new Vehicle(type, s.x, s.y, s.a, { parked: true });
       v.keep = true;
       G.vehicles.push(v);

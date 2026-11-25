@@ -17,6 +17,14 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.7', title: 'Buhay na Kalye', date: 'Nobyembre 2026', items: [
+    '😱 <b>Sigaw</b> kapag nang-agaw ka ng sasakyan o may nasaktan · 🩸 <b>Dugo</b> kapag may binaril (pwedeng i-OFF sa Settings)',
+    '🎯 <b>Mas malakas na auto-aim</b> sa tao at sasakyan — may pulang marka sa target',
+    '🚑 Iba-iba na ang tunog ng <b>ambulansya, bumbero at pulis</b> · 🎺 May <b>banda</b> kapag may pista',
+    '📻 <b>Balita sa radyo</b>: ulat panahon at mga krimen mo — at <b>binabasa nang malakas</b>!',
+    '⭐ <b>Mas mahirap nang makakuha ng bituin</b> — kailangan talagang makita ka ng pulis',
+    '🏎 Bagong sasakyan: <b>Supercar, Big Bike, E-Bike</b> at bisikleta sa kalye · 🐓 <b>Mga hayop</b>: manok, pusa, kambing at kalabaw',
+  ] },
   { v: '2.6', title: 'Pamilya', date: 'Nobyembre 2026', items: [
     '💗 <b>Pag-ibig at pamilya</b> — may makikilala ka sa 🍗 Manukan sa bawat lungsod (Ligaya, Isabel, Migo, Rosa): makipagkuwentuhan, magbigay ng regalo, mag-date, mag-propose at <b>magpakasal sa simbahan</b>!',
     '🏡 <b>Bahay ng Pamilya</b> — Bahay Kubo → Bungalow → Mansyon; lutong-bahay, baon araw-araw at hanggang <b>3 anak</b>',

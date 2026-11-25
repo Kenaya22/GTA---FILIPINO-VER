@@ -2,7 +2,7 @@
 // ===== Settings, difficulty & tutorial tips =====
 const SETTINGS_KEY = 'harinkalsada_settings_v1';
 const SETTINGS = {
-  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', touchCtl: 'joystick', lang: 'fil', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {}, density: 'normal', aim: 'auto',
+  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', touchCtl: 'joystick', lang: 'fil', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {}, density: 'normal', gore: 'on', newsVoice: 'on', aim: 'auto',
   dens() { return { kaunti: 0.55, normal: 1, marami: 1.3 }[this.density] || 1; },
   load() {
     try { Object.assign(this, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch (e) { }
@@ -10,8 +10,8 @@ const SETTINGS = {
   },
   save() {
     try {
-      const { autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim } = this;
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim }));
+      const { autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim, gore, newsVoice } = this;
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim, gore, newsVoice }));
     } catch (e) { }
   },
   apply() {

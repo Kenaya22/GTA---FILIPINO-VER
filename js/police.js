@@ -1,6 +1,6 @@
 'use strict';
 // ===== Wanted system (6 stars + suspect profile) =====
-const HEAT_T = [0, 1, 3, 6, 10, 16, 24];
+const HEAT_T = [0, 1.5, 4.5, 9, 15, 23, 33];   // heat needed for each star (raised in v2.7: stars build up more gradually)
 const UNIT_CARS = [0, 1, 3, 4, 5, 5, 6];
 const UNIT_SWAT = [0, 0, 0, 0, 2, 2, 2];
 const UNIT_ARMY = [0, 0, 0, 0, 0, 0, 3];
@@ -56,6 +56,7 @@ const WANTED = {
     }
     if (!w) for (const c of MAP.cctv) if (camSees(c, x, y)) { w = true; kind = 'cctv'; break; }
     if (!w) return false;
+    NEWS.crime(sev, x, y);
     this.addHeat(sev * D().heat);
     this.spotted(kind, dist);
     return true;
@@ -105,7 +106,7 @@ const WANTED = {
     if (this.cctvT > 0) this.cctvT -= dt;
     this.updateHelis(dt);
     this.updateSpikes(dt);
-    if (this.stars === 0) { const pv = G.player.vehicle; AUD.siren(pv && pv.siren && pv.t.emerg ? 0.55 : 0); return; }
+    if (this.stars === 0) { this.sirenMix(P); return; }
     if (P.downed) return;
     // who sees the player?
     this.seeT -= dt;
@@ -177,9 +178,13 @@ const WANTED = {
     }
     this.updateUnits(dt);
     // siren volume
-    let nd = 1e9;
-    for (const v of G.vehicles) if (v.siren) nd = Math.min(nd, U.dist(v.x, v.y, P.x, P.y));
-    AUD.siren(nd < 1400 ? 1 - nd / 1400 : 0);
+    this.sirenMix(P);
+  },
+  // the loudest nearby siren decides the sound: police wail, ambulance hi-lo, fire truck slow horn-wail
+  sirenMix(P) {
+    let nd = 1e9, kind = 'police';
+    for (const v of G.vehicles) if (v.siren) { const d = U.dist(v.x, v.y, P.x, P.y); if (d < nd) { nd = d; kind = v.type === 'ambulance' ? 'amb' : v.type === 'firetruck' ? 'fire' : 'police'; } }
+    AUD.siren(nd < 1400 ? Math.max(0.12, 1 - nd / 1400) * (P.vehicle && P.vehicle.siren ? 0.8 : 1) : 0, kind);
   },
   updateUnits(dt) {
     const P = G.player;

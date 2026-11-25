@@ -59,6 +59,8 @@ class Person {
   }
   knock(fromX, fromY, force) {
     const a = Math.atan2(this.y - fromY, this.x - fromX);
+    if (this.animal && this.state !== 'down') ANIMALS.sound(this);
+    if (this.kind !== 'dog' && !this.animal && this !== G.player && this.state !== 'down') { AUD.scream(this.x, this.y); if (U.d2(fromX, fromY, G.player.x, G.player.y) < 200 * 200) G.stats.downs = (G.stats.downs || 0) + 1; if (force > 260) G.bleed(this.x + Math.cos(a) * 10, this.y + Math.sin(a) * 10, 0.7); }
     this.vx = Math.cos(a) * force; this.vy = Math.sin(a) * force;
     this.state = 'down'; this.downT = U.rand(4, 7); this.a = a;
     if (this.kind === 'goon') { this.hostile = true; this.hits = (this.hits || 0) + 1; if (this.hits >= (this.toughness || 2)) { this.ko = true; this.downT = 999; } else if (this.toughness) this.downT = 1.2; }
@@ -104,7 +106,7 @@ class Person {
     if (this.state === 'down') {
       this.vx *= Math.pow(0.02, dt); this.vy *= Math.pow(0.02, dt); this.moveAmt = 0;
       this.move(dt); this.downT -= dt;
-      if (this.downT <= 0) { this.state = this.kind === 'cop' ? 'chase' : 'flee'; this.fleeT = 4; this.tx = G.player.x; this.ty = G.player.y; }
+      if (this.downT <= 0) { if (this.animal) { this.state = 'wander'; this.downT = 0; return; } this.state = this.kind === 'cop' ? 'chase' : 'flee'; this.fleeT = 4; this.tx = G.player.x; this.ty = G.player.y; }
       return;
     }
     if (this.kind === 'goon') { updateGoon(this, dt); return; }
@@ -348,6 +350,7 @@ class Player extends Person {
 function drawPerson(g, p, now) {
   if (p.hidden) return;
   if (p.kind === 'dog') { drawDog(g, p); return; }
+  if (p.animal) { drawAnimal(g, p); return; }
   g.save(); g.translate(p.x, p.y);
   const L = p.look;
   if (p.state === 'down' || p.downed) {

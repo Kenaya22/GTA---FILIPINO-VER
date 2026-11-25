@@ -304,8 +304,12 @@ const MUSIC = {
         if (this.djT <= 0) {
           this.djT = U.rand(35, 60);
           let lines = st.lines.slice();
-          const news = NEWS.lines(); if (news.length && Math.random() < 0.55) lines = news;
-          UI.radio(`📻 ${st.name}: "${U.choice(lines)}"`, 6);
+          const news = NEWS.lines(); news.push(NEWS.weather());
+          const isNews = Math.random() < 0.6 || (NEWS.lastCrime && G.time - NEWS.lastCrime.t < 30);
+          if (isNews) lines = NEWS.lastCrime && G.time - NEWS.lastCrime.t < 30 ? [news.find(l => l.includes('NEWS: Barilan') || l.includes('Gulo sa')) || U.choice(news)] : news;
+          const line = U.choice(lines);
+          UI.radio(`📻 ${st.name}: "${line}"`, 7);
+          if (isNews) NEWS.say(line);
         }
       }
     } else { this.lastVeh = null; want = SETTINGS.walkMusic ? 'lakad' : null; }
@@ -331,6 +335,37 @@ const NEWS = {
     if (WANTED.stars >= 3) out.push(`BALITA: Habulan ngayon sa kalye! ${WANTED.stars} bituin ang hinahabol ng pulis. Mag-ingat ang mga motorista!`);
     if (TYPHOON.s) out.push(`BALITA: ${TYPHOON.s.name}, Signal No. ${TYPHOON.s.signal}. Manatili sa bahay at lumayo sa baha!`);
     if ((G.player && G.player.level || 1) >= 5) out.push(`BALITA: Si Nonoy, Level ${G.player.level} na raw! Sikat na sikat!`);
+    // fresh crime reports (from what you just did)
+    const c = this.lastCrime;
+    if (c && G.time - c.t < 180) out.push(c.sev >= 3 ? `BREAKING NEWS: Barilan at kaguluhan malapit sa ${c.place}! Isang armadong suspek, tinutugis ng pulis.` : `BALITA: Gulo sa ${c.place} — may nanakaw daw ng sasakyan at nanakit ng tao. Ingat po tayo!`);
+    if ((G.stats.downs || 0) >= 10) out.push(`BALITA: ${G.stats.downs} katao na ang nasaktan ng isang misteryosong siga sa kalye. Nananawagan ang pulis.`);
+    if (G.flags.fam && G.flags.fam.stage === 'married') out.push(`BALITA: Isang driver, ikinasal kay ${LOVERS[G.flags.fam.partner].name}! Congrats sa bagong kasal! 💍`);
     return out;
+  },
+  // weather report from the current conditions
+  weather() {
+    const r = WORLD.rain, tg = WORLD.rainTarget;
+    if (TYPHOON.s) return `ULAT PANAHON: ${TYPHOON.s.name} — malakas na hangin at ulan. Manatili sa loob ng bahay!`;
+    if (r > 0.4) return tg < 0.2 ? 'ULAT PANAHON: Malakas ang ulan ngayon pero titila na rin mamaya. Ingat sa baha!' : 'ULAT PANAHON: Tuloy-tuloy ang ulan. Magdala ng payong at iwasan ang mga bahang kalye!';
+    if (tg > 0.3) return 'ULAT PANAHON: Makulimlim — may paparating na ulan sa susunod na oras.';
+    const h = WORLD.hour();
+    return h < 10 ? 'ULAT PANAHON: Maaraw ang umaga, mainit mamayang tanghali. Uminom ng maraming tubig!' : h < 17 ? 'ULAT PANAHON: Maaraw at mainit — 34 degrees sa Metro Manila.' : 'ULAT PANAHON: Maaliwalas ang gabi, walang inaasahang ulan.';
+  },
+  crime(sev, x, y) {
+    const lab = MAP.labels.filter(l => !l.vert).sort((a, b) => U.d2(a.x, a.y, x, y) - U.d2(b.x, b.y, x, y))[0];
+    this.lastCrime = { sev, place: lab ? lab.name : regionName(x), t: G.time };
+    G.stats.downs = G.stats.downs || 0;
+    if (MUSIC.djT > 10) MUSIC.djT = U.rand(6, 10);        // the news breaks soon after
+  },
+  // read a line aloud (the phone/computer's own text-to-speech voice)
+  say(text) {
+    if (SETTINGS.newsVoice === 'off' || !window.speechSynthesis) return;
+    try {
+      const t = I18N.t(text).replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu, ''), u = new SpeechSynthesisUtterance(t), vs = speechSynthesis.getVoices();
+      const want = SETTINGS.lang === 'en' ? ['en-PH', 'en-US', 'en'] : ['fil', 'tl', 'id', 'en-PH'];
+      for (const w of want) { const v = vs.find(v => v.lang && v.lang.toLowerCase().startsWith(w.toLowerCase())); if (v) { u.voice = v; u.lang = v.lang; break; } }
+      u.rate = 1.05; u.pitch = 1; u.volume = Math.min(1, SETTINGS.music + 0.2);
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch (e) { }
   },
 };

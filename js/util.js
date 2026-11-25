@@ -1,6 +1,6 @@
 'use strict';
 // ===== Utilities =====
-const GAME_VERSION = '2.6';
+const GAME_VERSION = '2.7';
 const TAU = Math.PI * 2;
 
 const U = {

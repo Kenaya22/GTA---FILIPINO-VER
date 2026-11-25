@@ -168,6 +168,11 @@ const FIESTA = {
   },
   update(dt) {
     if (!G.started) return;
+    // a marching band plays near the parade
+    if (this.floats && this.floats.length) {
+      this.bandT = (this.bandT || 0) - dt;
+      if (this.bandT <= 0) { this.bandT = 2.1; const P = G.player; let nd = 1e9; for (const f of this.floats) nd = Math.min(nd, U.dist(f.x, f.y, P.x, P.y)); if (nd < 900) AUD.band(1 - nd / 900); }
+    }
     if (!this.greeted && G.frame > 300) {
       this.greeted = true;
       if (this.undas()) UI.toast('🕯 Undas na — may mga kandila sa paligid ng simbahan.');

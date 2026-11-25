@@ -1,5 +1,15 @@
 # Changelog — Hari ng Kalsada
 
+## v2.7: Buhay na Kalye / Lively Streets (2026-11-25)
+- 😱 **Screams** (synthesized) when you carjack someone, knock someone down, shoot them or cause a panic
+- 🩸 **Blood**: drops and a fading pool when people are shot or hit hard (Settings → 🩸 Dugo ON/OFF)
+- 🎯 **Auto-aim** now has a wider cone (especially on phones) for people and cars, with a spinning red lock-on marker on the current target
+- 🔊 **Sirens by vehicle**: police wail, ambulance hi-lo, fire truck slow wail — including AI emergency vehicles; 🎺 a **marching band** plays near fiesta parades
+- 📻 **Radio news**: weather reports, breaking news about your crimes (with the place name) and other events; the news plays soon after a crime and is **read aloud** with the device's text-to-speech (Settings → 📻 voice ON/OFF)
+- ⭐ **Fairer wanted level**: more heat per star (1.5 / 4.5 / 9 / 15 / 23 / 33), gunshots only count when police are close and can see you, and minor car bumps don't count
+- 🏎 **New vehicles**: Supercar, Big Bike and E-Bike (quiet) in traffic and parking lots, plus bicycles on the road
+- 🐓 **Animals**: chickens (in small flocks), cats, goats and carabao wander around with their own sounds; the mix changes by region (cats in Manila, carabao in the province and Davao, goats in Baguio). Hitting an animal gives no wanted stars
+
 ## v2.6: Pamilya / Family (2026-11-25)
 - 💗 **Love & family**: meet Ligaya (Manila), Isabel (Cebu), Migo (Davao) or Rosa (Baguio) outside the 🍗 chicken houses. Chat daily, give flowers or chocolates (each has a favorite), go on dates (they follow you to a landmark, mall, videoke or restaurant with a purple GPS arrow and a 5-minute limit), propose with a ₱25,000 ring at 100 ❤️, then get married at the nearest church
 - 🏡 **Family House** (🏡 on the map, Manila): Nipa Hut ₱15,000 → Bungalow ₱60,000 → Mansion ₱250,000. Your spouse lives there: home-cooked meals (full heal + ENERGY), up to 3 kids who appear at home, play with them for XP, and a daily allowance (₱300 / ₱1,000) with a good-morning text

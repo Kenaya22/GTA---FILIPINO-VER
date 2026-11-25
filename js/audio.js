@@ -91,11 +91,15 @@ const AUD = {
     this.engF.frequency.setTargetAtTime(260 + frac * 900, t, 0.1);
     this.engG.gain.setTargetAtTime(on ? 0.045 + frac * 0.04 : 0, t, 0.15);
   },
-  siren(vol) {
+  siren(vol, kind) {
     if (!this.ctx) return;
     const t = this.t();
     const ph = (t * 0.55) % 1;
-    const f = 620 + 520 * (ph < 0.5 ? ph * 2 : 2 - ph * 2);
+    let f = 620 + 520 * (ph < 0.5 ? ph * 2 : 2 - ph * 2);
+    if (kind === 'amb') f = (t * 1.6) % 1 < 0.5 ? 960 : 770;                       // hi-lo
+    else if (kind === 'fire') f = 380 + 420 * Math.min(1, ((t * 0.3) % 1) * 1.6);   // slow rising wail
+    const ty = kind === 'amb' ? 'square' : 'triangle'; if (this.sirOsc.type !== ty) this.sirOsc.type = ty;
+    if (kind === 'amb') vol *= 0.55;
     this.sirOsc.frequency.setTargetAtTime(f, t, 0.02);
     this.sirG.gain.setTargetAtTime(vol * 0.05, t, 0.2);
   },
@@ -157,6 +161,27 @@ const AUD = {
     const c = this.ctx, t = Math.max(c.currentTime, h.t0 + 0.14);
     h.g.gain.setValueAtTime(h.g.gain.value || 0.09, t); h.g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
     for (const o of h.os) o.stop(t + 0.08);
+  },
+  // a short cartoon scream (rate-limited)
+  scream(x, y) {
+    if (!this.ctx) return; const now = performance.now(); if (now - (this.lastScream || 0) < 450) return; this.lastScream = now;
+    let v = 0.09; if (x != null && G.player) { const d = U.dist(x, y, G.player.x, G.player.y); if (d > 900) return; v *= 1 - d / 1000; }
+    const c = this.ctx, t = c.currentTime, hi = Math.random() < 0.55, f0 = hi ? U.rand(950, 1250) : U.rand(520, 700), dur = U.rand(0.45, 0.75);
+    const o = c.createOscillator(), g = c.createGain(), vib = c.createOscillator(), vg = c.createGain(), bp = c.createBiquadFilter();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(f0 * 0.8, t); o.frequency.linearRampToValueAtTime(f0, t + 0.08); o.frequency.exponentialRampToValueAtTime(f0 * 0.6, t + dur);
+    vib.frequency.value = 9; vg.gain.value = f0 * 0.04; vib.connect(vg); vg.connect(o.frequency);
+    bp.type = 'bandpass'; bp.frequency.value = f0 * 1.5; bp.Q.value = 1.2;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(bp); bp.connect(g); g.connect(this.master); o.start(t); vib.start(t); o.stop(t + dur + 0.05); vib.stop(t + dur + 0.05);
+    this.noise(dur * 0.6, v * 0.5, f0 * 2, 0, 'bandpass');
+  },
+  // a marching-band phrase for fiestas (called every couple of seconds while near a parade)
+  band(vol) {
+    if (!this.ctx || vol <= 0.02) return;
+    const tunes = [[392, 440, 494, 523, 494, 440, 392, 330], [523, 523, 494, 440, 392, 440, 494, 523], [330, 392, 440, 392, 523, 494, 440, 392]];
+    const tune = U.choice(tunes), st = 0.24;
+    tune.forEach((f, i) => { this.tone(f, st * 0.9, 'square', 0.035 * vol, 0, i * st); this.tone(f / 2, st * 0.5, 'triangle', 0.05 * vol, 0, i * st); });
+    for (let i = 0; i < tune.length; i++) { this.noise(0.06, (i % 2 ? 0.08 : 0.16) * vol, i % 2 ? 4000 : 200, i * st, i % 2 ? 'highpass' : 'lowpass'); }
   },
   crash(i) { this.noise(0.25 + i * 0.3, Math.min(0.6, 0.15 + i * 0.5), 900 + i * 1200); this.tone(90, 0.2, 'sine', 0.2 * i, 40); },
   punch() { this.noise(0.08, 0.35, 1800); this.tone(120, 0.12, 'sine', 0.3, 60); },

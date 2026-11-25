@@ -34,7 +34,7 @@ const GUNS = {
     const P = G.player;
     if (G.time - this.mouse.t < 2.5 && !INPUT.touch) return Math.atan2(this.mouse.wy - P.y, this.mouse.wx - P.x);
     if (INPUT.touch && SETTINGS.aim === 'manual') return P.a;
-    const t = this.bestTarget(P.x, P.y, P.a, range, P.vehicle ? Math.PI : 0.7);
+    const t = this.bestTarget(P.x, P.y, P.a, range, P.vehicle ? Math.PI : (INPUT.touch ? 1.4 : 1.0));
     return t ? Math.atan2(t.y + (t.vy || 0) * 0.12 - P.y, t.x + (t.vx || 0) * 0.12 - P.x) : P.a;
   },
   bestTarget(x, y, a, range, cone) {
@@ -111,8 +111,9 @@ const GUNS = {
   gunshot(x, y) {
     G.panic(x, y, 520);
     if (MS.active && MS.c && MS.c.noCops) return;
-    for (const v of G.vehicles) if (v.isCop && v.driver && v.driver !== 'player' && U.d2(v.x, v.y, x, y) < 650 * 650) { WANTED.crime(2, x, y, true); return; }
-    for (const p of G.peds) if ((p.kind === 'cop') && p.state !== 'down' && U.d2(p.x, p.y, x, y) < 600 * 600) { WANTED.crime(2, x, y, true); return; }
+    // police only react to shots they're close enough to hear clearly or can see
+    for (const v of G.vehicles) if (v.isCop && v.driver && v.driver !== 'player' && U.d2(v.x, v.y, x, y) < 420 * 420 && MAP.los(v.x, v.y, x, y)) { WANTED.crime(1.5, x, y, true); return; }
+    for (const p of G.peds) if ((p.kind === 'cop') && p.state !== 'down' && U.d2(p.x, p.y, x, y) < 380 * 380 && MAP.los(p.x, p.y, x, y)) { WANTED.crime(1.5, x, y, true); return; }
   },
   // hitscan bullet with a tracer; owner: 'player' | 'cop' | 'goon'
   bullet(x, y, a, w, owner, shooter) {
@@ -154,6 +155,7 @@ const GUNS = {
       const p = hit;
       p.hp -= w.dmg;
       G.particle('hit', ex, ey);
+      if (p.kind !== 'dog' && !p.animal) { G.bleed(ex, ey, p.hp <= 0 ? 1 : 0.45); if (p.hp > 0) AUD.scream(p.x, p.y); }
       if (p.hp <= 0) { p.knock(x, y, 220 + w.dmg * 3); p.downT = p.kind === 'goon' ? 999 : U.rand(10, 16); p.hp = 100; if (p.kind === 'goon') p.ko = true; }
       else if (p.kind === 'ped' && !p.npc) { p.state = 'flee'; p.fleeT = 5; p.tx = x; p.ty = y; }
       if (owner === 'player') {
@@ -208,6 +210,18 @@ const GUNS = {
   },
   // ---------- drawing ----------
   draw(g, inV) {
+    // auto-aim lock-on marker
+    const lw = WEAPONS[this.cur()], LP = G.player;
+    if (lw && lw.gun && !LP.downed && !(G.time - this.mouse.t < 2.5 && !INPUT.touch) && !(INPUT.touch && SETTINGS.aim === 'manual')) {
+      if (G.frame % 6 === 0) this.lockT = this.bestTarget(LP.x, LP.y, LP.a, lw.range, LP.vehicle ? Math.PI : (INPUT.touch ? 1.4 : 1.0));
+      const t = this.lockT;
+      if (t && !t.remove && t.state !== 'down' && !t.burnt) {
+        const r = (t.L ? t.L / 2 : 14) + 8, s = G.time * 2;
+        g.save(); g.translate(t.x, t.y); g.rotate(s); g.strokeStyle = 'rgba(255,60,60,0.9)'; g.lineWidth = 2.5;
+        for (let k = 0; k < 4; k++) { g.beginPath(); g.arc(0, 0, r, k * Math.PI / 2 + 0.25, k * Math.PI / 2 + 1.3); g.stroke(); }
+        g.restore();
+      }
+    } else this.lockT = null;
     for (const t of this.tracers) {
       g.strokeStyle = `rgba(${t.c},${Math.min(1, t.life / 0.07)})`; g.lineWidth = 2;
       g.beginPath(); g.moveTo(t.x1, t.y1); g.lineTo(t.x2, t.y2); g.stroke();

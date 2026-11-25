@@ -4,7 +4,7 @@ const SAVE_KEY = 'harinkalsada_v1';
 
 const G = {
   started: false, paused: false, cutscene: false, time: 0, dt: 1 / 60, frame: 0,
-  vehicles: [], peds: [], pickups: [], particles: [], skids: [], projectiles: [],
+  vehicles: [], peds: [], pickups: [], particles: [], skids: [], projectiles: [], blood: [],
   cam: { x: 0, y: 0, zoom: 1, vw: 1000, vh: 1000, shake: 0, sx: 0, sy: 0 },
   unlock: { sports: false, gold: false }, tsinelas: new Set(), stats: { sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 },
   copField: null, walkField: null, gpsField: null, gpsPath: null, target: null,
@@ -73,9 +73,9 @@ const G = {
   hasSave() { return !!SAVE.latest(); },
   save() { if (this.started) SAVE.write('auto', true); },
   resetWorld() {
-    this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
+    this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = []; this.blood = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; FAMILY.reset(); REPLAY.on = false;
+    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; FAMILY.reset(); ANIMALS.reset(); REPLAY.on = false;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -203,6 +203,7 @@ const G = {
     if (v.dead) { UI.toast('Sira na yan, nasusunog!'); return; }
     if (v.driver === 'ai' || v.driver === 'cop') {
       this.ejectDriver(v);
+      AUD.scream(v.x, v.y);
       WANTED.crime(v.isCop ? 3 : 1, v.x, v.y);
       this.panic(v.x, v.y, 220);
     } else if (v.parked && !v.mission && Math.random() < 0.12) {
@@ -245,6 +246,7 @@ const G = {
     AUD.door();
   },
   panic(x, y, r) {
+    if (Math.random() < 0.6 && this.peds.some(p => !p.npc && p.kind === 'ped' && p.state !== 'down' && U.d2(p.x, p.y, x, y) < r * r)) setTimeout(() => AUD.scream(x, y), U.rand(80, 300));
     for (const p of this.peds) {
       if (p.npc || p.kind === 'cop' || p.state === 'down') continue;
       if (U.d2(p.x, p.y, x, y) < r * r) { p.state = 'flee'; p.fleeT = U.rand(3, 6); p.tx = x; p.ty = y; }
@@ -298,8 +300,16 @@ const G = {
     else if (type === 'wake') { p.life = p.max = 1.6; p.size = U.rand(5, 9); p.vx *= 0.3; p.vy *= 0.3; }
     else if (type === 'drip') { p.life = p.max = 0.4; p.size = U.rand(3, 6); p.vx = 0; p.vy = 0; }
     else if (type === 'shell') { p.life = p.max = 0.5; p.size = 2; p.vx = U.rand(-90, 90); p.vy = U.rand(-90, 90); }
+    else if (type === 'blood') { p.life = p.max = U.rand(0.35, 0.6); p.size = U.rand(2, 4); p.vx = U.rand(-110, 110); p.vy = U.rand(-110, 110); }
     else if (type === 'cash') { p.life = p.max = 1; p.size = 14; p.vx = 0; p.vy = -40; }
     this.particles.push(p);
+  },
+  // blood: a few drops and a pool that fades (Settings → Dugo can turn it off)
+  bleed(x, y, k = 1) {
+    if (SETTINGS.gore === 'off') return;
+    for (let i = 0; i < 6 * k; i++) this.particle('blood', x, y);
+    if (this.blood.length > 60) this.blood.shift();
+    this.blood.push({ x: x + U.rand(-6, 6), y: y + U.rand(-6, 6), r: U.rand(9, 15) * k, life: 45, a: U.rand(0, TAU) });
   },
   addSkid(v) {
     if (this.skids.length > 700) this.skids.splice(0, 40);
@@ -446,7 +456,7 @@ const G = {
     JOBS.update(dt);
     JOBS.depotTick(dt);
     STREET.update(dt);
-    FAMILY.update(dt); FAMILY.checkWedding(); PHONE.interest();
+    FAMILY.update(dt); FAMILY.checkWedding(); PHONE.interest(); ANIMALS.update(dt);
     COLL.update();
     DAILY.update(dt);
     REPLAY.update(dt);
@@ -466,6 +476,7 @@ const G = {
     for (const p of this.particles) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.96; p.vy *= 0.96; }
     this.particles = this.particles.filter(p => p.life > 0);
     for (const s of this.skids) s.life -= dt;
+    for (const b of this.blood) b.life -= dt; if (this.frame % 60 === 0) this.blood = this.blood.filter(b => b.life > 0);
     if (this.frame % 30 === 0) this.skids = this.skids.filter(s => s.life > 0);
     // removals
     if (this.frame % 10 === 0 || this.vehicles.some(v => v.remove)) {
@@ -535,7 +546,7 @@ const G = {
           if (pl && hit > (D().ramMin || 90) && this.ramCd <= 0) {
             this.ramCd = 1;
             if (other.isCop && other.driver) { other.lastHitByPlayer = true; WANTED.crime(2, other.x, other.y, true); }
-            else if (hit > 260 && other.driver && !other.criminal) WANTED.crime(1, other.x, other.y);
+            else if (hit > 340 && other.driver && !other.criminal) WANTED.crime(1, other.x, other.y);
             if (other.ai instanceof RoadDriver && Math.random() < 0.5) AUD.horn(other.isBig());
           }
         }
@@ -563,7 +574,7 @@ const G = {
             P.vx = v.vx * 0.8; P.vy = v.vy * 0.8;
           } else {
             p.knock(v.x - v.vx, v.y - v.vy, Math.min(500, sp * 0.9));
-            if (v.driver === 'player' && p.kind !== 'goon' && !p.snatcher) { WANTED.crime(p.kind === 'cop' ? 3 : 1, p.x, p.y); this.panic(p.x, p.y, 260); }
+            if (v.driver === 'player' && p.kind !== 'goon' && !p.snatcher && !p.animal) { WANTED.crime(p.kind === 'cop' ? 3 : 1, p.x, p.y); this.panic(p.x, p.y, 260); }
           }
           v.vx *= 0.9; v.vy *= 0.9;
           AUD.punch();
@@ -667,6 +678,9 @@ const G = {
       g.strokeRect(Wd.lastX - Wd.zone, Wd.lastY - Wd.zone, Wd.zone * 2, Wd.zone * 2); g.setLineDash([]);
     }
     WORLD.drawFloods(g, inV, now);
+    // blood pools
+    for (const b of this.blood) { if (!inV(b.x, b.y, 30)) continue; g.globalAlpha = Math.min(1, b.life / 8) * 0.8; g.fillStyle = '#6e0b0b'; g.beginPath(); g.ellipse(b.x, b.y, b.r, b.r * 0.7, b.a, 0, TAU); g.fill(); g.fillStyle = '#8f1313'; g.beginPath(); g.ellipse(b.x - 2, b.y - 1, b.r * 0.55, b.r * 0.4, b.a, 0, TAU); g.fill(); }
+    g.globalAlpha = 1;
     // skids
     g.fillStyle = 'rgba(10,10,12,0.35)';
     for (const s of this.skids) { if (!inV(s.x, s.y, 10)) continue; g.globalAlpha = Math.min(1, s.life / 4) * 0.6; g.save(); g.translate(s.x, s.y); g.rotate(s.a); g.fillRect(-5, -2.5, 10, 5); g.restore(); }
@@ -747,6 +761,7 @@ const G = {
       const t = p.life / p.max;
       if (p.type === 'smoke') { g.fillStyle = `rgba(60,60,66,${0.35 * t})`; g.beginPath(); g.arc(p.x, p.y, p.size * (2 - t), 0, TAU); g.fill(); }
       else if (p.type === 'spark') { g.fillStyle = `rgba(255,220,120,${t})`; g.fillRect(p.x, p.y, 3, 3); }
+      else if (p.type === 'blood') { g.fillStyle = `rgba(150,12,12,${t})`; g.beginPath(); g.arc(p.x, p.y, p.size, 0, TAU); g.fill(); }
       else if (p.type === 'hit') { g.strokeStyle = `rgba(255,255,255,${t})`; g.lineWidth = 3; g.beginPath(); g.arc(p.x, p.y, p.size * (1.5 - t), 0, TAU); g.stroke(); }
       else if (p.type === 'splash' || p.type === 'drip') { g.strokeStyle = `rgba(190,215,240,${0.6 * t})`; g.lineWidth = 1.5; g.beginPath(); g.arc(p.x, p.y, p.size * (1.6 - t), 0, TAU); g.stroke(); }
       else if (p.type === 'wake') { g.fillStyle = `rgba(220,235,245,${0.35 * t})`; g.beginPath(); g.arc(p.x, p.y, p.size * (2 - t), 0, TAU); g.fill(); }
