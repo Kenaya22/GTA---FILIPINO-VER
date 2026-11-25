@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila — v1.9
+# 👑 HARI NG KALSADA: Maynila — v2.1
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -17,7 +17,13 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 * Or run a local server: `python3 -m http.server` and open `http://localhost:8000`.
 
 ## 📲 Install it like an app
-Open the game link on your phone and tap **📲 I-INSTALL ANG APP** on the home page (Android/Chrome), or **Share → Add to Home Screen** (iPhone). It opens fullscreen and works without internet. Back up your saves anytime: ☰ → I-SAVE → **📤 I-EXPORT**.
+Open the game link on your phone and tap **📲 I-INSTALL ANG APP** on the home page (Android/Chrome), or **Share → Add to Home Screen** (iPhone). It opens fullscreen and works without internet. Back up your saves anytime: ☰ → I-SAVE → **📤 I-EXPORT**. Publishing kits: `ITCH.md` (itch.io) and `STORE.md` (Google Play).
+
+## 🌲 Chapter 5: Bagiw (v2.1)
+Fly to **Bagiw**, a cold, foggy pine-mountain city: Sesyon Street, a lake park, a strawberry farm, Mines View and a winding road down to the airport. 5 missions against **Don Magno**, the "Ninong of Ninongs" — a downhill bike race, a fog stealth break-in, a helicopter photo flight and a final armored-SUV chase. **33 missions in all.**
+
+## ⏱ Ghost Time Trial & sharing (v2.1)
+At the 🏁 race spot on Baywalk, race a fixed course against your own best run's ghost. Tap **📤 IBAHAGI** to send your run as a link — friends who open it race your ghost. Photo Mode pictures can be shared straight to Messenger/Facebook.
 
 ## 🦅 Chapter 4: Dabaw (v1.9)
 Fly to **Dabaw**: Bundok Apo, the Eagle Center and a banana plantation. 6 missions against the illegal-logging boss **Ninong**, plus a brand-new pan-and-zoom map.
@@ -108,6 +114,10 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/missions.js` | Story missions (chapters 1–2), shops, pasada |
 | `js/chapter3.js` | Chapter 3 missions and the final endings |
 | `js/chapter4.js` | Chapter 4 missions and the epilogue |
+| `js/chapter5.js` | Chapter 5 (Bagiw) missions and the series finale |
+| `js/share.js` | Ghost time trial, share links, photo sharing |
+| `js/life.js` | Interiors, street events, pet dog, collectibles |
+| `js/progression.js` | Levels/skills, daily challenges, replays, New Game+ |
 | `js/mapview.js` | Interactive full-screen map |
 | `js/ui.js` | HUD, minimap, map, dialogue, menus, touch controls |
 | `js/game.js` | Main loop, collisions, camera, lighting, save/load |
@@ -118,10 +128,10 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/weapons.js` | Melee weapons, projectiles, hardware shop |
 | `js/guns.js` | Guns, grenades, armor, gun shop, gang hideouts, shooting range |
 | `js/events.js` | Typhoons + rescue job, fiesta parade, Pasko, Undas |
-| `js/minigames.js` | Videoke and 3-point shootout |
+| `js/minigames.js` | Videoke, 3-point shootout, tumbang preso, sipa |
 | `js/wardrobe.js` | Wardrobe/accessories and photo mode |
 | `js/economy.js` | Properties, garage, car customization, achievements |
-| `js/jobs.js` | Side jobs: rider, taxi, tow, vigilante, race, paramedic, bumbero, basurero |
+| `js/jobs.js` | Side jobs: rider, taxi, Sakay App, tow, vigilante, race, paramedic, bumbero, basurero, fishing, tour guide |
 | `js/i18n.js`, `js/lang_en.js` | English language option |
 | `js/portraits.js` | Character portraits |
 | `js/pwa.js`, `sw.js`, `manifest.json` | Installable offline app |

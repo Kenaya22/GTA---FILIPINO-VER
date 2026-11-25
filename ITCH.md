@@ -7,6 +7,7 @@ Everything you need to publish the game on **itch.io** (free) or share it anywhe
 |---|---|
 | `media/trailer.gif` | 12-second gameplay loop for the store page / social posts |
 | `media/home.png`, `media/chase.png`, `media/province.png`, `media/island.png`, `media/phone-home.png` | Screenshots |
+| `media/feature-1024x500.png` | Google Play feature graphic / itch.io banner |
 | `media/preview.png` (1200×630) | Link preview image (already used for Facebook / Messenger previews) |
 | `icons/icon-512.png` | Game icon / cover thumbnail |
 
@@ -22,19 +23,23 @@ Everything you need to publish the game on **itch.io** (free) or share it anywhe
 ## Store page text
 **Hari ng Kalsada: Maynila** — King of the Road
 
-An original top-down open-world game set on the streets of a Manila-inspired city. Drive jeepneys and tricycles, outsmart a **6-star wanted system** that recognizes you by your clothes, face and car, and take down a corrupt mayor — then head to the province in **Chapter 2** and decide the fate of a farming town.
+An original top-down open-world game across four Filipino-inspired cities. Drive jeepneys and tricycles, outsmart a **6-star wanted system** that recognizes you by your clothes, face and car, and take down a corrupt mayor — then follow the story through the province, **Sugbo**, **Dabaw** and the pine-covered mountain city of **Bagiw** across **5 chapters and 33 missions** with choices and multiple endings.
 
-- 🚌 Jeepney pasada, taxi, food rider, tow truck and underground races
-- ⭐ 6-star police chases with search zones, disguises, helicopters and roadblocks
-- 🌅 Day/night, rain and floods, traffic lights, taho and balut vendors
-- 🏝 An island in Manila Bay and a whole province with a story choice and two endings
-- 🎵 Original synthesized OPM, budots and hip-hop radio
-- 📱 Plays on phones (joystick or arrow buttons) and keyboard · Filipino or English · installable & offline
+- 🚌 Jobs: jeepney pasada, taxi, ride-hailing, food rider, tow, ambulance, fire truck, fishing, tour guide, underground races
+- ⏱ Ghost Time Trial — share your run as a link and race a friend's ghost
+- ⭐ 6-star police chases with disguises, helicopters and roadblocks; guns and gun ranges
+- 🚁 Helicopters, bikes, boats and planes between cities
+- 🌀 Typhoons, fiestas, Simbang Gabi, street events, a pet dog and collectibles
+- 🎤 Mini-games: videoke, 3-point shootout, tumbang preso, sipa
+- 📈 Levels & skills, daily challenges, mission medals, New Game+
+- 📱 Plays on phones and keyboard · Filipino or English · installable & offline
 
 **Tags:** open-world, driving, philippines, filipino, top-down, police, pixel-free, singleplayer, browser, mobile
 
 ## Share link
 `https://kenaya22.github.io/GTA---FILIPINO-VER/` (GitHub Pages). On a phone, open it and tap **📲 I-INSTALL ANG APP** on the home page, or **Share → Add to Home Screen** on iPhone.
+
+See **STORE.md** for publishing to Google Play.
 
 ## Releasing an update
 1. Bump `GAME_VERSION` in `js/util.js` and add an entry to `CHANGES` in `js/ui.js` and to `CHANGELOG.md`.

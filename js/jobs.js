@@ -1,7 +1,7 @@
 'use strict';
 // ===== Side jobs: Food Rider, Taxi, Tow, Underground Race, Vigilante =====
 const EATERIES = ['Lutong Bahay ni Aling Bining', 'Inasal sa Kanto', 'Lugawan 24/7', 'Siomai House ni Ah Beng', 'Pares ni Mang Dado', 'Tapsihan sa Tondo', 'Bilao Pancit Express'];
-const JOB_NAMES = { rider: '🛵 Food Rider', taxi: '🚕 Taxi', tow: '🛻 Tow Truck', race: '🏁 Underground Race', vigil: '🚨 Pulis Vigilante', medic: '🚑 Paramedic', fire: '🚒 Bumbero', garbage: '🗑 Basurero', rescue: '🌀 Rescue' };
+const JOB_NAMES = { rider: '🛵 Food Rider', taxi: '🚕 Taxi', tow: '🛻 Tow Truck', race: '🏁 Underground Race', vigil: '🚨 Pulis Vigilante', medic: '🚑 Paramedic', fire: '🚒 Bumbero', garbage: '🗑 Basurero', rescue: '🌀 Rescue', sakay: '📱 Sakay App', fish: '🎣 Mangingisda', tour: '📸 Tour Guide' };
 
 function racePath(startI, startJ, n) {
   const path = [[startI, startJ]], seen = new Set([startI + ',' + startJ]);
@@ -49,6 +49,9 @@ const JOBS = {
     if (v.type === 'ambulance') return 'medic';
     if (v.type === 'firetruck') return 'fire';
     if (v.type === 'garbage') return 'garbage';
+    if (['sedan', 'hatch', 'suv', 'sports', 'pickup', 'mayor'].includes(v.type)) return 'sakay';
+    if (v.type === 'bangka' || v.type === 'lancha') return 'fish';
+    if (['van', 'multicab', 'bus'].includes(v.type)) return 'tour';
     if (v.rider) return 'rider';
     if (v.isCop && !v.t.boat) return 'vigil';
     return null;
@@ -231,14 +234,22 @@ const JOBS = {
   // ---------- UNDERGROUND RACE ----------
   raceLabel() {
     const h = WORLD.hour(), v = G.player.vehicle;
-    if (!(h >= 20 || h < 4)) return 'Underground Race — bumalik ng gabi (8 PM – 4 AM)';
-    if (!v) return 'Underground Race — kailangan mo ng sasakyan';
-    return `Underground Race — pusta ${U.money(this.bet())}, panalo x2`;
+    if (!v) return 'Underground Race / ⏱ Time Trial — kailangan mo ng sasakyan';
+    if (!(h >= 20 || h < 4)) return GHOST.label();
+    return `Underground Race — pusta ${U.money(this.bet())}, panalo x2 · ⏱ Time Trial`;
   },
   bet() { return Math.max(0, Math.min(1000, Math.floor(G.player.money / 100) * 100)); },
-  raceStart() {
+  raceStart(pick) {
     const h = WORLD.hour(), v = G.player.vehicle;
-    if (!(h >= 20 || h < 4)) { UI.toast('🌙 Gabi lang ang karera (8 PM – 4 AM). Hintayin ang gabi.'); return; }
+    if (!(h >= 20 || h < 4)) { GHOST.start(); return; }
+    if (!pick) {
+      G.paused = true; document.getElementById('shop-title').textContent = '🏁 KARERA';
+      const el = document.getElementById('shop-list');
+      el.innerHTML = `<div class="shoprow"><span class="ic">🏁</span><div><b>Underground Race</b><small>Pusta ${U.money(this.bet())}, panalo x2 (gabi lang)</small></div><button data-k="race">KARERA</button></div>`
+        + `<div class="shoprow"><span class="ic">⏱</span><div><b>Time Trial (Ghost)</b><small>${GHOST.label().replace(/^⏱ Time Trial \(Ghost\) — /, '')}</small></div><button data-k="trial">SIMULAN</button></div>`;
+      el.querySelectorAll('button[data-k]').forEach(b => b.onclick = () => { AUD.click(); UI.hide('shop'); G.paused = false; b.dataset.k === 'race' ? this.raceStart(true) : GHOST.start(); });
+      UI.show('shop'); return;
+    }
     if (!v || v.t.boat || ['bus', 'jeepney', 'tricycle'].includes(v.type)) { UI.toast('Kailangan ng kotse o motor para sa karera.'); return; }
     if (WANTED.stars > 0) { UI.toast('May humahabol na pulis — walang karera!'); return; }
     if (this.active || MS.active) { UI.toast('Tapusin muna ang ginagawa mo.'); return; }
@@ -408,3 +419,72 @@ Object.assign(JOBS, {
   },
 });
 function P_IN(v) { return G.player.vehicle === v; }
+
+// ===== v2.1 jobs: ride-hailing app, fishing, tour guide =====
+const FISH = [['🐟', 'Tilapia', 80], ['🐠', 'Lapu-lapu', 160], ['🦑', 'Pusit', 120], ['🦀', 'Alimango', 140], ['🐡', 'Butete (ibalik!)', 0], ['🐟', 'Bangus', 100]];
+Object.assign(JOBS, {
+  u_sakay(dt, c) {
+    const v = c.v;
+    if (!c.stage) {
+      const pt = this.stopNear(450, 1300); if (!pt) return;
+      c.pt = pt; c.stage = 'pick'; c.waiting = [];
+      const p = new Person(pt.x, pt.y, 'ped'); p.npc = true; p.state = 'idle'; p.keep = true; p.umb = null; G.peds.push(p); c.waiting.push(p);
+      c.name = U.choice(['Bea', 'Migs', 'Tita Lorna', 'Kuya Jun', 'Ate Joy', 'Sir Ramon', 'Paolo']);
+      UI.toast(`📱 May booking! Sunduin si ${c.name}.`);
+    }
+    if (c.stage === 'pick') {
+      c.obj = `Sunduin si ${c.name} · ⭐ ${(c.rate || 5).toFixed(1)}`; c.tgt = Object.assign({ stop: true }, c.pt);
+      if (this.stopped(c.pt, 100)) { removePeds(c.waiting); c.waiting = null; c.dest = this.stopNear(1000, 2800) || this.stopNear(600, 4000); c.hp0 = v.hp; c.t = 0; c.stage = 'drop'; AUD.door(); }
+    } else {
+      c.t += dt;
+      c.obj = `Ihatid si ${c.name} — dahan-dahan, may rating! 🚗`; c.tgt = Object.assign({ stop: true }, c.dest);
+      if (this.stopped(c.dest, 110)) {
+        const dmg = Math.max(0, c.hp0 - v.hp), d = U.dist(c.pt.x, c.pt.y, c.dest.x, c.dest.y), fast = d / Math.max(1, c.t);
+        const stars = U.clamp(5 - dmg / 12 - (fast < 120 ? 1 : 0), 1, 5);
+        c.n++; c.rate = ((c.rate || 5) * (c.n - 1) + stars) / c.n; G.stats.sakay = (G.stats.sakay || 0) + 1;
+        this.pay((60 + d / 20) * (0.6 + stars * 0.12), `📱 ${'⭐'.repeat(Math.round(stars))} Bayad mula kay ${c.name}`);
+        c.stage = null;
+      }
+    }
+  },
+  // a random sidewalk stop in whatever region the player is in
+  stopNear(minD, maxD) {
+    const P = G.player;
+    if (regionName(P.x) === 'MAYNILA') return PASADA.randomStop(minD, maxD);
+    for (let k = 0; k < 60; k++) { const a = Math.random() * TAU, r = U.rand(minD, maxD), x = P.x + Math.cos(a) * r, y = P.y + Math.sin(a) * r; if (MAP.tileAt(x, y) === TL.SIDE && regionName(x) === regionName(P.x)) return { x, y }; }
+    return null;
+  },
+  u_fish(dt, c) {
+    const v = c.v; c.catch = c.catch || [];
+    if (!c.stage) {
+      for (let k = 0; k < 40; k++) { const a = Math.random() * TAU, r = U.rand(400, 1100), x = v.x + Math.cos(a) * r, y = v.y + Math.sin(a) * r; if (MAP.tileAt(x, y) === TL.WATER && MAP.tileAt(x + 60, y) === TL.WATER && MAP.tileAt(x - 60, y) === TL.WATER) { c.spot = { x, y }; c.stage = 'go'; break; } }
+      if (!c.spot) return;
+    }
+    if (c.catch.length >= 5) {
+      const piers = Object.values(MAP.pois).filter(p => p.type === 'ferry');
+      const pier = piers.reduce((a, b) => U.d2(a.x, a.y, v.x, v.y) < U.d2(b.x, b.y, v.x, v.y) ? a : b);
+      c.obj = `Ibenta ang huli sa pantalan (${c.catch.map(f => f[0]).join('')})`; c.tgt = Object.assign({ stop: true }, pier);
+      if (this.stopped(pier, 180, 0.6)) { const tot = c.catch.reduce((a, f) => a + f[2], 0); this.pay(tot + 100, '🐟 Nabenta ang huli!'); G.stats.fish = (G.stats.fish || 0) + c.catch.length; c.catch = []; c.stage = null; c.spot = null; c.n++; }
+      return;
+    }
+    c.obj = `🎣 Pumunta sa isdaan at huminto (huli: ${c.catch.length}/5)`; c.tgt = Object.assign({ stop: true }, c.spot);
+    if (U.dist(v.x, v.y, c.spot.x, c.spot.y) < 120 && v.speed < 50) {
+      c.h = (c.h || 0) + dt; c.obj = `🎣 Nangingisda... ${'.'.repeat(1 + Math.floor(c.h * 2) % 3)}`;
+      if (c.h > 3) { c.h = 0; const f = U.choice(FISH); c.catch.push(f); UI.toast(`${f[0]} Nakahuli ng ${f[1]}!`); AUD.coin(); c.stage = null; c.spot = null; }
+    } else c.h = 0;
+  },
+  u_tour(dt, c) {
+    if (!c.stage) {
+      const P = G.player, lms = Object.values(MAP.pois).filter(p => p.landmark && regionName(p.x) === regionName(P.x));
+      if (lms.length < 2) { this.stop('Walang sapat na pasyalan dito — subukan sa ibang lungsod.'); return; }
+      c.route = lms.sort(() => Math.random() - 0.5).slice(0, Math.min(3, lms.length)); c.i = 0; c.stage = 'tour';
+      UI.say([['Turista', U.choice(['Hello! We want to see the best spots! Ganda dito!', 'Kuya, ipasyal mo kami! May selfie stick kami!', 'Saan ang pinakamagandang view, guide?'])]]);
+    }
+    const p = c.route[c.i];
+    c.obj = `📸 Ipasyal ang mga turista: ${p.label} (${c.i}/${c.route.length})`; c.tgt = Object.assign({ stop: true }, p);
+    if (this.stopped(p, 200, 1.2)) {
+      c.i++; AUD.tone(1800, 0.05, 'square', 0.05); UI.toast(`📸 Click! "${U.choice(['Wow!', 'Ang ganda!', 'Grabe!', 'Amazing!'])}"`);
+      if (c.i >= c.route.length) { c.n++; G.stats.tours = (G.stats.tours || 0) + 1; this.pay(250 + c.route.length * 120, '📸 Tapos ang tour! May tip pa'); c.stage = null; }
+    }
+  },
+});

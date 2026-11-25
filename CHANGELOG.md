@@ -1,5 +1,20 @@
 # Changelog — Hari ng Kalsada
 
+## v2.1: Kabanata 5 — Bagiw (2026-11-25)
+**New content**
+- 🌲 **Chapter 5: Bagiw**, a cold pine-mountain city north of everything: Sesyon Street, Bagiw Park with a lake, the strawberry farm, Mines View, Don Magno's walled mansion, a cathedral, hospital, police, shops and a winding mountain road down to its airport. Fog rolls in at night and dawn
+- 📖 **5 new missions** (33 total) against **Don Magno**, the "Ninong of Ninongs": Akyat Bagiw, a **downhill bike race**, **Hamog** (stealth break-in under the fog, guards with sight cones), **Himpapawid** (photograph 4 illegal mines from a helicopter) and **Ang Huling Ninong** (armored SUV chase with your allies from every chapter). New series finale
+- 🚁 **Helicopters** (rent one at the helipads for ₱1,500 — fly over everything, land on flat ground) and 🚲 **bicycles**
+- 💼 **3 new jobs**: 📱 Sakay App (ride-hailing with a star rating), 🎣 fishing (boats), 📸 tour guide (vans/multicab/bus between landmarks)
+- 🥫 **New court mini-games**: Tumbang Preso and Sipa, alongside the 3-Point Shootout
+- 🍓 10 golden strawberries to collect in Bagiw · ✈️ Airports fly to Bagiw
+**Sharing**
+- ⏱ **Ghost Time Trial** at the Baywalk race spot (any time of day): race a fixed course against your best run's ghost, then **📤 share it as a link** — friends who open the link race your ghost
+- 📤 **Share photos** from Photo Mode straight to Messenger/Facebook (on phones that support it)
+- 🏆 10 new achievements
+**Publishing**
+- `STORE.md`: Google Play (Trusted Web Activity) guide, listing text and a 1024×500 feature graphic (`media/feature-1024x500.png`)
+
 ## v2.0: Buhay na Lungsod / A Living City (2026-11-25)
 **Polish**
 - 🔋 New setting for the amount of people and traffic (Kaunti = battery saver) and 🎯 auto/manual aiming on phones

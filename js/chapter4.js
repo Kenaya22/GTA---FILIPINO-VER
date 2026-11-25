@@ -186,10 +186,10 @@ MISSIONS.push(
         obj: (c) => `Protektahan ang mga trak ng saging! 🍌 ${c.trucks ? c.trucks.map(j => Math.max(0, Math.round(j.hp / j.maxhp * 100)) + '%').join(' · ') : ''}`,
         enter(c) {
           const D = dw(), X = DX0;
-          const path = [{ x: (MW - 8.5) * T, y: (D.HY[3] + 2) * T }, { x: D.cx(3) + LO, y: D.cy(3) + LO }, { x: D.cx(2), y: D.cy(3) + LO }, { x: D.cx(2) - LO, y: D.cy(2) + LO }, { x: D.cx(0), y: D.cy(2) + LO }, { x: (X + 3) * T, y: (D.HY[2] + 2) * T }];
+          const path = [{ x: (DABAW_END - 8.5) * T, y: (D.HY[3] + 2) * T }, { x: D.cx(3) + LO, y: D.cy(3) + LO }, { x: D.cx(2), y: D.cy(3) + LO }, { x: D.cx(2) - LO, y: D.cy(2) + LO }, { x: D.cx(0), y: D.cy(2) + LO }, { x: (X + 3) * T, y: (D.HY[2] + 2) * T }];
           c.trucks = []; c.t = 0; c.spawned = 0;
           for (let k = 0; k < 2; k++) {
-            const j = laneSpawn('pickup', (MW - 8.5) * T, (D.HY[3] + 10 + k * 5) * T, -Math.PI / 2, { color: k ? '#f1c40f' : '#e67e22' });
+            const j = laneSpawn('pickup', (DABAW_END - 8.5) * T, (D.HY[3] + 10 + k * 5) * T, -Math.PI / 2, { color: k ? '#f1c40f' : '#e67e22' });
             j.driver = 'ai'; j.maxhp = j.hp = 380; j.cargo = 1;
             j.ai = new PathDriver(j, path, { cruise: 150, solid: true });
             c.trucks.push(j);
@@ -300,7 +300,7 @@ const EPILOGUE = {
   },
   text() {
     return G.flags.ch2 !== 'pera' && !tookBribe()
-      ? 'Natapos mo ang lahat ng 4 na kabanata at ang Tunay na Wakas! Iniligtas mo ang gubat ng Bundok Apo at ang mga agila. Maraming salamat sa paglalaro — ikaw ang tunay na Hari ng Kalsada!'
-      : 'Natapos mo ang lahat ng 4 na kabanata! Itinuwid mo ang mga pagkakamali at iniligtas ang gubat at ang mga agila. Subukan ang ibang mga pagpili para makita ang Tunay na Wakas.';
+      ? 'Natapos mo ang lahat ng 4 na kabanata at ang Tunay na Wakas! Iniligtas mo ang gubat ng Bundok Apo at ang mga agila. Pero may isa pang Ninong sa itaas nila... BUKAS NA ANG KABANATA 5 — kausapin si Ate Maya!'
+      : 'Natapos mo ang lahat ng 4 na kabanata! Itinuwid mo ang mga pagkakamali at iniligtas ang gubat at ang mga agila. BUKAS NA ANG KABANATA 5 — kausapin si Ate Maya!';
   },
 };

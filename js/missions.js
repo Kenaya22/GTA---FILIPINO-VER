@@ -846,7 +846,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'kainan', 'mall', 'church', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'heli', 'kainan', 'mall', 'church', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -862,11 +862,12 @@ const SHOP = {
       case 'barber': return P.vehicle ? null : `Barberya — Bagong gupit (${c(100)})`;
       case 'paint': return P.vehicle ? `Pintura — kulay, makina, armor, sticker, busina` : null;
       case 'weapon': return P.vehicle ? null : ARMS.shopLabel();
+      case 'heli': return P.vehicle ? null : `🚁 Umarkila ng helicopter (${c(1500)})`;
       case 'kainan': return P.vehicle ? null : `🍗 Pumasok sa ${p.label}`;
       case 'mall': return P.vehicle ? null : `🏬 Pumasok sa ${p.label}`;
       case 'church': return P.vehicle ? null : `⛪ Pumasok sa ${p.label}`;
       case 'videoke': return P.vehicle ? null : 'Videoke — kumanta para sa premyo (₱20 kada kanta)';
-      case 'court': return P.vehicle ? null : `3-Point Shootout — libre! (Pinakamataas: ${G.stats.shootBest || 0})`;
+      case 'court': return P.vehicle ? null : 'Laro sa korte — 3-Point Shootout, Tumbang Preso, Sipa';
       case 'gunshop': return P.vehicle ? null : (GUNS.unlocked() ? 'Armas ni Kabo — baril, bala, vest at shooting range' : '🔒 Armas — bukas pagkatapos ng Misyon 2');
       case 'property': return ECON.propLabel(p);
       case 'garage': return P.vehicle ? 'I-park ang sasakyan sa garahe' : `Buksan ang garahe (${ECON.garage.length} sasakyan)`;
@@ -912,7 +913,13 @@ const SHOP = {
       case 'gunshop': GUNS.openShop(); break;
       case 'videoke': VIDEOKE.pick(); break;
       case 'kainan': case 'mall': case 'church': INTERIOR.open(p); break;
-      case 'court': MG.run(SHOOTOUT); break;
+      case 'heli': {
+        if (WANTED.stars > 0) { UI.toast('🚁 "Bawal umarkila habang hinahabol ka ng pulis!"'); return; }
+        if (!this.pay(1500)) return;
+        const pt = MAP.safeNear(p.x, p.y - 70), hv = new Vehicle('heli', pt.x, pt.y, -Math.PI / 2); hv.keep = true; G.vehicles.push(hv); G.enterVehicle(hv);
+        AUD.success(); UI.toast('🚁 Lipad! Lumapag sa patag na lupa para bumaba.'); TIP.show('heli'); G.stats.heli = (G.stats.heli || 0) + 1; ACH.check(); break;
+      }
+      case 'court': COURTGAMES.open(); break;
       case 'property': ECON.propUse(p); break;
       case 'garage': if (P.vehicle) ECON.store(P.vehicle); else ECON.openGarage(p); break;
       case 'race': JOBS.raceStart(); break;
@@ -948,7 +955,7 @@ const SHOP = {
         G.paused = true;
         document.getElementById('shop-title').textContent = '✈️ ' + p.label.toUpperCase();
         const el = document.getElementById('shop-list');
-        const dests = [['airport_m', '🏙', 'Maynila'], ['airport_s', '🏝', 'Sugbo'], ['airport_d', '🦅', 'Dabaw']].filter(d => d[0] !== p.key && MAP.pois[d[0]]);
+        const dests = [['airport_m', '🏙', 'Maynila'], ['airport_s', '🏝', 'Sugbo'], ['airport_d', '🦅', 'Dabaw'], ['airport_b', '🌲', 'Bagiw']].filter(d => d[0] !== p.key && MAP.pois[d[0]]);
         el.innerHTML = dests.map(([k, ic, n]) => `<div class="shoprow"><span class="ic">${ic}</span><div><b>${n}</b><small>${MAP.pois[k].label}</small></div><button data-to="${k}">LIPAD · ${MS.freeShops ? 'LIBRE' : U.money(500)}</button></div>`).join('');
         el.querySelectorAll('button[data-to]').forEach(b => b.onclick = () => { if (!this.pay(500)) return; UI.hide('shop'); G.paused = false; FLY.go(MAP.pois[b.dataset.to]); });
         UI.show('shop');

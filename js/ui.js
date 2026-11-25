@@ -17,6 +17,14 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.1', title: 'Kabanata 5: Bagiw', date: 'Nobyembre 2026', items: [
+    '🌲 <b>KABANATA 5: BAGIW</b> — malamig na lungsod sa bundok: Kalye Sesyon, lawa, strawberry farm, Mines View at mahamog na gabi',
+    '📖 <b>5 bagong misyon</b> (33 lahat) laban kay <b>Don Magno</b>: karera ng bisikleta pababa, palihim sa hamog, helicopter at huling habulan',
+    '🚁 <b>Helicopter</b> (umarkila sa helipad) at 🚲 <b>bisikleta</b> · ✈️ Lumipad sa Bagiw mula sa kahit anong paliparan',
+    '💼 Bagong trabaho: 📱 <b>Sakay App</b>, 🎣 <b>Mangingisda</b>, 📸 <b>Tour Guide</b> · 🥫 Bagong laro sa korte: <b>Tumbang Preso</b> at <b>Sipa</b>',
+    '⏱ <b>Ghost Time Trial</b> sa Baywalk — talunin ang sarili mong multo at <b>ipadala ang link</b> sa kaibigan para labanan ka nila!',
+    '📤 <b>I-share ang litrato</b> mula sa Photo Mode diretso sa Messenger/Facebook · 🍓 10 gintong strawberry · 🏆 10 bagong achievement',
+  ] },
   { v: '2.0', title: 'Buhay na Lungsod', date: 'Nobyembre 2026', items: [
     '⭐ <b>Level at Skills</b> — kumita ng XP at palakasin ang Pagmamaneho, Asinta, Tibay sa Takbo at Tibay ng Katawan (☰ → 📈)',
     '📅 <b>Hamon araw-araw</b> — 3 bagong hamon bawat araw na may premyo (☰ → 📅)',
@@ -163,7 +171,8 @@ const UI = {
     $('btn-daily').onclick = () => DAILY.open();
     $('btn-ngplus').onclick = () => { AUD.init(); AUD.resume(); NGPLUS.start(); TUT.pending = false; TUT.end && TUT.end(true); };
     $('ph-close').onclick = () => PHOTO.close();
-    $('ph-snap').onclick = () => PHOTO.snap();
+    $('ph-snap').onclick = () => { PHOTO.snap(); $('ph-share').classList.remove('hidden'); };
+    $('ph-share').onclick = () => SHARE.photo();
     $('ph-frame').onclick = () => { PHOTO.frame = !PHOTO.frame; PHOTO.render(); AUD.click(); };
     $('ph-zoom').oninput = (e) => PHOTO.setZoom(+e.target.value);
     $('btn-achclose').onclick = () => this.hide('achievements');
@@ -393,7 +402,7 @@ const UI = {
     if (!MS.active && !side && MS.idx < MISSIONS.length) {
       side = `Susunod na misyon: ${MISSIONS[MS.idx].title} — puntahan si ${CHARS[MISSIONS[MS.idx].giver].name} (${CHARS[MISSIONS[MS.idx].giver].name[0]} sa mapa)`;
       const gp = MS.giverPOI(MISSIONS[MS.idx]);
-      if (gp && regionName(gp.x) !== regionName(P.x) && (SUGBO.in(gp.x) || DABAW.in(gp.x))) side += ' · ✈️ Sumakay ng eroplano sa Paliparan';
+      if (gp && regionName(gp.x) !== regionName(P.x) && (SUGBO.in(gp.x) || DABAW.in(gp.x) || BAGIW.in(gp.x))) side += ' · ✈️ Sumakay ng eroplano sa Paliparan';
     }
     this.el.sidejob.classList.toggle('hidden', !side);
     this.set('side', this.el.sidejob, 'textContent', side);
@@ -579,7 +588,7 @@ const UI = {
     let ch = 0;
     $('mission-list').innerHTML = MISSIONS.map((m, i) => {
       let head = '';
-      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'SUGBO' : 'DABAW'}</div>`; }
+      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'SUGBO' : ch === 4 ? 'DABAW' : 'BAGIW'}</div>`; }
       const st = i < MS.idx ? 'done' : i === MS.idx ? 'next' : 'locked';
       const label = st === 'done' ? '✓ TAPOS' : st === 'next' ? (MS.active === m ? 'GINAGAWA' : 'SUSUNOD') : '🔒';
       return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title} ${REPLAY.gradeIcon(m)}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}${st === 'done' && !MS.active ? `<button class="rep" data-r="${i}">🔁 REPLAY</button>` : ''}</div></div>`;
@@ -595,9 +604,10 @@ const UI = {
       ch2b: ['💰 ANG PRESYO', 'Mayaman ka na, pero nawalan ng lupa ang San Isidro (Ending B). May pagkakataon ka pang ituwid ito... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
       final: FINAL.ending(),
       epilogue: ['🦅 TAPOS ANG KABANATA 4!', EPILOGUE.text()],
+      grand: ['👑 WAKAS NG SERYE!', GRAND.text()],
     }[kind] || [];
     $('end-title').textContent = E[0]; $('end-text').textContent = E[1];
-    $('end-choices').innerHTML = kind === 'final' || kind === 'epilogue' ? FINAL.summary() : '';
+    $('end-choices').innerHTML = kind === 'final' || kind === 'epilogue' || kind === 'grand' ? FINAL.summary() : '';
     $('end-stats').innerHTML = [
       ['PERA', U.money(G.player.money)], ['TSINELAS', `${G.tsinelas.size}/${MAP.tsinelas.length}`], ['NAKATAKAS', G.stats.escapes], ['NABENTA', G.stats.sold],
     ].map(([a, b]) => `<div><span>${a}</span>${b}</div>`).join('');

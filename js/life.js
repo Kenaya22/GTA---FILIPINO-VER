@@ -207,7 +207,7 @@ function drawDog(g, p) {
 // ---------- regional collectibles: shells (Sugbo) and eagle feathers (Dabaw) ----------
 const COLL = {
   list: null,
-  kinds: { kabibe: { icon: '🐚', name: 'Kabibe', region: 'Sugbo' }, balahibo: { icon: '🪶', name: 'Balahibo ng Agila', region: 'Dabaw' } },
+  kinds: { kabibe: { icon: '🐚', name: 'Kabibe', region: 'Sugbo' }, balahibo: { icon: '🪶', name: 'Balahibo ng Agila', region: 'Dabaw' }, presa: { icon: '🍓', name: 'Gintong Strawberry', region: 'Bagiw' } },
   make() {
     const out = [], R = U.rng(9191);
     const pick = (kind, x0, x1, n) => {
@@ -219,7 +219,8 @@ const COLL = {
       got.forEach(([x, y], i) => out.push({ id: kind + i, kind, x: (x + 0.5) * T, y: (y + 0.5) * T }));
     };
     pick('kabibe', SX0 + 1, SUGBO_END - 2, 10);
-    pick('balahibo', DX0 + 1, MW - 2, 10);
+    pick('balahibo', DX0 + 1, DABAW_END - 2, 10);
+    pick('presa', BX0 + 1, MW - 2, 10);
     return (this.list = out);
   },
   all() { return this.list || this.make(); },

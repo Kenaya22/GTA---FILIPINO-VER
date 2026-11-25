@@ -223,3 +223,97 @@ const SHOOTOUT = {
     ACH.check(); SAVE.auto();
   },
 };
+
+// ---------- TUMBANG PRESO: knock the can over with your tsinelas ----------
+const TUMBANG = {
+  title: '🥫 TUMBANG PRESO', help: 'Space / click para itigil ang palaso, tapos ulit para sa lakas. 6 na tira!', helpTouch: 'I-tap para itigil ang palaso, tapos ulit para sa lakas. 6 na tira!',
+  init() { this.n = 0; this.hits = 0; this.phase = 'aim'; this.ang = 0; this.dir = 1; this.pow = 0; this.anim = null; this.msg = null; this.canX = 0.5 + U.rand(-0.15, 0.15); },
+  key(c) { if (c === 'Space' || c === 'Enter') this.tap(); },
+  tap() {
+    if (this.anim || this.n >= 6) return;
+    if (this.phase === 'aim') { this.phase = 'power'; this.pow = 0; this.pdir = 1; }
+    else if (this.phase === 'power') {
+      const tx = 0.5 + Math.sin(this.ang) * 0.42, need = 0.62 + this.n * 0.03;
+      const hit = Math.abs(tx - this.canX) < 0.05 && Math.abs(this.pow - need) < 0.16;
+      this.anim = { t: 0, tx, ty: 0.18 + (1 - this.pow) * 0.25, hit }; AUD.whoosh();
+    }
+  },
+  update(dt, g, W, H) {
+    if (this.phase === 'aim' && !this.anim) { this.ang += this.dir * dt * (1.3 + this.n * 0.15); if (Math.abs(this.ang) > 0.9) this.dir *= -1; }
+    if (this.phase === 'power' && !this.anim) { this.pow += this.pdir * dt * 1.4; if (this.pow > 1 || this.pow < 0) this.pdir *= -1; }
+    g.fillStyle = '#7a6040'; g.fillRect(0, 0, W, H); g.fillStyle = '#8a7050'; for (let k = 0; k < 40; k++) g.fillRect((k * 97) % W, (k * 53) % H, 6, 4);
+    g.strokeStyle = 'rgba(255,255,255,0.6)'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, H * 0.78); g.lineTo(W, H * 0.78); g.stroke();
+    // the can + its guard (taya)
+    const cx = this.canX * W, cy = H * 0.22;
+    if (!(this.anim && this.anim.hit && this.anim.t > 0.6)) { g.fillStyle = '#c0392b'; g.fillRect(cx - 14, cy - 22, 28, 44); g.fillStyle = '#ddd'; g.fillRect(cx - 14, cy - 22, 28, 6); }
+    else { g.save(); g.translate(cx + 40, cy + 10); g.rotate(1.4); g.fillStyle = '#c0392b'; g.fillRect(-14, -22, 28, 44); g.restore(); }
+    g.font = `${W * 0.06}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(this.anim && this.anim.hit && this.anim.t > 0.6 ? '😱' : '🧍', cx + W * 0.1, cy);
+    // aim line from the player
+    const px = W / 2, py = H * 0.88;
+    if (!this.anim && this.n < 6) {
+      g.strokeStyle = 'rgba(255,255,255,0.5)'; g.setLineDash([10, 10]); g.lineWidth = 3; g.beginPath(); g.moveTo(px, py); g.lineTo(px + Math.sin(this.ang) * W * 0.42, H * 0.2); g.stroke(); g.setLineDash([]);
+      if (this.phase === 'power') { g.fillStyle = 'rgba(0,0,0,0.5)'; g.fillRect(W * 0.9, H * 0.3, W * 0.03, H * 0.45); const need = 0.62 + this.n * 0.03; g.fillStyle = 'rgba(61,220,151,0.8)'; g.fillRect(W * 0.9, H * 0.75 - H * 0.45 * (need + 0.16), W * 0.03, H * 0.45 * 0.32); g.fillStyle = '#fff'; g.fillRect(W * 0.885, H * 0.75 - H * 0.45 * this.pow - 3, W * 0.06, 6); }
+    }
+    g.font = `${W * 0.05}px sans-serif`; g.fillText('🩴', px, py);
+    if (this.anim) {
+      const a = this.anim; a.t += dt; const k = Math.min(1, a.t / 0.6);
+      g.save(); g.translate(U.lerp(px, a.tx * W, k), U.lerp(py, a.ty * H, k) - Math.sin(k * Math.PI) * H * 0.1); g.rotate(a.t * 14); g.fillText('🩴', 0, 0); g.restore();
+      if (a.t > 0.6 && !a.done) { a.done = true; this.n++; if (a.hit) { this.hits++; this.msg = { t: 1, txt: 'TUMBA! 🥫' }; AUD.tone(1046, 0.1, 'square', 0.06); } else { this.msg = { t: 1, txt: U.choice(['Sablay!', 'Muntik na!', 'Taya ka!']) }; AUD.tone(180, 0.2, 'sawtooth', 0.04); } }
+      if (a.t > 1.3) { this.anim = null; this.phase = 'aim'; this.canX = 0.5 + U.rand(-0.2, 0.2); }
+    }
+    if (this.msg) { this.msg.t -= dt; MG.text(g, this.msg.txt, W / 2, H * 0.5, W * 0.05, '#ffd23f'); if (this.msg.t <= 0) this.msg = null; }
+    MG.text(g, `Tumba: ${this.hits}`, W * 0.97, H * 0.06, W * 0.03, '#fff', 'right');
+    MG.text(g, `Tira ${Math.min(6, this.n + 1)}/6`, W * 0.03, H * 0.06, W * 0.026, '#fff', 'left');
+    return this.n >= 6 && !this.anim && !this.msg;
+  },
+  finish() {
+    G.stats.tumbang = Math.max(G.stats.tumbang || 0, this.hits);
+    const prize = this.hits >= 5 ? 800 : this.hits >= 3 ? 250 : 0; if (prize) G.addMoney(prize, true);
+    UI.big(`🥫 ${this.hits} TUMBA`, prize ? `Panalo! +${U.money(prize)}` : '3+ para sa premyo', 2.6, prize ? 'good' : ''); PROG.xp(this.hits * 8, 'Laro'); ACH.check();
+  },
+};
+
+// ---------- SIPA: keep the sipa in the air ----------
+const SIPA = {
+  title: '🪶 SIPA', help: 'Space / click kapag nasa bilog ang sipa — huwag ilaglag!', helpTouch: 'I-tap kapag nasa bilog ang sipa — huwag ilaglag!',
+  init(W, H) { this.y = 0.2; this.vy = 0; this.kicks = 0; this.over = false; this.x = 0.5; this.vx = 0; this.t = 0; this.flash = 0; },
+  key(c) { if (c === 'Space' || c === 'Enter') this.tap(); },
+  tap() {
+    if (this.over) return;
+    if (this.y > 0.62 && this.y < 0.86) { this.vy = -1.38 - Math.min(0.5, this.kicks * 0.02); this.vx = U.rand(-0.25, 0.25); this.kicks++; this.flash = 0.15; AUD.tone(700 + this.kicks * 10, 0.05, 'square', 0.05); }
+    else { this.vy += 0.2; AUD.tone(150, 0.08, 'sawtooth', 0.03); }
+  },
+  update(dt, g, W, H) {
+    this.t += dt;
+    if (!this.over) { this.vy += dt * (1.6 + this.kicks * 0.04); this.y += this.vy * dt; this.x = U.clamp(this.x + this.vx * dt, 0.2, 0.8); if (this.y > 0.95) { this.over = true; this.endT = 1.2; AUD.fail(); } }
+    else this.endT -= dt;
+    g.fillStyle = '#2a4231'; g.fillRect(0, 0, W, H);
+    g.fillStyle = this.flash > 0 ? 'rgba(61,220,151,0.35)' : 'rgba(255,255,255,0.12)'; this.flash -= dt;
+    g.beginPath(); g.ellipse(this.x * W, H * 0.74, W * 0.09, H * 0.1, 0, 0, TAU); g.fill();
+    g.font = `${W * 0.08}px sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('🦶', this.x * W, H * 0.88);
+    g.save(); g.translate(this.x * W, this.y * H); g.rotate(Math.sin(this.t * 6) * 0.4);
+    g.fillStyle = '#d4af37'; g.beginPath(); g.arc(0, 8, 9, 0, TAU); g.fill();
+    for (let k = -2; k <= 2; k++) { g.fillStyle = ['#e74c3c', '#f1c40f', '#27ae60', '#2e86c1', '#e84393'][k + 2]; g.beginPath(); g.ellipse(k * 5, -10, 3, 13, k * 0.2, 0, TAU); g.fill(); }
+    g.restore();
+    MG.text(g, `Sipa: ${this.kicks}`, W / 2, H * 0.08, W * 0.045, '#fff');
+    if (this.over) MG.text(g, 'NAHULOG!', W / 2, H * 0.45, W * 0.06, '#ff6b5a');
+    return this.over && this.endT <= 0;
+  },
+  finish() {
+    G.stats.sipa = Math.max(G.stats.sipa || 0, this.kicks);
+    const prize = this.kicks >= 30 ? 1000 : this.kicks >= 15 ? 300 : 0; if (prize) G.addMoney(prize, true);
+    UI.big(`🪶 ${this.kicks} SIPA`, prize ? `Galing! +${U.money(prize)}` : '15+ para sa premyo', 2.6, prize ? 'good' : ''); PROG.xp(Math.min(80, this.kicks * 2), 'Laro'); ACH.check();
+  },
+};
+// courts: pick a game
+const COURTGAMES = {
+  open() {
+    G.paused = true;
+    document.getElementById('shop-title').textContent = '🏀 LARO SA KORTE';
+    const el = document.getElementById('shop-list'), st = G.stats;
+    el.innerHTML = [['shoot', '🏀', '3-Point Shootout', `Pinakamataas: ${st.shootBest || 0}`], ['tumbang', '🥫', 'Tumbang Preso', `Pinakamataas: ${st.tumbang || 0}`], ['sipa', '🪶', 'Sipa', `Pinakamataas: ${st.sipa || 0}`]]
+      .map(([k, ic, n, d]) => `<div class="shoprow"><span class="ic">${ic}</span><div><b>${n}</b><small>${d}</small></div><button data-g="${k}">LARO</button></div>`).join('');
+    el.querySelectorAll('button[data-g]').forEach(b => b.onclick = () => { UI.hide('shop'); MG.run({ shoot: SHOOTOUT, tumbang: TUMBANG, sipa: SIPA }[b.dataset.g]); });
+    UI.show('shop');
+  },
+};

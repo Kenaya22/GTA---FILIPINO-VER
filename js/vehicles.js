@@ -28,6 +28,8 @@ const VT = {
   multicab: { name: 'Multicab', L: 66, W: 28, max: 420, acc: 360, brake: 850, grip: 9, steer: 2.6, mass: 1.1, hp: 110, cruise: 210, value: 300, draw: 'jeep' },
   lancha: { name: 'Speedboat', L: 62, W: 22, max: 640, acc: 520, brake: 360, grip: 2.6, steer: 2.2, mass: 1, hp: 120, cruise: 300, value: 900, draw: 'lancha', boat: 1, color: '#f4f4f0' },
   yate: { name: 'Yate ni Tiburon', L: 120, W: 38, max: 500, acc: 300, brake: 300, grip: 2.2, steer: 1.6, mass: 4, hp: 900, cruise: 300, value: 0, draw: 'lancha', boat: 1, color: '#1d2a3a' },
+  heli: { name: 'Helicopter', L: 74, W: 26, max: 560, acc: 380, brake: 520, grip: 2.4, steer: 2.6, mass: 1.2, hp: 220, cruise: 300, value: 2500, draw: 'heli', fly: 1, color: '#1f6f8b' },
+  bisikleta: { name: 'Bisikleta', L: 34, W: 12, max: 300, acc: 320, brake: 900, grip: 11, steer: 3.8, mass: 0.3, hp: 40, cruise: 180, value: 80, draw: 'bike', quiet: 1 },
   float: { name: 'Karosa', L: 90, W: 42, max: 140, acc: 120, brake: 500, grip: 9, steer: 2.0, mass: 6, hp: 9999, cruise: 55, value: 0, draw: 'float' },
   armored: { name: 'Armored Van', L: 84, W: 40, max: 440, acc: 340, brake: 800, grip: 8.5, steer: 2.2, mass: 3, hp: 600, cruise: 200, value: 0, draw: 'armored', armor: 2 },
 };
@@ -67,8 +69,8 @@ class Vehicle {
     let ca = Math.cos(this.a), sa = Math.sin(this.a);
     let vf = this.vx * ca + this.vy * sa, vr = -this.vx * sa + this.vy * ca;
     const tile = MAP.tileAt(this.x, this.y);
-    let terrain = tile === TL.GRASS ? 0.72 : tile === TL.SAND ? 0.6 : tile === TL.PADDY ? 0.5 : tile === TL.DIRT ? (this.type === 'kuliglig' ? 1 : 0.85) : 1;
-    if (!t.boat && WORLD.flood > 0.05) {
+    let terrain = t.fly ? 1 : tile === TL.GRASS ? 0.72 : tile === TL.SAND ? 0.6 : tile === TL.PADDY ? 0.5 : tile === TL.DIRT ? (this.type === 'kuliglig' ? 1 : 0.85) : 1;
+    if (!t.boat && !t.fly && WORLD.flood > 0.05) {
       const f = MAP.floodAt(this.x, this.y);
       if (f) { terrain *= 1 - 0.55 * WORLD.flood; if (this.speed > 120 && Math.random() < 0.5) G.particle('splash', this.x + U.rand(-20, 20), this.y + U.rand(-20, 20)); }
     }
@@ -101,7 +103,7 @@ class Vehicle {
     if (t.boat) { if (Math.abs(vf) > 80 && Math.random() < 0.6) G.particle('wake', this.x - Math.cos(this.a) * this.L * 0.5, this.y - Math.sin(this.a) * this.L * 0.5); }
     else if (Math.abs(vr) > 140 && G.frame % 2 === 0 && SETTINGS.quality !== 'low') G.addSkid(this);
     this.x += this.vx * dt; this.y += this.vy * dt;
-    this.collideTiles();
+    if (!t.fly) this.collideTiles();
     if (this.lastImpact > 0) this.lastImpact -= dt;
     // smoke & fire
     if (!this.dead && this.hp < this.maxhp * 0.3 && Math.random() < 0.25) G.particle('smoke', this.x + ca * this.L * 0.35, this.y + sa * this.L * 0.35);
@@ -201,6 +203,8 @@ function drawVehicle(g, v, now) {
     case 'pickup': drawPickup(g, v, col, hl, hw); break;
     case 'float': drawFloat(g, v, col, hl, hw, now); break;
     case 'lancha': drawLancha(g, v, col, hl, hw); break;
+    case 'heli': drawHeliV(g, v, col, hl, hw, now); break;
+    case 'bike': drawBike(g, v, col, hl, hw, now); break;
     case 'logs': drawLogs(g, v, col, hl, hw); break;
   }
   if (v.upg) drawSticker(g, v, hl, hw);
@@ -446,6 +450,30 @@ function drawLogs(g, v, col, hl, hw) {
   g.fillStyle = '#3a3f48'; g.fillRect(-hl, -hw, hl * 1.42, hw * 2);
   if (!v.burnt && !v.caught) for (let r = 0; r < 4; r++) { g.fillStyle = r % 2 ? '#8a5a2b' : '#a0703a'; U.rr(g, -hl + 2, -hw + 3 + r * (hw * 2 - 6) / 4, hl * 1.36, (hw * 2 - 6) / 4 - 1, 4); g.fill(); g.fillStyle = '#d9b48a'; g.beginPath(); g.arc(-hl + 6, -hw + 3 + (r + 0.5) * (hw * 2 - 6) / 4, 3, 0, TAU); g.fill(); }
   lightsFrontBack(g, v, hl, hw);
+}
+function drawHeliV(g, v, col, hl, hw, now) {
+  const air = v.speed > 30 || v.driver === 'player';
+  if (air) { g.fillStyle = 'rgba(0,0,0,0.25)'; g.beginPath(); g.ellipse(-14, 22, hl * 0.8, hw * 0.7, 0, 0, TAU); g.fill(); }
+  g.fillStyle = v.burnt ? '#2a2826' : col; g.beginPath(); g.ellipse(hl * 0.15, 0, hl * 0.55, hw * 0.75, 0, 0, TAU); g.fill();
+  g.fillRect(-hl, -3, hl * 0.8, 6); g.fillRect(-hl, -9, 6, 18);
+  g.fillStyle = '#18202d'; g.beginPath(); g.ellipse(hl * 0.42, 0, hl * 0.2, hw * 0.5, 0, 0, TAU); g.fill();
+  g.strokeStyle = '#333'; g.lineWidth = 2; g.beginPath(); g.moveTo(-hl * 0.2, -hw); g.lineTo(hl * 0.5, -hw); g.moveTo(-hl * 0.2, hw); g.lineTo(hl * 0.5, hw); g.stroke();
+  const spin = (v.driver ? now * 30 : 0.3);
+  g.save(); g.rotate(spin); g.strokeStyle = air ? 'rgba(30,30,30,0.55)' : '#2b2b2b'; g.lineWidth = 4;
+  g.beginPath(); g.moveTo(-hl * 0.9, 0); g.lineTo(hl * 0.9, 0); g.moveTo(0, -hl * 0.9); g.lineTo(0, hl * 0.9); g.stroke(); g.restore();
+  if (air && v.driver) { g.strokeStyle = 'rgba(255,255,255,0.15)'; g.lineWidth = 2; g.beginPath(); g.arc(0, 0, hl * 0.9, 0, TAU); g.stroke(); }
+}
+function drawBike(g, v, col, hl, hw, now) {
+  g.strokeStyle = '#222'; g.lineWidth = 3; g.beginPath(); g.moveTo(-hl, 0); g.lineTo(hl, 0); g.stroke();
+  g.fillStyle = '#111'; g.beginPath(); g.ellipse(hl - 5, 0, 5, 2.5, 0, 0, TAU); g.ellipse(-hl + 5, 0, 5, 2.5, 0, 0, TAU); g.fill();
+  g.strokeStyle = v.burnt ? '#2a2826' : col; g.lineWidth = 3; g.beginPath(); g.moveTo(-hl * 0.4, 0); g.lineTo(hl * 0.4, 0); g.stroke();
+  g.strokeStyle = '#555'; g.lineWidth = 2; g.beginPath(); g.moveTo(hl * 0.55, -hw - 2); g.lineTo(hl * 0.55, hw + 2); g.stroke();
+  if (v.driver) {
+    const leg = Math.sin(now * Math.min(16, v.speed / 10)) * 4;
+    g.fillStyle = v.driver === 'player' ? G.player.look.shirt : (v.rcol || '#c0392b'); g.beginPath(); g.ellipse(-2, 0, 6, 8, 0, 0, TAU); g.fill();
+    g.fillStyle = '#1b1410'; g.beginPath(); g.arc(1, 0, 4.5, 0, TAU); g.fill();
+    g.fillStyle = '#333'; g.fillRect(2 + leg, -6, 3, 2); g.fillRect(2 - leg, 4, 3, 2);
+  }
 }
 function drawLancha(g, v, col, hl, hw) {
   g.fillStyle = v.burnt ? '#2a2826' : col;

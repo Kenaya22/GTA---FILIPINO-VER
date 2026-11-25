@@ -278,6 +278,7 @@ const WORLD = {
     if (dk > 0) { g.fillStyle = `rgba(255,115,40,${dk * 0.14})`; g.fillRect(x0, y0, w, h); }
     if (this.rain > 0.01) { g.fillStyle = `rgba(12,20,34,${this.rain * 0.22})`; g.fillRect(x0, y0, w, h); }
     TYPHOON.drawOverlay(g, x0, y0, w, h);
+    if (MAP.bagiw && G.cam.x > (BX0 - 10) * T) { const hr = this.hour(), fog = hr < 9 ? 0.32 : hr > 18 ? 0.22 : 0.1; g.fillStyle = `rgba(215,222,232,${fog})`; g.fillRect(x0, y0, w, h); }
   },
   drawRain(g, W, H, dpr) {
     if (this.drops.length) {
@@ -430,10 +431,11 @@ function cityLife(region, x0, x1, carTypes) { return {
   reset() { this.folk = []; this.cars = []; },
 }; }
 const SUGBO = cityLife(() => MAP.sugbo, () => SX0 - 12, () => SUGBO_END + 4, ['multicab', 'multicab', 'multicab', 'jeepney', 'taxi', 'taxi', 'motor', 'motor', 'sedan', 'suv', 'pickup', 'van', 'bus']);
-const DABAW = cityLife(() => MAP.dabaw, () => DX0 - 12, () => MW + 1, ['jeepney', 'jeepney', 'taxi', 'taxi', 'motor', 'tricycle', 'sedan', 'suv', 'pickup', 'pickup', 'van', 'multicab']);
+const DABAW = cityLife(() => MAP.dabaw, () => DX0 - 12, () => DABAW_END + 3, ['jeepney', 'jeepney', 'taxi', 'taxi', 'motor', 'tricycle', 'sedan', 'suv', 'pickup', 'pickup', 'van', 'multicab']);
+const BAGIW = cityLife(() => MAP.bagiw, () => BX0 - 4, () => MW + 1, ['jeepney', 'jeepney', 'taxi', 'sedan', 'suv', 'pickup', 'pickup', 'van', 'motor']);
 // road points used by police in the outer regions
-function regionPts(x) { return DABAW.in(x) ? MAP.dabaw.pts : SUGBO.in(x) ? MAP.sugbo.pts : MAP.prov.pts; }
-function regionName(x) { return DABAW.in(x) ? 'DABAW' : SUGBO.in(x) ? 'SUGBO' : MAP.inProvince(x) ? 'SAN ISIDRO' : 'MAYNILA'; }
+function regionPts(x) { return BAGIW.in(x) ? MAP.bagiw.pts : DABAW.in(x) ? MAP.dabaw.pts : SUGBO.in(x) ? MAP.sugbo.pts : MAP.prov.pts; }
+function regionName(x) { return BAGIW.in(x) ? 'BAGIW' : DABAW.in(x) ? 'DABAW' : SUGBO.in(x) ? 'SUGBO' : MAP.inProvince(x) ? 'SAN ISIDRO' : 'MAYNILA'; }
 
 // ===== Flights between Manila and Sugbo (short animated transition) =====
 const FLY = {
@@ -441,7 +443,7 @@ const FLY = {
     const P = G.player, el = document.getElementById('flight');
     if (P.vehicle) G.exitVehicle(true);
     G.cutscene = true; AUD.whoosh(); AUD.tone(180, 2.4, 'sawtooth', 0.04, 120);
-    const toSugbo = dest.key === 'airport_s', nm = { airport_m: 'MAYNILA', airport_s: 'SUGBO', airport_d: 'DABAW' }, from = regionName(P.x);
+    const toSugbo = dest.key === 'airport_s', nm = { airport_m: 'MAYNILA', airport_s: 'SUGBO', airport_d: 'DABAW', airport_b: 'BAGIW' }, from = regionName(P.x);
     document.getElementById('fl-to').textContent = `${from} ✈️ ${nm[dest.key]}`;
     el.classList.remove('hidden'); el.classList.add('on');
     const arr = MAP.safeNear(dest.x, dest.y + (dest.key === 'airport_m' ? -50 : 30));
@@ -452,8 +454,8 @@ const FLY = {
     }, 1600);
     setTimeout(() => {
       el.classList.remove('on'); el.classList.add('hidden'); G.cutscene = false;
-      UI.big(nm[dest.key], dest.key === 'airport_m' ? 'Balik sa Maynila' : dest.key === 'airport_d' ? 'Madayaw nga pag-abot! (Maligayang pagdating!)' : 'Maayong pag-abot! (Maligayang pagdating!)', 2.2);
-      if (toSugbo) TIP.show('sugbo'); if (dest.key === 'airport_d') TIP.show('dabaw');
+      UI.big(nm[dest.key], dest.key === 'airport_m' ? 'Balik sa Maynila' : dest.key === 'airport_d' ? 'Madayaw nga pag-abot! (Maligayang pagdating!)' : dest.key === 'airport_b' ? 'Malamig dito! Brrr... 🌲' : 'Maayong pag-abot! (Maligayang pagdating!)', 2.2);
+      if (toSugbo) TIP.show('sugbo'); if (dest.key === 'airport_d') TIP.show('dabaw'); if (dest.key === 'airport_b') TIP.show('bagiw');
       G.stats.flights = (G.stats.flights || 0) + 1; ACH.check();
       if (done) done();
     }, 3200);

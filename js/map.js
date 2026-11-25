@@ -15,7 +15,10 @@ const SUGBO_END = SX0 + SUGBO_W;
 const STRAIT2_W = 26;                             // sea between Sugbo and Dabaw
 const DX0 = SUGBO_END + STRAIT2_W;                // Dabaw (Chapter 4 city)
 const DABAW_W = 104;
-const MW = DX0 + DABAW_W;
+const DABAW_END = DX0 + DABAW_W;
+const BX0 = DABAW_END + 6;                         // Bagiw (Chapter 5 mountain city), behind a pine ridge
+const BAGIW_W = 100;
+const MW = BX0 + BAGIW_W;
 const MH = OY + (NR - 1) * PER + RW + 16;
 const WORLD_W = MW * T, WORLD_H = MH * T;
 const LO = 32;         // lane offset from road centre
@@ -162,6 +165,7 @@ const MAP = {
     this.makeProvince();
     this.makeSugbo();
     this.makeDabaw();
+    this.makeBagiw();
     this.makeLandmarks();
     this.makeLabels();
     this.makeMini();
@@ -709,7 +713,7 @@ const MAP = {
     fill(sg.VX[4] + RW, py, SUGBO_END - sg.VX[4] - RW, RW, TL.ROAD);
     fill(SUGBO_END, py, 9, RW, TL.PIER);
     fill(X, 0, DABAW_W, MH, TL.GRASS);
-    for (let y = 0; y < MH; y++) this.set(MW - 1, y, TL.TREE);
+    for (let y = 0; y < MH; y++) this.set(DABAW_END - 1, y, TL.TREE);
     const VX = [X + 10, X + 32, X + 54, X + 76], HY = [66, 88, 110, 132, 154];
     const dw = this.dabaw = { x0: X, VX, HY, pts: [], loops: [], blocks: [] };
     dw.cx = (i) => (VX[i] + RW / 2) * T; dw.cy = (j) => (HY[j] + RW / 2) * T;
@@ -727,7 +731,7 @@ const MAP = {
     dw.pier = { x: (X - 7) * T, y: (HY[2] + 9.5) * T };
     this.boatSpots.push({ x: (X - 5) * T, y: (HY[2] + 12.6) * T, a: Math.PI }, { x: (SUGBO_END + 5) * T, y: (py + RW + 2) * T, a: 0 });
     // the mountain (Bundok Apo) in the north: forest, a winding trail, the logging camp and the summit
-    for (let y = 2; y < HY[0] - 1; y++) for (let x = X + 1; x < MW - 2; x++) if (R() < 0.16) this.addTree(x, y);
+    for (let y = 2; y < HY[0] - 1; y++) for (let x = X + 1; x < DABAW_END - 2; x++) if (R() < 0.16) this.addTree(x, y);
     const trail = [[VX[1] + 1, HY[0]], [VX[1] + 1, 52], [X + 70, 52], [X + 70, 38], [X + 26, 38], [X + 26, 24], [X + 80, 24], [X + 80, 10]];
     for (let k = 0; k < trail.length - 1; k++) { const [ax, ay] = trail[k], [bx, by] = trail[k + 1]; fill(Math.min(ax, bx), Math.min(ay, by), Math.abs(bx - ax) + 3, Math.abs(by - ay) + 3, TL.DIRT); }
     dw.trail = trail.map(([x, y]) => ({ x: (x + 1.5) * T, y: (y + 1.5) * T }));
@@ -739,15 +743,15 @@ const MAP = {
     fill(X + 76, 3, 12, 8, TL.PLAZA); this.addBld(X + 80, 4, 3, 2, '#9aa3ad', 'monument');
     dw.summit = { x: (X + 82) * T, y: (9) * T };
     // eagle sanctuary (east of the city)
-    fill(VX[3] + RW, HY[0], MW - VX[3] - RW - 2, HY[2] - HY[0], TL.GRASS);
-    fill(VX[3] + RW, HY[1], MW - VX[3] - RW - 2, RW, TL.ROAD);
-    for (let y = HY[0] + 1; y < HY[2] - 1; y++) for (let x = VX[3] + RW + 1; x < MW - 3; x++) if (R() < 0.12 && Math.abs(y - HY[1] - 2) > 3) this.addTree(x, y);
+    fill(VX[3] + RW, HY[0], DABAW_END - VX[3] - RW - 2, HY[2] - HY[0], TL.GRASS);
+    fill(VX[3] + RW, HY[1], DABAW_END - VX[3] - RW - 2, RW, TL.ROAD);
+    for (let y = HY[0] + 1; y < HY[2] - 1; y++) for (let x = VX[3] + RW + 1; x < DABAW_END - 3; x++) if (R() < 0.12 && Math.abs(y - HY[1] - 2) > 3) this.addTree(x, y);
     this.addBld(VX[3] + 10, HY[1] + 6, 8, 4, '#6b8f5a', 'hall');
     // banana plantation (south-east)
-    for (let y = HY[2] + 1; y < MH - 4; y++) for (let x = VX[3] + RW + 1; x < MW - 3; x++) this.set(x, y, (x % 4 === 0) ? TL.GRASS : TL.PADDY);
-    fill(VX[3] + RW, HY[3], MW - VX[3] - RW - 2, RW, TL.DIRT);
-    fill(MW - 10, HY[2], 3, MH - HY[2] - 6, TL.DIRT);
-    dw.farm = { x: (MW - 9) * T, y: (MH - 12) * T };
+    for (let y = HY[2] + 1; y < MH - 4; y++) for (let x = VX[3] + RW + 1; x < DABAW_END - 3; x++) this.set(x, y, (x % 4 === 0) ? TL.GRASS : TL.PADDY);
+    fill(VX[3] + RW, HY[3], DABAW_END - VX[3] - RW - 2, RW, TL.DIRT);
+    fill(DABAW_END - 10, HY[2], 3, MH - HY[2] - 6, TL.DIRT);
+    dw.farm = { x: (DABAW_END - 9) * T, y: (MH - 12) * T };
     // airport (south-west)
     const ay = HY[4] + RW;
     fill(X + 2, ay, VX[3] - X, MH - ay - 1, TL.GRASS);
@@ -768,7 +772,7 @@ const MAP = {
     add('ferry_dw', X - 7, HY[2] + 10.5, 'ferry', 'Ferry pabalik sa Sugbo', '⛴');
     add('airport_d', X + 37, ay + 7.6, 'airport', 'Paliparan ng Dabaw', '✈️');
     add('maya', VX[3] + 14, HY[1] + 11, 'npc', 'Ate Maya', 'M');
-    add('islaw', MW - 14, HY[3] - 1, 'npc', 'Mang Islaw', 'I');
+    add('islaw', DABAW_END - 14, HY[3] - 1, 'npc', 'Mang Islaw', 'I');
     add('eagle', VX[3] + 14, HY[1] + 10.4, 'spot', 'Sentro ng Agila', '🦅', { landmark: true });
     add('durian', ...door(B(1, 0), 'S'), 'sari', 'Durian Market', '🍈');
     add('dw_hospital', ...door(B(2, 3), 'N'), 'hospital', 'Ospital ng Dabaw', '🏥');
@@ -778,10 +782,91 @@ const MAP = {
     add('dw_paint', ...door(B(0, 2), 'E'), 'paint', 'Pintura sa Dabaw', '🎨');
     add('summit', X + 82, 7, 'spot', 'Tuktok ng Bundok Apo', '⛰', { landmark: true });
     add('camp', X + 16, 24.5, 'spot', 'Kampo ng mga Ilegal na Mangangahoy', '🪓');
-    add('banana', MW - 9, MH - 12, 'spot', 'Saging na Plantasyon', '🍌', { landmark: true });
+    add('banana', DABAW_END - 9, MH - 12, 'spot', 'Saging na Plantasyon', '🍌', { landmark: true });
     for (const k of ['durian', 'dw_gun', 'dw_ukay', 'dw_paint']) { const pp = this.pois[k], a = { sari: ['#7fb800', 'DURIAN'], gunshop: ['#3b3b3b', 'ARMAS'], ukay: ['#e84393', 'UKAY-UKAY'], paint: ['#e67e22', 'PINTURA'] }[pp.type]; this.decor.push({ type: 'sign', x: pp.x, y: pp.y, color: a[0], text: a[1] }); }
   },
   // photo spots / tourist landmarks (map category "Pasyalan")
+  // ===== Chapter 5: Bagiw — the cool mountain city of pines, fog and strawberries =====
+  makeBagiw() {
+    const fill = this.fill, R = U.rng(5151), X = BX0;
+    fill(DABAW_END, 0, BX0 - DABAW_END, MH, TL.GRASS);
+    for (let y = 0; y < MH; y++) for (let x = DABAW_END; x < BX0; x++) this.addTree(x, y);
+    fill(X, 0, BAGIW_W, MH, TL.GRASS);
+    for (let y = 0; y < MH; y++) this.set(MW - 1, y, TL.TREE);
+    const VX = [X + 22, X + 42, X + 62], HY = [56, 76, 96, 116];
+    const bg = this.bagiw = { x0: X, VX, HY, pts: [], loops: [], blocks: [] };
+    bg.cx = (i) => (VX[i] + RW / 2) * T; bg.cy = (j) => (HY[j] + RW / 2) * T;
+    for (const x of VX) fill(x, HY[0], RW, HY[3] - HY[0] + RW, TL.ROAD);
+    for (const y of HY) fill(VX[0], y, VX[2] - VX[0] + RW, RW, TL.ROAD);
+    const KIND = [['comm', 'market'], ['church', 'comm'], ['resid', 'resid']];
+    for (let j = 0; j < 3; j++) for (let i = 0; i < 2; i++) {
+      const x0 = VX[i] + RW, y0 = HY[j] + RW, w = VX[i + 1] - x0, h = HY[j + 1] - y0;
+      this.fillBlock(x0, y0, w, h, KIND[j][i], 300 + i, 300 + j);
+      bg.blocks.push({ i, j, x0, y0, w, h, kind: KIND[j][i] });
+    }
+    // park with a lake (east of the city)
+    const px0 = VX[2] + RW + 2, py0 = HY[0], pw = MW - px0 - 4, ph = HY[2] - HY[0] + RW;
+    fill(px0, py0, pw, ph, TL.GRASS);
+    fill(VX[2] + RW, HY[1], px0 - VX[2] - RW + 2, RW, TL.ROAD);
+    const lcx = px0 + pw / 2, lcy = py0 + ph / 2 + 4;
+    for (let y = py0; y < py0 + ph; y++) for (let x = px0; x < px0 + pw; x++) { const d = ((x - lcx) / 11) ** 2 + ((y - lcy) / 7) ** 2; if (d < 1) this.set(x, y, TL.WATER); else if (d < 1.35) this.set(x, y, TL.PROM); }
+    bg.lake = { x: lcx * T, y: lcy * T };
+    for (let k = 0; k < 3; k++) this.boatSpots.push({ x: (lcx - 5 + k * 5) * T, y: (lcy + 2) * T, a: 0, swan: true });
+    // strawberry farms (west)
+    for (let y = HY[0]; y < HY[3] + RW; y++) for (let x = X + 2; x < VX[0] - 2; x++) this.set(x, y, x % 3 === 0 ? TL.DIRT : TL.PADDY);
+    fill(X + 2, HY[2], VX[0] - X - 2, RW, TL.DIRT);
+    bg.farm = { x: (X + 10) * T, y: (HY[2] - 2) * T };
+    this.addBld(X + 6, HY[2] - 6, 4, 3, '#8a5a3a', 'nipa');
+    // walled mansion + Mines View lookout up north
+    fill(VX[2] + 1, 26, RW, HY[0] - 26, TL.ROAD); fill(VX[2] + 1, 26, X + 92 - VX[2], RW, TL.ROAD);
+    const mx0 = X + 34, my0 = 4, mw = 24, mh = 18;
+    for (let y = my0; y < my0 + mh; y++) for (let x = mx0; x < mx0 + mw; x++) this.set(x, y, (x === mx0 || y === my0 || x === mx0 + mw - 1 || y === my0 + mh - 1) ? TL.WALL : TL.GRASS);
+    fill(mx0 + 10, my0 + mh - 1, 4, 1, TL.PLAZA); fill(mx0 + 10, my0 + mh, 4, 26 - my0 - mh, TL.ROAD);
+    fill(mx0 + 10, my0 + 9, 4, 8, TL.PLAZA);
+    this.addBld(mx0 + 6, my0 + 3, 12, 6, '#d8cdb0', 'mansion');
+    for (const [x, y] of [[mx0 + 2, my0 + 2], [mx0 + mw - 3, my0 + 2], [mx0 + 3, my0 + 13], [mx0 + mw - 4, my0 + 13]]) this.addTree(x, y);
+    bg.mansion = { x0: mx0 * T, y0: my0 * T, x1: (mx0 + mw) * T, y1: (my0 + mh) * T, gate: { x: (mx0 + 12) * T, y: (my0 + mh + 2) * T }, office: { x: (mx0 + 12) * T, y: (my0 + 10) * T } };
+    fill(X + 84, 16, 12, 10, TL.PLAZA); this.addBld(X + 88, 17, 3, 2, '#9aa3ad', 'monument');
+    // winding road down to the airport
+    const sw = [[VX[1] + 1, HY[3] + RW], [VX[1] + 1, 134], [X + 74, 134], [X + 74, 146], [X + 26, 146], [X + 26, 158], [X + 62, 158], [X + 62, 168]];
+    for (let k = 0; k < sw.length - 1; k++) { const [ax, ay] = sw[k], [bx, by] = sw[k + 1]; fill(Math.min(ax, bx), Math.min(ay, by), Math.abs(bx - ax) + RW, Math.abs(by - ay) + RW, TL.ROAD); }
+    bg.down = sw.map(([x, y]) => ({ x: (x + 2) * T, y: (y + 2) * T }));
+    const ay = 168;
+    fill(X + 20, ay + 2, 60, 6, TL.PLAZA); this.addBld(X + 38, ay - 4, 14, 5, '#c9ced6', 'hall');
+    fill(X + 6, ay + 12, BAGIW_W - 12, 6, TL.ROAD);
+    this.decor.push({ type: 'plane', x: (X + 70) * T, y: (ay + 5) * T, a: Math.PI });
+    // illegal mining scars in the forest (Chapter 5)
+    bg.mines = [];
+    for (const [mx, my] of [[X + 8, 22], [X + 84, 42], [X + 12, 152], [X + 88, 152]]) { for (let y = my - 3; y <= my + 3; y++) for (let x = mx - 4; x <= mx + 4; x++) if (this.get(x, y) === TL.GRASS && R() < 0.85) this.set(x, y, TL.DIRT); bg.mines.push({ x: mx * T, y: my * T }); }
+    // pines everywhere else
+    for (let y = 2; y < MH - 2; y++) for (let x = X + 1; x < MW - 2; x++) if (this.get(x, y) === TL.GRASS && R() < 0.1) { let free = true; for (let k = 0; k < 4; k++) { const n = this.get(x + DIRS[k][0], y + DIRS[k][1]); if (n !== TL.GRASS && n !== TL.TREE) free = false; } if (free) this.addTree(x, y); }
+    // lamps, traffic
+    for (const y of HY) for (let x = VX[0] + 2; x < VX[2] + 2; x += 8) { this.lamps.push({ x: x * T, y: (y - 0.5) * T }); this.lamps.push({ x: x * T, y: (y + RW + 0.5) * T }); }
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) { const cx = bg.cx(i), cy = bg.cy(j); bg.pts.push({ x: cx + LO, y: cy - 90, a: Math.PI / 2 }, { x: cx - LO, y: cy + 90, a: -Math.PI / 2 }); }
+    const loop = (i0, j0, i1, j1) => { const o = LO, c = [[bg.cx(i0) + o, bg.cy(j0) + o], [bg.cx(i1) - o, bg.cy(j0) + o], [bg.cx(i1) - o, bg.cy(j1) - o], [bg.cx(i0) + o, bg.cy(j1) - o]]; bg.loops.push(c.map(([x, y]) => ({ x, y }))); };
+    loop(0, 0, 2, 3); loop(0, 0, 1, 2); loop(1, 1, 2, 3);
+    // places
+    const add = (key, x, y, type, label, icon, extra) => { this.pois[key] = Object.assign({ key, x: x * T, y: y * T, type, label, icon }, extra || {}); };
+    const B = (i, j) => bg.blocks.find(b => b.i === i && b.j === j);
+    const door = (b, side, off = 0) => side === 'S' ? [b.x0 + b.w / 2 + off, b.y0 + b.h - 0.5] : side === 'N' ? [b.x0 + b.w / 2 + off, b.y0 + 0.5] : side === 'E' ? [b.x0 + b.w - 0.5, b.y0 + b.h / 2 + off] : [b.x0 + 0.5, b.y0 + b.h / 2 + off];
+    add('airport_b', X + 45, ay + 3.5, 'airport', 'Paliparan ng Bagiw', '✈️');
+    add('pining', X + 8, HY[2] - 1.5, 'npc', 'Lola Pining', 'P');
+    add('bg_ukay', ...door(B(1, 0), 'W'), 'ukay', 'Ukay-Ukay sa Bagiw', '👕');
+    add('bg_sari', ...door(B(0, 0), 'S'), 'sari', 'Strawberry Taho', '🍓');
+    add('bg_gun', ...door(B(1, 1), 'S'), 'gunshop', 'Armas ni Kabo (Bagiw)', '🔫');
+    add('bg_hospital', ...door(B(0, 2), 'N'), 'hospital', 'Ospital ng Bagiw', '🏥');
+    add('bg_presinto', ...door(B(1, 2), 'N'), 'police', 'Presinto ng Bagiw', '🚓');
+    add('bg_church', ...door(B(0, 1), 'E'), 'church', 'Katedral ng Bagiw', '⛪');
+    add('bg_kainan', ...door(B(1, 2), 'W'), 'kainan', 'Manukan sa Kanto (Bagiw)', '🍗');
+    add('bg_heli', X + 72, HY[1] + 2, 'heli', 'Helicopter Tour', '🚁');
+    add('heli_m', this.door(8, 6, 'N').x / T, this.door(8, 6, 'N').y / T, 'heli', 'Helipad ng Makati', '🚁');
+    add('lm_mines', X + 90, 24.5, 'spot', 'Mines View Lookout', '🏔', { landmark: true });
+    add('lm_lake', lcx, lcy + 8.5, 'spot', 'Liwasang Bagiw (Lawa)', '🦢', { landmark: true });
+    add('lm_farm', X + 12, HY[1] + 2, 'spot', 'Presahan (Strawberry Farm)', '🍓', { landmark: true });
+    add('magno_gate', bg.mansion.gate.x / T, bg.mansion.gate.y / T, 'spot', 'Mansyon ni Don Magno', '🏰');
+    for (const k of ['bg_ukay', 'bg_sari', 'bg_gun', 'bg_church', 'bg_kainan']) { const pp = this.pois[k], a = { ukay: ['#e84393', 'UKAY-UKAY'], sari: ['#c0392b', 'STRAWBERRY'], gunshop: ['#3b3b3b', 'ARMAS'], church: ['#7a6a58', 'SIMBAHAN'], kainan: ['#c0392b', 'MANUKAN'] }[pp.type]; this.decor.push({ type: 'sign', x: pp.x, y: pp.y, color: a[0], text: a[1] }); }
+    this.decor.push({ type: 'sign', x: this.pois.heli_m.x, y: this.pois.heli_m.y, color: '#16a085', text: 'HELIPAD' });
+  },
   makeLandmarks() {
     const add = (key, x, y, label, icon) => { this.pois[key] = { key, x, y, type: 'spot', label, icon, landmark: true }; };
     const [lx, ly, lw, lh] = this.blockRect(0, 4); add('lm_luneta', (lx + 9) * T, (ly + 8) * T, 'Rizal Park (Luneta)', '🗽');
@@ -816,12 +901,14 @@ const MAP = {
     this.regions = [{ name: 'MAYNILA', x: this.cx(4), y: this.cy(4) }, { name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 6) * T }, { name: 'ISLA MALIGAYA', x: this.island.cx * T, y: this.island.cy * T }];
     if (this.sugbo) this.regions.push({ name: 'SUGBO', x: (SX0 + 56) * T, y: 90 * T });
     if (this.dabaw) this.regions.push({ name: 'DABAW', x: (DX0 + 50) * T, y: 100 * T });
+    if (this.bagiw) this.regions.push({ name: 'BAGIW', x: (BX0 + 50) * T, y: 90 * T });
     this.labels.push({ name: 'MANILA BAY', x: (OX - 8) * T, y: this.cy(5), vert: true });
     if (this.sugbo) {
       const sg = this.sugbo, bc = (i, j) => ({ x: (sg.VX[i] + RW + 9) * T, y: (sg.HY[j] + RW + 9) * T });
       for (const [n, i, j] of [['KOLON', 1, 1], ['PLAZA KRUS', 2, 1.75], ['IT PARK', 3, 0.5], ['MERKADO', 0, 0.3], ['LAHUG', 2, 2.6], ['MABOLO', 3, 4.6], ['PARDO', 0.5, 5.4], ['TEJERO', 1, 4]]) { const c = bc(Math.floor(i), Math.floor(j)); this.labels.push({ name: n, x: c.x + (i % 1) * 22 * T, y: c.y + (j % 1) * 22 * T }); }
       this.labels.push({ name: 'SUGBO', x: (SX0 + 56) * T, y: 22 * T }, { name: 'BUSAY', x: (SX0 + 60) * T, y: 8 * T }, { name: 'PANTALAN NG SUGBO', x: (SX0 + 7) * T, y: (sg.HY[2] + 4) * T, vert: true }, { name: 'PALIPARAN', x: (SX0 + 48) * T, y: (sg.HY[6] + 20) * T });
       if (this.dabaw) { const d = this.dabaw; this.labels.push({ name: 'DABAW', x: (DX0 + 40) * T, y: (d.HY[0] - 3) * T }, { name: 'BUNDOK APO', x: (DX0 + 50) * T, y: 30 * T }, { name: 'SENTRO NG AGILA', x: (d.VX[3] + 14) * T, y: (d.HY[0] + 4) * T }, { name: 'SAGINGAN', x: (DX0 + 92) * T, y: (d.HY[3] + 12) * T }, { name: 'BANKEROHAN', x: (d.VX[1] + 13) * T, y: (d.HY[1] + 13) * T }, { name: 'KIPOT NG DABAW', x: (SUGBO_END + STRAIT2_W / 2) * T, y: this.cy(6), vert: true }); }
+      if (this.bagiw) { const b = this.bagiw; this.labels.push({ name: 'BAGIW', x: (BX0 + 42) * T, y: (b.HY[0] - 4) * T }, { name: 'KALYE SESYON', x: (b.VX[1] + 2) * T, y: (b.HY[1] + 10) * T }, { name: 'LIWASANG BAGIW', x: b.lake.x, y: b.lake.y - 9 * T }, { name: 'PRESAHAN', x: (BX0 + 11) * T, y: (b.HY[0] - 3) * T }, { name: 'MINES VIEW', x: (BX0 + 90) * T, y: 13 * T }, { name: 'KENNON', x: (BX0 + 48) * T, y: 152 * T }); }
       this.labels.push({ name: 'KIPOT NG SUGBO', x: (PROV_END + STRAIT_W / 2) * T, y: this.cy(6), vert: true });
     }
     this.labels.push({ name: 'ISLA MALIGAYA', x: (this.island.cx + 5) * T, y: (this.island.cy - 38) * T });

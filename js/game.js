@@ -39,6 +39,7 @@ const G = {
     UI.init();
     I18N.init();
     PWA.init();
+    GHOST.checkLink();
     SETTINGS.apply();
     this.last = performance.now();
     requestAnimationFrame((t) => this.loop(t));
@@ -73,7 +74,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); SUGBO.reset(); DABAW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; REPLAY.on = false;
+    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; REPLAY.on = false;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -227,9 +228,10 @@ const G = {
       const sd = v.t.boat ? (Math.abs(s) > 1 ? 56 : 34) : v.W / 2 + 14, ss = Math.sign(s);
       const ox = s ? -Math.sin(v.a) * sd * ss : Math.cos(v.a) * (v.L / 2 + 14) * f;
       const oy = s ? Math.cos(v.a) * sd * ss : Math.sin(v.a) * (v.L / 2 + 14) * f;
-      if (!MAP.solidAt(v.x + ox, v.y + oy)) { P.x = v.x + ox; P.y = v.y + oy; placed = true; break; }
+      if (!MAP.solidAt(v.x + ox, v.y + oy) && !(v.t.fly && MAP.tileAt(v.x, v.y) === TL.WATER)) { P.x = v.x + ox; P.y = v.y + oy; placed = true; break; }
     }
     if (!placed) {
+      if (v.t.fly && !force) { UI.toast('🚁 Lumapag muna sa patag na lupa bago bumaba!'); return; }
       if (v.t.boat && !force) { UI.toast('🌊 Hindi ka pwedeng bumaba sa gitna ng dagat! Pumunta sa pantalan o pampang.'); return; }
       P.x = v.x; P.y = v.y;
     }
@@ -440,6 +442,7 @@ const G = {
     PROV.update(dt);
     SUGBO.update(dt);
     DABAW.update(dt);
+    BAGIW.update(dt);
     ARMS.update(dt);
     GUNS.update(dt);
     ACH.update(dt);
@@ -484,6 +487,7 @@ const G = {
       const a = act[i];
       for (let j = i + 1; j < act.length; j++) {
         const b = act[j];
+        if (a.t.fly || b.t.fly) continue;
         if (a.towedBy === b || b.towedBy === a) continue;
         const lim = (a.L + b.L) / 2;
         const dx0 = b.x - a.x, dy0 = b.y - a.y;
@@ -531,7 +535,7 @@ const G = {
     const list = this.peds.filter(p => Math.abs(p.x - this.cam.x) < 1500 && Math.abs(p.y - this.cam.y) < 1500);
     if (!P.vehicle && !P.downed) list.push(P);
     for (const v of this.vehicles) {
-      if (Math.abs(v.x - this.cam.x) > 1500 || Math.abs(v.y - this.cam.y) > 1500) continue;
+      if (v.t.fly || Math.abs(v.x - this.cam.x) > 1500 || Math.abs(v.y - this.cam.y) > 1500) continue;
       const ca = Math.cos(v.a), sa = Math.sin(v.a), sp = v.speed;
       for (const p of list) {
         const dx = p.x - v.x, dy = p.y - v.y;
@@ -704,6 +708,7 @@ const G = {
     for (const p of this.peds) if (p.state === 'down' && inV(p.x, p.y, 30)) drawPerson(g, p, now);
     // vehicles
     for (const v of this.vehicles) if (inV(v.x, v.y, v.L)) drawVehicle(g, v, now);
+    if (JOBS.active === 'trial' && JOBS.c.ghost) { g.save(); g.globalAlpha = 0.45; drawVehicle(g, JOBS.c.ghost, now); g.restore(); }
     for (const p of this.peds) if (p.state !== 'down' && inV(p.x, p.y, 30)) drawPerson(g, p, now);
     const P = this.player;
     if (!P.vehicle) drawPerson(g, P, now);

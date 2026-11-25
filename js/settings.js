@@ -63,6 +63,8 @@ const TIPS = {
   save: () => ['💾 Save at Load', 'Awtomatikong nase-save ang laro kapag umalis ka. Pwede ring mag-save sa 3 slot: ☰ → I-SAVE. Ang mga ari-arian mo ay safehouse din.'],
   jobs: () => ['💼 Side Jobs', 'Sa taxi, police car, ambulansya (🚑), fire truck (🚒), trak ng basura (🗑), delivery motor (🛵 Rider Hub) o tow truck (🛻 Impound), pindutin ang J / 💼 para kumita. Sa gabi, may 🏁 underground race sa Baywalk.'],
   minigames: () => ['🎤 Mini-games', 'May 🎤 Videoke (₱20 kada kanta, premyo sa 90+) at 🏀 3-Point Shootout sa mga basketball court. May 🥫 shooting range din sa Armas ni Kabo.'],
+  bagiw: () => ['🌲 Bagiw', 'Malamig at mahamog sa Bagiw! May Kalye Sesyon, Liwasang Bagiw na may lawa, Presahan (strawberry farm) at Mines View. Mag-ingat sa paliko-likong daan pababa!'],
+  heli: () => ['🚁 Helicopter', 'Lumilipad ka sa ibabaw ng lahat — walang pader o trapik! Ituro kung saan pupunta. Lumapag sa patag na lupa (hindi sa tubig) at pindutin ang E / BABA para bumaba.'],
   dabaw: () => ['🦅 Dabaw', 'Madayaw nga pag-abot sa Dabaw! May Bundok Apo sa hilaga, Sentro ng Agila sa silangan at saging na plantasyon sa timog-silangan. Bawal ang mabilis dito — mag-ingat sa pulis!'],
   sugbo: () => ['🏝 Sugbo', 'Maayong pag-abot sa Sugbo! Bisaya ang salita dito: "Maayong buntag" = magandang umaga, "Salamat kaayo" = maraming salamat, "Lami!" = sarap! Bumalik sa Maynila gamit ang ✈️ Paliparan o ⛴ Ferry papuntang San Isidro.'],
   typhoon: () => ['🌀 Bagyo!', 'Itutulak ng hangin ang sasakyan mo at may lumilipad na yero — ingat! Maraming kalye ang baha. Sumakay sa jeepney, van, bus o bangka at pindutin ang J / 💼 para sa 🌀 Rescue: dalhin ang mga tao sa ⛺ Evacuation Center.'],

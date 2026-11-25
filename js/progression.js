@@ -124,7 +124,7 @@ const REPLAY = {
 
 // ---------- New Game+ ----------
 const NGPLUS = {
-  available() { const s = SAVE.read && SAVE.read('auto'); return !!(s && s.flags && s.flags.ch4); },
+  available() { const s = SAVE.read && SAVE.read('auto'); return !!(s && s.flags && (s.flags.ch4 || s.flags.ch5)); },
   start() {
     const s = SAVE.read('auto'); if (!s) return;
     G.newGame();
