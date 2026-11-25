@@ -61,6 +61,7 @@
   <div id="toasts"></div>
   <div id="tut" class="hidden"><div class="tut-top"><span class="tut-badge">🎓 TUTORIAL</span><span id="tut-n"></span><button id="tut-skip">Laktawan ✕</button></div><div id="tut-text"></div><div class="tut-bot"><span id="tut-wait">⏳ Gawin ito para magpatuloy...</span><button id="tut-ok">SIGE ▶</button></div></div>
   <div id="tip" class="hidden"><b id="tip-title"></b><span id="tip-body"></span><button id="tip-ok">OK ✓</button></div>
+  <div id="bossbar" class="hidden"><b id="boss-name"></b><div class="bbar"><div id="boss-hp"></div></div></div>
   <div id="bigmsg" class="hidden"><h1 id="big-title"></h1><p id="big-sub"></p></div>
 </div>
 
@@ -147,6 +148,7 @@
 <div id="mapscreen" class="screen hidden">
   <canvas id="bigmap"></canvas>
   <div id="places" class="places"></div>
+  <button id="btn-mapall" class="mbtn small">🗺 Buong mapa</button>
   <button id="btn-mapclose" class="mbtn closebtn">ISARA ✕</button>
 </div>
 
@@ -320,6 +322,7 @@
     <div class="stars-deco">★★★★★★</div>
     <h2 id="end-title">IKAW ANG HARI NG KALSADA!</h2>
     <p id="end-text">Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Nabawi ang lupa ng pamilya Dela Cruz sa Samar.</p>
+    <div id="end-choices" class="end-choices"></div>
     <div id="end-stats"></div>
     <p class="credits">Salamat sa paglalaro!<br>Pwede ka pang mag-free roam: pasada, karera sa kalye, at hanapin ang lahat ng Gintong Tsinelas.</p>
     <button id="btn-endclose" class="mbtn primary">MAG-FREE ROAM</button>
@@ -333,6 +336,7 @@
     <div class="ph-row"><label>🔍 <input id="ph-zoom" type="range" min="0.5" max="2.6" step="0.05" value="1"></label><button id="ph-frame" class="ph-tog">🖼 Frame</button><button id="ph-snap" class="mbtn primary small">📸 KUHANAN</button></div>
   </div>
 </div>
+<div id="flight" class="hidden"><div class="fl-cloud c1">☁️</div><div class="fl-cloud c2">☁️</div><div class="fl-cloud c3">☁️</div><div class="fl-plane">✈️</div><div id="fl-to" class="fl-to"></div></div>
 <div id="fade"></div>
 <div id="loading" class="hidden">Ginagawa ang Maynila...</div>
 
@@ -360,6 +364,7 @@
 <script src="js/portraits.js"></script>
 <script src="js/pwa.js"></script>
 <script src="js/missions.js"></script>
+<script src="js/chapter3.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/game.js"></script>
 </body>

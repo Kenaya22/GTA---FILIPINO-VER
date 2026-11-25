@@ -25,7 +25,7 @@ function stopAt(v, pt, r, c, key, hold = 0.8) {
   return c[key] > hold;
 }
 function talk(lines) {
-  return { obj: '', enter() { UI.say(lines); }, update() { return !UI.talking; } };
+  return { obj: '', enter() { UI.say(typeof lines === 'function' ? lines() : lines); }, update() { return !UI.talking; } };
 }
 function waitingPeds(c, pt, n) {
   c.waiting = [];
@@ -743,7 +743,7 @@ MISSIONS.push(
 const MS = {
   idx: 0, active: null, stage: 0, c: null, entered: false, freeShops: false, failCd: 0, giverNPC: null, retryInfo: null, retryT: 0,
   reset() { this.retryInfo = null; this.idx = 0; this.active = null; this.stage = 0; this.c = null; this.freeShops = false; if (this.giverNPC) this.giverNPC.remove = true; this.giverNPC = null; },
-  giverPOI(m) { return MAP.pois[{ tito: 'tito', ben: 'mangben', nena: 'nena', paeng: 'paeng', tikboy: 'tikboy', lola: 'lola', ditas: 'ditas', luz: 'luz' }[m.giver]]; },
+  giverPOI(m) { return MAP.pois[{ tito: 'tito', ben: 'mangben', nena: 'nena', paeng: 'paeng', tikboy: 'tikboy', lola: 'lola', ditas: 'ditas', luz: 'luz' }[m.giver] || m.giver]; },
   start(i) {
     if (this.giverNPC && i !== 0) { /* keep */ }
     this.active = MISSIONS[i]; this.stage = 0; this.c = {}; this.entered = false;
@@ -843,7 +843,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -871,7 +871,8 @@ const SHOP = {
       case 'hospital': return P.vehicle ? null : `Ospital — Full heal (${c(100)})`;
       case 'chop': return P.vehicle && MS.idx >= 2 && !(MS.active && MS.active.giver === 'ben') ? `Ibenta kay Mang Ben (~${U.money(this.value(P.vehicle))})` : null;
       case 'home': return P.vehicle ? null : 'I-save ang laro at magpahinga';
-      case 'ferry': return P.vehicle ? null : `${p.label} (${c(50)})`;
+      case 'ferry': return P.vehicle ? null : `${p.label} (${c(p.key === 'ferry_si' || p.key === 'ferry_sg' ? 150 : 50)})`;
+      case 'airport': return P.vehicle ? null : `✈️ ${p.key === 'airport_m' ? 'Lumipad papuntang Sugbo' : 'Lumipad pabalik sa Maynila'} (${c(500)})`;
     }
     return null;
   },
@@ -935,17 +936,25 @@ const SHOP = {
         G.addMoney(val, true); G.stats.sold++;
         UI.toast(`🔧 Nabenta ang ${v.t.name} sa halagang ${U.money(val)}`); break;
       }
+      case 'airport': {
+        if (WANTED.stars > 0) { UI.toast('✈️ "Hindi ka makakalusot sa security habang hinahabol ka ng pulis!"'); return; }
+        if (!this.pay(500)) return;
+        FLY.go(p.key === 'airport_m' ? MAP.pois.airport_s : MAP.pois.airport_m);
+        break;
+      }
       case 'ferry': {
         if (WANTED.stars > 0) { UI.toast('⛴ "Bawal sumakay ng ferry ang may humahabol na pulis!"'); return; }
-        if (!this.pay(50)) return;
-        const dest = p.key === 'ferry1' ? MAP.pois.ferry2 : MAP.pois.ferry1;
+        const far = p.key === 'ferry_si' || p.key === 'ferry_sg';
+        if (!this.pay(far ? 150 : 50)) return;
+        const dest = MAP.pois[{ ferry1: 'ferry2', ferry2: 'ferry1', ferry_si: 'ferry_sg', ferry_sg: 'ferry_si' }[p.key]];
         const f = document.getElementById('fade'); f.classList.add('on'); G.cutscene = true; AUD.horn(true);
         setTimeout(() => {
           P.x = dest.x; P.y = dest.y + (p.key === 'ferry1' ? 0 : 8); P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
-          WORLD.clock = (WORLD.clock + 40) % 1440;
+          WORLD.clock = (WORLD.clock + (far ? 90 : 40)) % 1440;
           f.classList.remove('on'); G.cutscene = false;
-          UI.big(p.key === 'ferry1' ? 'ISLA MALIGAYA' : 'MAYNILA', p.key === 'ferry1' ? 'Maligayang pagdating sa isla!' : 'Balik sa lungsod', 2);
-          TIP.show('island');
+          const nm = { ferry1: ['ISLA MALIGAYA', 'Maligayang pagdating sa isla!'], ferry2: ['MAYNILA', 'Balik sa lungsod'], ferry_si: ['SUGBO', 'Maayong pag-abot! (Maligayang pagdating!)'], ferry_sg: ['SAN ISIDRO', 'Balik sa probinsya'] }[p.key];
+          UI.big(nm[0], nm[1], 2);
+          if (!far) TIP.show('island'); else TIP.show('sugbo');
         }, 900);
         break;
       }

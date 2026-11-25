@@ -156,8 +156,11 @@ function drawSticker(g, v, hl, hw) {
 const ACH_LIST = [
   ['first_mission', '🥇', 'Unang Hakbang', 'Tapusin ang unang misyon', () => MS.idx >= 1],
   ['story', '👑', 'Hari ng Kalsada', 'Tapusin ang Kabanata 1 (Maynila)', () => MS.idx >= 8],
-  ['chapter2', '🌾', 'Anak ng Bukid', 'Tapusin ang Kabanata 2 (San Isidro)', () => MS.idx >= MISSIONS.length],
+  ['chapter2', '🌾', 'Anak ng Bukid', 'Tapusin ang Kabanata 2 (San Isidro)', () => MS.idx >= 14],
   ['endingA', '⚖️', 'Lupa ng Bayan', 'Makuha ang Ending A', () => G.flags && G.flags.ending2 === 'A'],
+  ['chapter3', '🏝', 'Bayani ng Sugbo', 'Tapusin ang Kabanata 3 (Sugbo)', () => !!(G.flags && G.flags.final)],
+  ['trueEnding', '👑', 'Tunay na Hari', 'Makuha ang Tunay na Wakas (bayan + ilantad)', () => !!(G.flags && G.flags.final === 'AC')],
+  ['flight1', '✈️', 'Frequent Flyer', 'Sumakay ng eroplano papuntang Sugbo', () => (G.stats.flights || 0) >= 1],
   ['endingB', '💰', 'Ang Presyo', 'Makuha ang Ending B', () => G.flags && G.flags.ending2 === 'B'],
   ['escape3', '🏃', 'Madulas', 'Takasan ang 3 bituin o higit pa', () => ACH.flags.escape3],
   ['escape6', '🌪', 'Imposible', 'Takasan ang 6 na bituin', () => ACH.flags.escape6],
@@ -194,7 +197,7 @@ const ACH_LIST = [
 ];
 const ACH = {
   got: new Set(), visited: new Set(), drove: new Set(), flags: {}, t: 0,
-  districtCount() { return MAP.labels.filter(l => l.name !== 'MANILA BAY').length; },
+  districtCount() { return MAP.labels.filter(l => !l.vert).length; },
   check() {
     if (!G.started) return;
     for (const [id, ic, name, desc, fn] of ACH_LIST) {
@@ -206,7 +209,7 @@ const ACH = {
   update(dt) {
     this.t -= dt; if (this.t > 0) return; this.t = 1;
     const P = G.player;
-    for (const l of MAP.labels) if (l.name !== 'MANILA BAY' && !this.visited.has(l.name) && U.d2(l.x, l.y, P.x, P.y) < 650 * 650) { this.visited.add(l.name); UI.toast(`🗺 Napuntahan: ${l.name} (${this.visited.size}/${this.districtCount()})`); }
+    for (const l of MAP.labels) if (!l.vert && !this.visited.has(l.name) && U.d2(l.x, l.y, P.x, P.y) < 650 * 650) { this.visited.add(l.name); UI.toast(`🗺 Napuntahan: ${l.name} (${this.visited.size}/${this.districtCount()})`); }
     if (P.vehicle) this.drove.add(P.vehicle.type);
     this.check();
   },

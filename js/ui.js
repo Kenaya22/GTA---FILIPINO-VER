@@ -130,6 +130,7 @@ const UI = {
     $('btn-pload').onclick = () => SAVE.open('load');
     $('btn-slotclose').onclick = () => this.hide('slots');
     $('btn-pach').onclick = () => ACH.open();
+    $('btn-mapall').onclick = () => { this.mapAll = !this.mapAll; AUD.click(); this.openMap(); };
     $('btn-photo').onclick = () => PHOTO.open();
     $('ph-close').onclick = () => PHOTO.close();
     $('ph-snap').onclick = () => PHOTO.snap();
@@ -332,6 +333,9 @@ const UI = {
     // money + clock
     this.set('money', this.el.money, 'textContent', U.money(P.money));
     this.set('clock', $('clock'), 'textContent', `${WORLD.icon()} ${WORLD.timeStr()}`);
+    const B = this.boss;
+    $('bossbar').classList.toggle('hidden', !B);
+    if (B) { const o = B.v || B.p, pct = B.v ? o.hp / o.maxhp : (B.p.ko ? 0 : o.hp / B.max); this.set('bossn', $('boss-name'), 'textContent', B.name); $('boss-hp').style.width = Math.max(0, Math.min(1, pct)) * 100 + '%'; }
     const evt = TYPHOON.banner() || FIESTA.banner();
     $('event').classList.toggle('hidden', !evt);
     this.set('evt', $('event'), 'textContent', evt);
@@ -354,7 +358,11 @@ const UI = {
     if (P.armor > 0) this.el.armorbar.style.width = P.armor + '%';
     let side = JOBS.objText() || PASADA.objText();
     if (!side && JOBS.avail()) side = `💼 Pindutin ang ${INPUT.touch ? '💼' : 'J'} para sa side job: ${JOB_NAMES[JOBS.avail()]}`;
-    if (!MS.active && !side && MS.idx < MISSIONS.length) side = `Susunod na misyon: ${MISSIONS[MS.idx].title} — puntahan si ${CHARS[MISSIONS[MS.idx].giver].name} (${CHARS[MISSIONS[MS.idx].giver].name[0]} sa mapa)`;
+    if (!MS.active && !side && MS.idx < MISSIONS.length) {
+      side = `Susunod na misyon: ${MISSIONS[MS.idx].title} — puntahan si ${CHARS[MISSIONS[MS.idx].giver].name} (${CHARS[MISSIONS[MS.idx].giver].name[0]} sa mapa)`;
+      const gp = MS.giverPOI(MISSIONS[MS.idx]);
+      if (gp && SUGBO.in(gp.x) && !SUGBO.in(P.x)) side += ' · ✈️ Sumakay ng eroplano sa Paliparan (Pasay)';
+    }
     this.el.sidejob.classList.toggle('hidden', !side);
     this.set('side', this.el.sidejob, 'textContent', side);
     // arrest meter
@@ -452,13 +460,19 @@ const UI = {
     this.show('mapscreen');
     const c = $('bigmap'), g = c.getContext('2d');
     const pr = Math.min(2, devicePixelRatio || 1);
-    const cssW = Math.min(innerWidth * 0.96, innerHeight * 0.78 * MW / MH);
-    const sz = cssW * pr, szH = sz * MH / MW;
+    // show the region you're in (Luzon or Sugbo) unless "whole map" is on
+    const inS = G.player.x > (PROV_END + 6) * T, all = this.mapAll;
+    const cx0 = all ? 0 : inS ? PROV_END - 30 : 0, cw = all ? MW : inS ? MW - cx0 : PROV_END + 6;
+    this.mapView = { cx0, cw };
+    $('btn-mapall').textContent = all ? '🔍 Rehiyon ko' : '🗺 Buong mapa';
+    const cssW = Math.min(innerWidth * 0.96, innerHeight * 0.74 * cw / MH);
+    const sz = cssW * pr, szH = sz * MH / cw;
     c.width = sz; c.height = szH;
-    c.style.width = cssW + 'px'; c.style.height = (cssW * MH / MW) + 'px';
-    const k = sz / (MW * T);
+    c.style.width = cssW + 'px'; c.style.height = (cssW * MH / cw) + 'px';
+    const k = sz / (cw * T);
     g.imageSmoothingEnabled = false;
-    g.drawImage(MAP.mini, 0, 0, sz, szH);
+    g.drawImage(MAP.mini, cx0, 0, cw, MH, 0, 0, sz, szH);
+    g.save(); g.translate(-cx0 * T * k, 0);
     g.textAlign = 'center'; g.textBaseline = 'middle';
     g.font = `900 ${Math.round(sz / 48)}px Nunito, sans-serif`;
     for (const l of MAP.labels) {
@@ -485,9 +499,10 @@ const UI = {
     g.save(); g.translate(P.x * k, P.y * k); g.rotate(P.a); const s = sz / 60;
     g.fillStyle = '#fff'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(s, 0); g.lineTo(-s * 0.7, -s * 0.7); g.lineTo(-s * 0.3, 0); g.lineTo(-s * 0.7, s * 0.7); g.closePath(); g.fill(); g.stroke();
     g.restore();
+    g.restore();
     // tap the map to set a GPS waypoint
     c.onclick = (e) => {
-      const r = c.getBoundingClientRect(), wx = (e.clientX - r.left) / r.width * MW * T, wy = (e.clientY - r.top) / r.height * MH * T;
+      const r = c.getBoundingClientRect(), wx = (cx0 + (e.clientX - r.left) / r.width * cw) * T, wy = (e.clientY - r.top) / r.height * MH * T;
       G.setWaypoint({ x: wx, y: wy }, '📍 Napiling lugar');
     };
     this.renderPlaces();
@@ -531,7 +546,7 @@ const UI = {
     let ch = 0;
     $('mission-list').innerHTML = MISSIONS.map((m, i) => {
       let head = '';
-      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : 'PROBINSYA (SAN ISIDRO)'}</div>`; }
+      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : 'SUGBO'}</div>`; }
       const st = i < MS.idx ? 'done' : i === MS.idx ? 'next' : 'locked';
       const label = st === 'done' ? '✓ TAPOS' : st === 'next' ? (MS.active === m ? 'GINAGAWA' : 'SUSUNOD') : '🔒';
       return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}</div></div>`;
@@ -541,10 +556,12 @@ const UI = {
     G.paused = true;
     const E = {
       ch1: ['TAPOS ANG KABANATA 1!', 'Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Pero may sulat mula sa probinsya... BUKAS NA ANG KABANATA 2 — puntahan si Tito Boy!'],
-      ch2a: ['🌾 BAYANI NG SAN ISIDRO!', 'Nakulong si Don Severo at nabawi ng mga magsasaka ang kanilang lupa. Ito ang tunay na pagtatapos (Ending A). Ikaw ang Hari ng Kalsada!'],
-      ch2b: ['💰 ANG PRESYO', 'Mayaman ka na, pero nawalan ng lupa ang San Isidro (Ending B). Maglaro ulit mula sa Slot o Developer Mode para makita ang ibang wakas.'],
+      ch2a: ['🌾 BAYANI NG SAN ISIDRO!', 'Nakulong si Don Severo at nabawi ng mga magsasaka ang kanilang lupa (Ending A). Pero may tawag mula sa Sugbo... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
+      ch2b: ['💰 ANG PRESYO', 'Mayaman ka na, pero nawalan ng lupa ang San Isidro (Ending B). May pagkakataon ka pang ituwid ito... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
+      final: FINAL.ending(),
     }[kind] || [];
     $('end-title').textContent = E[0]; $('end-text').textContent = E[1];
+    $('end-choices').innerHTML = kind === 'final' ? FINAL.summary() : '';
     $('end-stats').innerHTML = [
       ['PERA', U.money(G.player.money)], ['TSINELAS', `${G.tsinelas.size}/${MAP.tsinelas.length}`], ['NAKATAKAS', G.stats.escapes], ['NABENTA', G.stats.sold],
     ].map(([a, b]) => `<div><span>${a}</span>${b}</div>`).join('');

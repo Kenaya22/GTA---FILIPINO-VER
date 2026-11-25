@@ -7,7 +7,11 @@ const RW = 4;          // road width (tiles)
 const OX = 72, OY = 16;   // OX leaves room for Manila Bay + Isla Maligaya on the west
 const CITY_W = OX + (NR - 1) * PER + RW + 16;   // city width in tiles
 const PROV_W = 72;                                // province (San Isidro) to the east
-const MW = CITY_W + PROV_W;
+const PROV_END = CITY_W + PROV_W;
+const STRAIT_W = 26;                              // sea between the province and Sugbo
+const SX0 = PROV_END + STRAIT_W;                  // Sugbo (Chapter 3 city) starts here
+const SUGBO_W = 112;
+const MW = SX0 + SUGBO_W;
 const MH = OY + (NR - 1) * PER + RW + 16;
 const WORLD_W = MW * T, WORLD_H = MH * T;
 const LO = 32;         // lane offset from road centre
@@ -152,6 +156,7 @@ const MAP = {
     this.makeLights();
     this.makeFloods();
     this.makeProvince();
+    this.makeSugbo();
     this.makeLabels();
     this.makeMini();
   },
@@ -416,10 +421,10 @@ const MAP = {
     const tcx = P0 + 34, tcy = hy + 2;
     this.prov = { x0: P0, hy, tcx, tcy };
     // base: rice paddies with grass borders
-    for (let y = 1; y < MH - 1; y++) for (let x = P0; x < MW - 1; x++) this.set(x, y, (x % 9 === 0 || y % 11 === 0) ? TL.GRASS : TL.PADDY);
-    for (let y = 0; y < MH; y++) { this.set(MW - 1, y, TL.TREE); this.set(P0, y, TL.GRASS); }
+    for (let y = 1; y < MH - 1; y++) for (let x = P0; x < PROV_END - 1; x++) this.set(x, y, (x % 9 === 0 || y % 11 === 0) ? TL.GRASS : TL.PADDY);
+    for (let y = 0; y < MH; y++) { this.set(PROV_END - 1, y, TL.TREE); this.set(P0, y, TL.GRASS); }
     // highway from the city out to the province
-    fill(this.rs(8) + RW, hy, MW - 1 - (this.rs(8) + RW), RW, TL.ROAD);
+    fill(this.rs(8) + RW, hy, PROV_END - 1 - (this.rs(8) + RW), RW, TL.ROAD);
     // town streets
     fill(tcx - 12, tcy - 16, 4, 34, TL.ROAD); fill(tcx + 10, tcy - 16, 4, 34, TL.ROAD);
     fill(tcx - 12, tcy - 16, 26, 4, TL.ROAD); fill(tcx - 12, tcy + 14, 26, 4, TL.ROAD);
@@ -452,7 +457,7 @@ const MAP = {
     this.prov.hacienda = { x0: hx0 * T, y0: hy0 * T, x1: (hx0 + hw) * T, y1: (hy0 + hh) * T };
     // farm loop (dirt) south of town
     fill(tcx - 1, tcy + 18, 3, 128 - (tcy + 18), TL.DIRT);
-    const fx0 = P0 + 6, fx1 = MW - 8, fy0 = 128, fy1 = 168;
+    const fx0 = P0 + 6, fx1 = PROV_END - 8, fy0 = 128, fy1 = 168;
     fill(fx0, fy0, fx1 - fx0 + 3, 3, TL.DIRT); fill(fx0, fy1, fx1 - fx0 + 3, 3, TL.DIRT);
     fill(fx0, fy0, 3, fy1 - fy0 + 3, TL.DIRT); fill(fx1, fy0, 3, fy1 - fy0 + 3, TL.DIRT);
     this.prov.loop = [[tcx + 0.5, fy0 + 1.5], [fx1 + 1.5, fy0 + 1.5], [fx1 + 1.5, fy1 + 1.5], [fx0 + 1.5, fy1 + 1.5], [fx0 + 1.5, fy0 + 1.5]].map(([x, y]) => ({ x: x * T, y: y * T }));
@@ -465,11 +470,11 @@ const MAP = {
       this.prov.farms.push({ x: (x + 1.5) * T, y: (y + 2.6) * T });
     }
     // Lola Isyang's house east on the highway
-    fill(MW - 16, hy - 6, 8, 6, TL.GRASS);
-    this.addBld(MW - 14, hy - 5, 4, 3, '#86704a', 'nipa');
-    this.addTree(MW - 9, hy - 5);
+    fill(PROV_END - 16, hy - 6, 8, 6, TL.GRASS);
+    this.addBld(PROV_END - 14, hy - 5, 4, 3, '#86704a', 'nipa');
+    this.addTree(PROV_END - 9, hy - 5);
     // coconut palms
-    for (let y = 2; y < MH - 2; y++) for (let x = P0 + 1; x < MW - 2; x++) {
+    for (let y = 2; y < MH - 2; y++) for (let x = P0 + 1; x < PROV_END - 2; x++) {
       const t = this.get(x, y);
       if ((t === TL.GRASS && R() < 0.06) || (t === TL.PADDY && R() < 0.004)) {
         let free = true;
@@ -478,15 +483,15 @@ const MAP = {
       }
     }
     // lamps along the highway & in town
-    for (let x = this.rs(8) + RW + 4; x < MW - 2; x += 9) { this.lamps.push({ x: x * T, y: (hy - 0.5) * T }); this.lamps.push({ x: x * T, y: (hy + RW + 0.5) * T }); }
+    for (let x = this.rs(8) + RW + 4; x < PROV_END - 2; x += 9) { this.lamps.push({ x: x * T, y: (hy - 0.5) * T }); this.lamps.push({ x: x * T, y: (hy + RW + 0.5) * T }); }
     // spawn points for police / traffic in the province
     this.prov.pts = [];
-    for (let x = P0 + 4; x < MW - 6; x += 8) this.prov.pts.push({ x: x * T, y: (hy + 1) * T, a: Math.PI }, { x: x * T, y: (hy + 3) * T, a: 0 });
+    for (let x = P0 + 4; x < PROV_END - 6; x += 8) this.prov.pts.push({ x: x * T, y: (hy + 1) * T, a: Math.PI }, { x: x * T, y: (hy + 3) * T, a: 0 });
     for (const p of this.prov.loop) this.prov.pts.push(Object.assign({ a: 0 }, p));
     // places
     const add = (key, x, y, type, label, icon) => { this.pois[key] = { key, x: x * T, y: y * T, type, label, icon }; };
     add('plaza', tcx + 0.5, tcy - 2.5, 'spot', 'Plaza ng San Isidro', '⛪');
-    add('lola', MW - 12, hy - 1.2, 'npc', 'Lola Isyang', 'L');
+    add('lola', PROV_END - 12, hy - 1.2, 'npc', 'Lola Isyang', 'L');
     add('mill', P0 + 10, tcy + 8.5, 'spot', 'Kiskisan (Rice Mill)', '🌾');
     add('munhall', tcx - 1, tcy + 8.5, 'spot', 'Munisipyo', '🏛');
     add('luz', tcx + 3, tcy + 8.5, 'npc', 'Kapitana Luz', 'K');
@@ -497,7 +502,7 @@ const MAP = {
     this.decor.push({ type: 'sign', x: this.pois.provsari.x, y: this.pois.provsari.y, color: '#27ae60', text: 'SARI-SARI' });
     this.decor.push({ type: 'flags', x0: (tcx - 9) * T, y0: (tcy - 13.5) * T, x1: (tcx + 11) * T, y1: (tcy - 13.5) * T });
   },
-  inProvince(x) { return x > (CITY_W - 2) * T; },
+  inProvince(x) { return x > (CITY_W - 2) * T && x < PROV_END * T; },
   floodAt(x, y) {
     for (const f of this.floods) if (x > f.x && x < f.x + f.w && y > f.y && y < f.y + f.h) return f;
     if (TYPHOON.flooded()) for (const f of this.tfloods) if (x > f.x && x < f.x + f.w && y > f.y && y < f.y + f.h) return f;
@@ -576,6 +581,119 @@ const MAP = {
     // add a pier one
     if (this.tsinelas.length < 20) this.tsinelas.push({ id: this.tsinelas.length, x: (OX - 13) * T, y: 7.5 * T });
   },
+  // ===== Chapter 3: Sugbo — a Visayan port city across the strait =====
+  makeSugbo() {
+    const fill = this.fill, R = U.rng(7777), X = SX0, hy = this.prov.hy;
+    // the strait
+    fill(PROV_END, 0, STRAIT_W, MH, TL.WATER);
+    // San Isidro pier at the end of the highway (ferry to Sugbo)
+    fill(PROV_END - 1, hy, 1, RW, TL.ROAD);
+    fill(PROV_END, hy, 9, RW, TL.PIER);
+    // Sugbo base: grass, tree border on the far east
+    fill(X, 0, SUGBO_W, MH, TL.GRASS);
+    for (let y = 0; y < MH; y++) this.set(MW - 1, y, TL.TREE);
+    const VX = [X + 12, X + 34, X + 56, X + 78, X + 100], HY = [26, 48, 70, 92, 114, 136, 158];
+    const sg = this.sugbo = { x0: X, VX, HY, pts: [], loops: [], blocks: [] };
+    sg.cx = (i) => (VX[i] + RW / 2) * T; sg.cy = (j) => (HY[j] + RW / 2) * T;
+    // roads
+    for (const x of VX) fill(x, HY[0], RW, HY[HY.length - 1] - HY[0] + RW, TL.ROAD);
+    for (const y of HY) fill(X + 2, y, VX[VX.length - 1] - X + 2, RW, TL.ROAD);
+    // blocks
+    const KIND = [
+      ['slum', 'resid', 'resid', 'towers'],
+      ['market', 'china', 'church', 'towers'],
+      ['comm', 'comm', 'comm', 'resid'],
+      ['slum', 'comm', 'hospital', 'police'],
+      ['resid', 'market', 'comm', 'resid'],
+      ['slum', 'resid', 'resid', 'resid'],
+    ];
+    for (let j = 0; j < HY.length - 1; j++) for (let i = 0; i < VX.length - 1; i++) {
+      const x0 = VX[i] + RW, y0 = HY[j] + RW, w = VX[i + 1] - x0, h = HY[j + 1] - y0;
+      this.fillBlock(x0, y0, w, h, KIND[j][i], 100 + i, 100 + j);
+      sg.blocks.push({ i, j, x0, y0, w, h, kind: KIND[j][i] });
+    }
+    // waterfront / port strip on the west
+    fill(X, HY[0], 2, HY[HY.length - 1] - HY[0] + RW, TL.PROM);
+    fill(X + 2, HY[0] + RW, 10, HY[HY.length - 1] - HY[0] - RW, TL.PLAZA);
+    const by0 = HY[3] + RW, by1 = by0 + 18;
+    for (let y = HY[0] + 6; y < HY[HY.length - 1] - 2; y += 4) if (!HY.some(h => y + 2 >= h && y <= h + RW) && !(y + 2 >= by0 && y <= by1)) { if (R() < 0.7) this.addBld(X + 3, y, 3, 2, U.pick(PAL.container, R), 'container'); if (R() < 0.7) this.addBld(X + 7, y, 3, 2, U.pick(PAL.container, R), 'container'); }
+    // Tiburon's warehouse on the port (Chapter 3 hideout)
+    fill(X + 2, HY[3] + RW + 1, 10, 16, TL.PLAZA);
+    this.addBld(X + 3, HY[3] + RW + 3, 8, 7, '#4f545c', 'bodega');
+    sg.bodega = { x: (X + 7) * T, y: (HY[3] + RW + 13) * T };
+    // piers into the strait
+    sg.piers = [];
+    for (const py of [HY[1] + 9, HY[4] + 9]) { fill(X - 9, py, 11, 3, TL.PIER); sg.piers.push({ x: (X - 7) * T, y: (py + 1.5) * T }); this.boatSpots.push({ x: (X - 5) * T, y: (py + 4.6) * T, a: Math.PI }); }
+    this.boatSpots.push({ x: (PROV_END + 5) * T, y: (hy + RW + 2) * T, a: 0 });
+    // northern hills (Busay) with a winding dirt road up to the lookout
+    for (let y = 2; y < HY[0] - 1; y++) for (let x = X + 1; x < MW - 2; x++) if (R() < 0.07) { const t = this.get(x, y); if (t === TL.GRASS) this.addTree(x, y); }
+    const path = [[VX[3] + 1, HY[0]], [VX[3] + 1, 19], [X + 64, 19], [X + 64, 11], [X + 86, 11], [X + 86, 5]];
+    for (let k = 0; k < path.length - 1; k++) {
+      const [ax, ay] = path[k], [bx, by] = path[k + 1];
+      fill(Math.min(ax, bx), Math.min(ay, by), Math.abs(bx - ax) + 3, Math.abs(by - ay) + 3, TL.DIRT);
+    }
+    fill(X + 82, 2, 12, 7, TL.PLAZA);
+    this.addBld(X + 86, 3, 3, 2, '#9aa3ad', 'monument');
+    sg.tops = { x: (X + 88) * T, y: (7.5) * T };
+    // airport in the south
+    const ay = HY[HY.length - 1] + RW;
+    fill(X + 2, ay, SUGBO_W - 4, MH - ay - 1, TL.GRASS);
+    fill(VX[1], ay, RW, 8, TL.ROAD);
+    fill(X + 20, ay + 8, 60, 6, TL.PLAZA);
+    this.addBld(X + 40, ay + 2, 16, 5, '#c9ced6', 'hall');
+    fill(X + 8, ay + 16, SUGBO_W - 16, 6, TL.ROAD);   // runway
+    sg.runway = { x0: (X + 8) * T, x1: (MW - 8) * T, y: (ay + 19) * T };
+    this.decor.push({ type: 'plane', x: (X + 64) * T, y: (ay + 11) * T, a: 0 });
+    this.decor.push({ type: 'plane', x: (X + 30) * T, y: (ay + 11) * T, a: Math.PI });
+    // a few more planes/boats for life
+    this.decor.push({ type: 'boat', x: (X - 21) * T, y: 150 * T });
+    // lamps
+    for (const y of HY) for (let x = X + 4; x < VX[VX.length - 1]; x += 8) { this.lamps.push({ x: x * T, y: (y - 0.5) * T }); this.lamps.push({ x: x * T, y: (y + RW + 0.5) * T }); }
+    for (let k = 0; k < 6; k++) this.lamps.push({ x: (PROV_END + 1 + k * 1.5) * T, y: (hy - 0.4) * T });
+    // traffic / police points (lane positions at intersections)
+    for (let i = 0; i < VX.length; i++) for (let j = 0; j < HY.length; j++) {
+      const cx = sg.cx(i), cy = sg.cy(j);
+      sg.pts.push({ x: cx + LO, y: cy - 90, a: Math.PI / 2 }, { x: cx - LO, y: cy + 90, a: -Math.PI / 2 });
+    }
+    // car loops (clockwise rectangles: lane offset towards the inside)
+    const loop = (i0, j0, i1, j1) => {
+      const o = LO, c = [[sg.cx(i0) + o, sg.cy(j0) + o], [sg.cx(i1) - o, sg.cy(j0) + o], [sg.cx(i1) - o, sg.cy(j1) - o], [sg.cx(i0) + o, sg.cy(j1) - o]];
+      sg.loops.push(c.map(([x, y]) => ({ x, y })));
+    };
+    loop(0, 0, 4, 6); loop(0, 0, 2, 3); loop(2, 0, 4, 3); loop(0, 3, 2, 6); loop(2, 3, 4, 6); loop(1, 1, 3, 5); loop(0, 2, 4, 4);
+    // floods (only during a typhoon) in the low port streets
+    for (const j of [3, 4, 5]) this.tfloods.push({ x: (X + 2) * T, y: (HY[j] - 1) * T, w: (VX[2] - X) * T, h: (RW + 2) * T });
+    // places
+    const add = (key, x, y, type, label, icon, extra) => { this.pois[key] = Object.assign({ key, x: x * T, y: y * T, type, label, icon }, extra || {}); };
+    const door = (b, side, off = 0) => side === 'S' ? [b.x0 + b.w / 2 + off, b.y0 + b.h - 0.5] : side === 'N' ? [b.x0 + b.w / 2 + off, b.y0 + 0.5] : side === 'E' ? [b.x0 + b.w - 0.5, b.y0 + b.h / 2 + off] : [b.x0 + 0.5, b.y0 + b.h / 2 + off];
+    const B = (i, j) => sg.blocks.find(b => b.i === i && b.j === j);
+    add('ferry_si', PROV_END + 7, hy + 2, 'ferry', 'Ferry papuntang Sugbo', '⛴');
+    add('ferry_sg', X - 7, HY[4] + 10.5, 'ferry', 'Ferry pabalik sa San Isidro', '⛴');
+    add('airport_s', X + 48, ay + 7.6, 'airport', 'Paliparan ng Sugbo', '✈️');
+    add('bebing', ...door(B(1, 1), 'S', 4), 'npc', 'Inday Bebing', 'I');
+    add('lechon_sg', ...door(B(1, 1), 'S', -2), 'spot', 'Lechonan ni Inday Bebing', '🐷');
+    add('dodong', ...door(B(0, 2), 'E'), 'npc', 'Dodong', 'D');
+    add('plazakrus', ...door(B(2, 1), 'S'), 'spot', 'Plaza Krus', '✝️');
+    add('evac_sg', ...door(B(2, 1), 'E'), 'evac', 'Evacuation Center (Plaza Krus)', '⛺');
+    add('sg_hospital', ...door(B(2, 3), 'S'), 'hospital', 'Ospital ng Sugbo', '🏥');
+    add('sg_presinto', ...door(B(3, 3), 'S'), 'police', 'Presinto ng Sugbo', '🚓');
+    add('sg_ukay', ...door(B(1, 2), 'S'), 'ukay', 'Ukay-Ukay sa Kolon', '👕');
+    add('sg_sari', ...door(B(2, 4), 'N'), 'sari', 'Sari-sari ni Nang Pacing', '🏪');
+    add('sg_gun', ...door(B(1, 4), 'E'), 'gunshop', 'Armas ni Kabo (Sugbo)', '🔫');
+    add('sg_paint', ...door(B(3, 2), 'S'), 'paint', 'Pintura sa IT Park', '🎨');
+    add('sg_barber', ...door(B(0, 4), 'E'), 'barber', 'Barberya ni Toto', '💈');
+    add('tops', X + 88, 9, 'spot', 'Tops Lookout', '⛰');
+    add('sg_bodega', X + 7, HY[3] + RW + 14, 'spot', 'Bodega ni Kapitan Tiburon', '📦');
+    for (const k of ['sg_ukay', 'sg_sari', 'sg_gun', 'sg_paint', 'sg_barber']) {
+      const pp = this.pois[k], a = { ukay: ['#e84393', 'UKAY-UKAY'], sari: ['#27ae60', 'SARI-SARI'], gunshop: ['#3b3b3b', 'ARMAS'], paint: ['#e67e22', 'PINTURA'], barber: ['#2e86c1', 'BARBERYA'] }[pp.type];
+      this.decor.push({ type: 'sign', x: pp.x, y: pp.y, color: a[0], text: a[1] });
+    }
+    this.decor.push({ type: 'sign', x: this.pois.lechon_sg.x, y: this.pois.lechon_sg.y, color: '#c0392b', text: 'LECHON' });
+    // Manila airport (fly to Sugbo) at the south edge of Pasay
+    const [mx0, my0, mw, mh] = this.blockRect(5, 8);
+    add('airport_m', mx0 + mw / 2, my0 + mh - 0.5, 'airport', 'Paliparan ng Maynila', '✈️');
+    this.decor.push({ type: 'sign', x: this.pois.airport_m.x, y: this.pois.airport_m.y, color: '#2c5aa0', text: 'PALIPARAN' });
+  },
   makeLabels() {
     const L = [['PANTALAN', 0, -0.5], ['TONDO', 1.5, 0], ['DIVISORIA', 3, -0.5], ['BINONDO', 4.5, 0], ['SAMPALOC', 7, -0.5], ['QUIAPO', 6, 1],
       ['INTRAMUROS', 0, 2.5], ['LUNETA', 0.5, 4], ['ERMITA', 1, 6], ['MALATE', 1, 7.5], ['STA. CRUZ', 3, 2], ['PACO', 4, 5.5],
@@ -588,6 +706,12 @@ const MAP = {
     }
     if (this.prov) { this.labels.push({ name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 20) * T }, { name: 'HACIENDA SEVERO', x: (this.prov.tcx + 0.5) * T, y: 10 * T }, { name: 'PALAYAN', x: (this.prov.tcx + 0.5) * T, y: 150 * T }); }
     this.labels.push({ name: 'MANILA BAY', x: (OX - 8) * T, y: this.cy(5), vert: true });
+    if (this.sugbo) {
+      const sg = this.sugbo, bc = (i, j) => ({ x: (sg.VX[i] + RW + 9) * T, y: (sg.HY[j] + RW + 9) * T });
+      for (const [n, i, j] of [['KOLON', 1, 1], ['PLAZA KRUS', 2, 1.75], ['IT PARK', 3, 0.5], ['MERKADO', 0, 0.3], ['LAHUG', 2, 2.6], ['MABOLO', 3, 4.6], ['PARDO', 0.5, 5.4], ['TEJERO', 1, 4]]) { const c = bc(Math.floor(i), Math.floor(j)); this.labels.push({ name: n, x: c.x + (i % 1) * 22 * T, y: c.y + (j % 1) * 22 * T }); }
+      this.labels.push({ name: 'SUGBO', x: (SX0 + 56) * T, y: 22 * T }, { name: 'BUSAY', x: (SX0 + 60) * T, y: 8 * T }, { name: 'PANTALAN NG SUGBO', x: (SX0 + 7) * T, y: (sg.HY[2] + 4) * T, vert: true }, { name: 'PALIPARAN', x: (SX0 + 48) * T, y: (sg.HY[6] + 20) * T });
+      this.labels.push({ name: 'KIPOT NG SUGBO', x: (PROV_END + STRAIT_W / 2) * T, y: this.cy(6), vert: true });
+    }
     this.labels.push({ name: 'ISLA MALIGAYA', x: (this.island.cx + 5) * T, y: (this.island.cy - 38) * T });
   },
 
@@ -915,6 +1039,16 @@ const MAP = {
         else { g.moveTo(x - 4, y); g.lineTo(x, y + 9); g.lineTo(x + 4, y); }
         g.fill();
       }
+    } else if (d.type === 'plane') {
+      if (d.x < ox - 200 || d.x > ox + S + 200 || d.y < oy - 200 || d.y > oy + S + 200) return;
+      g.save(); g.translate(d.x, d.y); g.rotate(d.a || 0);
+      g.fillStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(10, 14, 110, 18, 0, 0, TAU); g.fill();
+      g.fillStyle = '#e9edf2'; g.beginPath(); g.moveTo(-90, 0); g.lineTo(80, -12); g.quadraticCurveTo(110, 0, 80, 12); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(10, -6); g.lineTo(-20, -70); g.lineTo(-38, -70); g.lineTo(-18, -6); g.closePath(); g.moveTo(10, 6); g.lineTo(-20, 70); g.lineTo(-38, 70); g.lineTo(-18, 6); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(-70, -2); g.lineTo(-90, -28); g.lineTo(-98, -28); g.lineTo(-86, 0); g.lineTo(-98, 28); g.lineTo(-90, 28); g.lineTo(-70, 2); g.closePath(); g.fill();
+      g.fillStyle = '#2c5aa0'; g.fillRect(-80, -2, 150, 4); g.fillStyle = '#c0392b'; g.beginPath(); g.moveTo(-86, 0); g.lineTo(-98, -28); g.lineTo(-92, -28); g.closePath(); g.fill();
+      g.fillStyle = '#18202d'; for (let x = -60; x < 70; x += 10) { g.fillRect(x, -8, 4, 2); g.fillRect(x, 6, 4, 2); }
+      g.restore();
     } else if (d.type === 'boat') {
       if (d.x < ox - 150 || d.x > ox + S + 150 || d.y < oy - 150 || d.y > oy + S + 150) return;
       g.save(); g.translate(d.x, d.y);

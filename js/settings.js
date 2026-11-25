@@ -62,6 +62,7 @@ const TIPS = {
   save: () => ['💾 Save at Load', 'Awtomatikong nase-save ang laro kapag umalis ka. Pwede ring mag-save sa 3 slot: ☰ → I-SAVE. Ang mga ari-arian mo ay safehouse din.'],
   jobs: () => ['💼 Side Jobs', 'Sa taxi, police car, ambulansya (🚑), fire truck (🚒), trak ng basura (🗑), delivery motor (🛵 Rider Hub) o tow truck (🛻 Impound), pindutin ang J / 💼 para kumita. Sa gabi, may 🏁 underground race sa Baywalk.'],
   minigames: () => ['🎤 Mini-games', 'May 🎤 Videoke (₱20 kada kanta, premyo sa 90+) at 🏀 3-Point Shootout sa mga basketball court. May 🥫 shooting range din sa Armas ni Kabo.'],
+  sugbo: () => ['🏝 Sugbo', 'Maayong pag-abot sa Sugbo! Bisaya ang salita dito: "Maayong buntag" = magandang umaga, "Salamat kaayo" = maraming salamat, "Lami!" = sarap! Bumalik sa Maynila gamit ang ✈️ Paliparan o ⛴ Ferry papuntang San Isidro.'],
   typhoon: () => ['🌀 Bagyo!', 'Itutulak ng hangin ang sasakyan mo at may lumilipad na yero — ingat! Maraming kalye ang baha. Sumakay sa jeepney, van, bus o bangka at pindutin ang J / 💼 para sa 🌀 Rescue: dalhin ang mga tao sa ⛺ Evacuation Center.'],
   guns: () => ['🔫 Baril', 'Kaliwang click / Space para bumaril (hawakan para sa SMG at Riple), G para mag-reload. Sa sasakyan: click, X o 🔫 para sa drive-by (Pistola o SMG). Sa phone, kusang tumututok. Mag-ingat — naririnig ng pulis ang putok!'],
   kuta: () => ['☠️ Kuta ng Sindikato', 'May mga kuta ng armadong sindikato (☠️ sa mapa). Talunin silang lahat para sa ₱3,000 — hindi krimen ang labanan sila, pero huwag tamaan ang inosente!'],

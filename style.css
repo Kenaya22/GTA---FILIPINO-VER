@@ -448,3 +448,20 @@ body.photo #hud, body.photo #touch { display: none !important; }
 #bigmap { cursor: crosshair; }
 /* speedometer no longer covers the touch buttons: bottom centre between joystick and buttons */
 body.touch #speedo { top: auto !important; right: auto !important; left: 50%; transform: translateX(-50%); bottom: max(8px, env(safe-area-inset-bottom)) !important; font-size: 24px; opacity: .9; }
+/* ===== v1.8 flight ===== */
+#flight { position: fixed; inset: 0; z-index: 15; background: linear-gradient(180deg, #4aa3df 0%, #9fd3f5 60%, #d6eefc 100%); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+#flight.hidden { display: none; }
+.fl-plane { font-size: 90px; position: absolute; left: -120px; top: 40%; transform: rotate(-8deg); animation: flplane 3.2s ease-in-out forwards; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.25)); }
+.fl-cloud { position: absolute; font-size: 120px; opacity: .85; animation: flcloud 3.2s linear forwards; }
+.fl-cloud.c1 { top: 12%; left: 70%; } .fl-cloud.c2 { top: 60%; left: 30%; font-size: 160px; animation-duration: 2.6s; } .fl-cloud.c3 { top: 30%; left: 110%; font-size: 90px; }
+.fl-to { position: absolute; bottom: 16%; font-family: var(--font-display); font-size: clamp(26px, 7vw, 54px); color: #fff; text-shadow: 0 4px 0 #2c5aa0, 0 8px 20px rgba(0,0,0,0.3); }
+@keyframes flplane { from { left: -120px; top: 55%; } to { left: 110%; top: 25%; } }
+@keyframes flcloud { from { transform: translateX(0); } to { transform: translateX(-140vw); } }
+/* ===== v1.8 boss bar & ending choices ===== */
+#bossbar { position: absolute; top: max(64px, calc(env(safe-area-inset-top) + 56px)); left: 50%; transform: translateX(-50%); width: min(420px, 70vw); text-align: center; pointer-events: none; }
+#bossbar b { font-family: var(--font-display); font-weight: 400; color: #ffd28a; font-size: 15px; text-shadow: 0 2px 4px #000; }
+#bossbar .bbar { height: 10px; border-radius: 6px; background: rgba(0,0,0,0.6); overflow: hidden; border: 1px solid rgba(255,255,255,0.3); margin-top: 3px; }
+#boss-hp { height: 100%; width: 100%; background: linear-gradient(90deg, #c0392b, #ff6b5a); transition: width .2s; }
+.end-choices { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.end-choices div { background: var(--panel2); border-radius: 10px; padding: 6px 10px; font-weight: 800; font-size: 13px; }
+.end-choices span { display: block; font-size: 10px; color: var(--muted); letter-spacing: 1px; }

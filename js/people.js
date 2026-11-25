@@ -61,7 +61,7 @@ class Person {
     const a = Math.atan2(this.y - fromY, this.x - fromX);
     this.vx = Math.cos(a) * force; this.vy = Math.sin(a) * force;
     this.state = 'down'; this.downT = U.rand(4, 7); this.a = a;
-    if (this.kind === 'goon') { this.hostile = true; this.hits = (this.hits || 0) + 1; if (this.hits >= 2) { this.ko = true; this.downT = 999; } }
+    if (this.kind === 'goon') { this.hostile = true; this.hits = (this.hits || 0) + 1; if (this.hits >= (this.toughness || 2)) { this.ko = true; this.downT = 999; } else if (this.toughness) this.downT = 1.2; }
     if (Math.random() < 0.55 && this.kind === 'ped') G.dropCash(this.x, this.y, U.randi(10, 80));
   }
   move(dt) {
@@ -121,7 +121,7 @@ class Person {
       else {
         if (!this.tgt || (this.blocked || 0) > 1.5) {
           this.blocked = 0;
-          for (let k = 0; k < 6; k++) { const x = this.home.x + U.rand(-220, 220), y = this.home.y + U.rand(-220, 220); const tt = MAP.tileAt(x, y); if (tt === TL.GRASS || tt === TL.SAND || tt === TL.PIER) { this.tgt = { x, y }; break; } }
+          for (let k = 0; k < 6; k++) { const x = this.home.x + U.rand(-220, 220), y = this.home.y + U.rand(-220, 220); const tt = MAP.tileAt(x, y); if (this.wtiles ? this.wtiles.includes(tt) : (tt === TL.GRASS || tt === TL.SAND || tt === TL.PIER)) { this.tgt = { x, y }; break; } }
         }
         if (this.tgt && this.walkTo(this.tgt.x, this.tgt.y, this.speed, dt) < 8) { this.tgt = null; this.pause = U.rand(1, 4); }
       }
@@ -158,10 +158,10 @@ class Person {
       if (this.pause > 0) { this.pause -= dt; this.vx = this.vy = 0; this.moveAmt = 0; this.a += Math.sin(G.time * 1.5 + this.x) * dt * 1.2; }
       else if (this.walkTo(pt.x, pt.y, 55, dt) < 8) { this.pi = 1 - (this.pi || 0); this.pause = U.rand(1.5, 3); }
       const tg = p.vehicle || p, d = U.dist(this.x, this.y, tg.x, tg.y);
-      const seen = d < 250 && Math.abs(U.angDiff(this.a, Math.atan2(tg.y - this.y, tg.x - this.x))) < 0.6 && MAP.los(this.x, this.y, tg.x, tg.y);
+      const seen = d < (this.sight || 250) && Math.abs(U.angDiff(this.a, Math.atan2(tg.y - this.y, tg.x - this.x))) < 0.6 && MAP.los(this.x, this.y, tg.x, tg.y);
       this.seeT = seen ? (this.seeT || 0) + dt : 0;
       this.susp = Math.min(1, (this.seeT || 0) / 0.5);
-      if (this.seeT > 0.5) { this.susp = 0; WANTED.setStars(3); WANTED.spotted('cop', d); UI.toast('👀 Nakita ka ng bantay ni Don Severo!'); }
+      if (this.seeT > 0.5) { this.susp = 0; WANTED.setStars(3); WANTED.spotted('cop', d); UI.toast(`👀 Nakita ka ng bantay ni ${this.boss || 'Don Severo'}!`); }
       return;
     }
     if (this.role === 'enforcer' && this.state !== 'chase') {

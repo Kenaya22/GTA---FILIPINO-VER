@@ -108,6 +108,7 @@ const GUNS = {
   // hearing gunfire: police nearby react even without line of sight
   gunshot(x, y) {
     G.panic(x, y, 520);
+    if (MS.active && MS.c && MS.c.noCops) return;
     for (const v of G.vehicles) if (v.isCop && v.driver && v.driver !== 'player' && U.d2(v.x, v.y, x, y) < 650 * 650) { WANTED.crime(2, x, y, true); return; }
     for (const p of G.peds) if ((p.kind === 'cop') && p.state !== 'down' && U.d2(p.x, p.y, x, y) < 600 * 600) { WANTED.crime(2, x, y, true); return; }
   },
@@ -312,8 +313,8 @@ function updateGoon(p, dt) {
   if (p.ko) { p.state = 'down'; p.downT = 999; return; }
   const d = U.dist(p.x, p.y, tg.x, tg.y);
   const sees = d < 430 && MAP.los(p.x, p.y, tg.x, tg.y);
-  if (sees && !P.downed && !MS.active) p.hostile = true;
-  if (!p.hostile || d > 900 || P.downed) {
+  if (sees && !P.downed && (!MS.active || p.mgoon)) p.hostile = true;
+  if (!p.hostile || d > (p.mgoon ? 1400 : 900) || P.downed) {
     if (!p.tgt || U.d2(p.x, p.y, p.tgt.x, p.tgt.y) < 64) p.tgt = { x: p.home.x + U.rand(-90, 90), y: p.home.y + U.rand(-90, 90) };
     p.walkTo(p.tgt.x, p.tgt.y, 45, dt);
   } else {

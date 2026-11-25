@@ -348,7 +348,7 @@ class GoonDriver {
 }
 const PROV = {
   t: 0, folk: [], cars: [],
-  near() { return MAP.prov && G.player.x > (CITY_W - 30) * T; },
+  near() { return MAP.prov && G.player.x > (CITY_W - 30) * T && G.player.x < (PROV_END + 4) * T; },
   update(dt) {
     this.t -= dt; if (this.t > 0) return; this.t = 1;
     const P = G.player, pr = MAP.prov;
@@ -370,7 +370,7 @@ const PROV = {
     this.cars = this.cars.filter(v => { if (v.remove) return false; if (v.ai && v.ai.finished || U.dist(v.x, v.y, P.x, P.y) > 2200) { if (!TRAFFIC.inView(v.x, v.y, 60)) v.remove = true; return !v.remove; } return true; });
     if (near && this.cars.length < 6) {
       const east = Math.random() < 0.5, y = (pr.hy + (east ? 3 : 1)) * T;
-      const x0 = (MAP.rs(8) + RW + 2) * T, x1 = (MW - 3) * T;
+      const x0 = (MAP.rs(8) + RW + 2) * T, x1 = (PROV_END - 3) * T;
       const x = U.rand(x0, x1);
       if (!TRAFFIC.inView(x, y, 120) && U.dist(x, y, P.x, P.y) < 1800 && !G.vehicles.some(o => U.d2(o.x, o.y, x, y) < 140 * 140)) {
         const type = U.choice(['jeepney', 'tricycle', 'kuliglig', 'sedan', 'van', 'motor', 'suv', 'pickup', 'pickup']);
@@ -382,4 +382,64 @@ const PROV = {
     }
   },
   reset() { this.folk = []; this.cars = []; },
+};
+
+// ===== Sugbo (Chapter 3 city): traffic loops & people =====
+const SUGBO = {
+  t: 0, folk: [], cars: [],
+  in(x) { return x > (SX0 - 6) * T; },
+  near() { return MAP.sugbo && this.in(G.player.x); },
+  update(dt) {
+    this.t -= dt; if (this.t > 0) return; this.t = 1;
+    const P = G.player, sg = MAP.sugbo; if (!sg) return;
+    const near = this.near();
+    this.folk = this.folk.filter(p => { if (p.remove) return false; if (!near || U.dist(p.x, p.y, P.x, P.y) > 1700) { p.remove = true; return false; } return true; });
+    let tries = 0;
+    const want = SETTINGS.quality === 'low' ? 12 : 22;
+    while (near && this.folk.length < want && tries++ < 25) {
+      const a = Math.random() * TAU, r = U.rand(500, 1100), x = P.x + Math.cos(a) * r, y = P.y + Math.sin(a) * r;
+      const t = MAP.tileAt(x, y);
+      if (!(t === TL.SIDE || t === TL.PLAZA) || TRAFFIC.inView(x, y, 30)) continue;
+      const p = new Person(x, y, 'ped'); p.state = 'wander'; p.home = { x, y }; p.keep = true; p.wtiles = [TL.SIDE, TL.PLAZA, TL.PROM]; p.speed = U.rand(45, 70);
+      if (Math.random() < 0.35) p.look.hair = U.choice(['cap_blue', 'bucket', 'curly', 'short']);
+      this.folk.push(p); G.peds.push(p);
+    }
+    this.cars = this.cars.filter(v => { if (v.remove) return false; if (!near || U.dist(v.x, v.y, P.x, P.y) > 2300) { if (!TRAFFIC.inView(v.x, v.y, 60)) v.remove = true; return !v.remove; } return true; });
+    const cw = SETTINGS.quality === 'low' ? 7 : 12;
+    for (let k = 0; near && this.cars.length < cw && k < 8; k++) {
+      const loop = U.choice(sg.loops), i = U.randi(0, loop.length - 1), a = loop[i], b = loop[(i + 1) % loop.length], f = U.rand(0.15, 0.85);
+      const x = U.lerp(a.x, b.x, f), y = U.lerp(a.y, b.y, f);
+      const d = U.dist(x, y, P.x, P.y);
+      if (d < 500 || d > 1900 || TRAFFIC.inView(x, y, 120) || G.vehicles.some(o => U.d2(o.x, o.y, x, y) < 150 * 150)) continue;
+      const type = U.choice(['multicab', 'multicab', 'multicab', 'jeepney', 'taxi', 'taxi', 'motor', 'motor', 'sedan', 'suv', 'pickup', 'van', 'bus']);
+      const v = new Vehicle(type, x, y, Math.atan2(b.y - a.y, b.x - a.x), type === 'taxi' ? { color: '#f4f4f0' } : {}); v.driver = 'ai';
+      v.ai = new PathDriver(v, loop, { cruise: type === 'bus' ? 170 : 215, loop: true, start: (i + 1) % loop.length });
+      v.vx = Math.cos(v.a) * 120; v.vy = Math.sin(v.a) * 120;
+      this.cars.push(v); G.vehicles.push(v);
+    }
+  },
+  reset() { this.folk = []; this.cars = []; },
+};
+
+// ===== Flights between Manila and Sugbo (short animated transition) =====
+const FLY = {
+  go(dest, done) {
+    const P = G.player, el = document.getElementById('flight');
+    if (P.vehicle) G.exitVehicle(true);
+    G.cutscene = true; AUD.whoosh(); AUD.tone(180, 2.4, 'sawtooth', 0.04, 120);
+    const toSugbo = dest.key === 'airport_s';
+    document.getElementById('fl-to').textContent = toSugbo ? 'MAYNILA ✈️ SUGBO' : 'SUGBO ✈️ MAYNILA';
+    el.classList.remove('hidden'); el.classList.add('on');
+    setTimeout(() => {
+      P.x = dest.x; P.y = dest.y + 30; P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
+      WORLD.clock = (WORLD.clock + 60) % 1440;
+    }, 1600);
+    setTimeout(() => {
+      el.classList.remove('on'); el.classList.add('hidden'); G.cutscene = false;
+      UI.big(toSugbo ? 'SUGBO' : 'MAYNILA', toSugbo ? 'Maayong pag-abot! (Maligayang pagdating!)' : 'Balik sa Maynila', 2.2);
+      if (toSugbo) TIP.show('sugbo');
+      G.stats.flights = (G.stats.flights || 0) + 1; ACH.check();
+      if (done) done();
+    }, 3200);
+  },
 };

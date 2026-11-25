@@ -110,7 +110,7 @@ const TYPHOON = {
 };
 
 // ===== Rescue side job during typhoons =====
-const RESCUE_CAP = { jeepney: 10, bus: 14, van: 6, kuliglig: 6, pickup: 5, garbage: 4, firetruck: 4, ambulance: 4, bangka: 6, army: 12, suv: 4, tow: 2, armored: 4, policeboat: 4 };
+const RESCUE_CAP = { multicab: 6, jeepney: 10, bus: 14, van: 6, kuliglig: 6, pickup: 5, garbage: 4, firetruck: 4, ambulance: 4, bangka: 6, army: 12, suv: 4, tow: 2, armored: 4, policeboat: 4 };
 Object.assign(JOBS, {
   u_rescue(dt, c) {
     const v = c.v, cap = RESCUE_CAP[v.type] || 3;
@@ -138,8 +138,9 @@ Object.assign(JOBS, {
       // half-full: go save more or drop at the evac center
       c.stage = c.load >= Math.ceil(cap / 2) ? 'drop' : null;
     } else {
-      c.obj = `Dalhin sa Evacuation Center ⛺ (sakay: ${c.load}/${cap})`; c.tgt = Object.assign({ stop: true }, MAP.pois.evac);
-      if (this.stopped(MAP.pois.evac, 170, 0.8)) {
+      const ev = [MAP.pois.evac, MAP.pois.evac_sg].filter(Boolean).reduce((a, b) => U.d2(a.x, a.y, v.x, v.y) < U.d2(b.x, b.y, v.x, v.y) ? a : b);
+      c.obj = `Dalhin sa Evacuation Center ⛺ (sakay: ${c.load}/${cap})`; c.tgt = Object.assign({ stop: true }, ev);
+      if (this.stopped(ev, 170, 0.8)) {
         c.n += c.load; G.stats.rescued = (G.stats.rescued || 0) + c.load;
         this.pay(c.load * 120, `⛺ ${c.load} ang ligtas na!`); c.load = 0;
         if (c.waiting && c.waiting.length) c.stage = 'pick'; else { removePeds(c.waiting); c.waiting = null; c.stage = null; }
@@ -161,7 +162,7 @@ const FIESTA = {
     return this._route;
   },
   banner() {
-    if (this.floats) return '🎉 Pista sa Tondo — may parada!';
+    if (this.floats) return this.custom ? '🎉 Pista Señor sa Sugbo!' : '🎉 Pista sa Tondo — may parada!';
     if (this.undas()) return '🕯 Undas — dalaw sa mga yumao';
     return '';
   },
@@ -175,11 +176,13 @@ const FIESTA = {
     const r = this.route(), cx = (r[0].x + r[2].x) / 2, cy = (r[0].y + r[2].y) / 2, P = G.player;
     const d = U.dist(P.x, P.y, cx, cy);
     if (this.paradeTime() && !this.floats && d < 2600 && d > 300) this.spawnParade();
-    if (this.floats && (!this.paradeTime() || d > 3200)) this.endParade();
+    if (this.floats && this.custom && !MS.active) this.endParade();
+    if (this.floats && !this.custom && (!this.paradeTime() || d > 3200)) this.endParade();
     if (this.floats) this.updateParade(dt);
   },
-  spawnParade() {
-    const r = this.route();
+  spawnParade(route, crowdAt) {
+    const r = route || this.route();
+    this.custom = !!route;
     this.floats = []; this.marchers = []; this.crowd = []; this.earned = 0;
     const cols = ['#e84393', '#f1c40f', '#16a085'];
     for (let k = 0; k < 3; k++) {
@@ -195,18 +198,18 @@ const FIESTA = {
       }
     }
     // spectators on the sidewalks near the fiesta
-    const f = MAP.pois.fiesta;
+    const f = crowdAt || MAP.pois.fiesta;
     for (let n = 0; n < 12; n++) {
       const x = f.x + U.rand(-160, 160), y = f.y + U.rand(-260, 260);
       if (MAP.solidAt(x, y) || MAP.tileAt(x, y) === TL.ROAD) continue;
       const p = new Person(x, y, 'ped'); p.npc = true; p.keep = true; p.state = 'idle'; p.umb = null; p.cheer = true; G.peds.push(p); this.crowd.push(p);
     }
-    UI.toast('🎉 May parada sa Tondo! Sumabay sa paglakad para sa tip.');
+    UI.toast(this.custom ? '🎉 Pista Señor sa Sugbo! Sayaw, tambol at karosa!' : '🎉 May parada sa Tondo! Sumabay sa paglakad para sa tip.');
   },
   endParade() {
     for (const v of this.floats || []) v.remove = true;
     removePeds(this.marchers); removePeds(this.crowd);
-    this.floats = this.marchers = this.crowd = null;
+    this.floats = this.marchers = this.crowd = null; this.custom = false;
   },
   updateParade(dt) {
     const P = G.player;
