@@ -48,6 +48,7 @@
     <div id="event" class="hidden"></div>
     <div id="vehname"></div>
     <button id="btn-map" class="iconbtn" title="Mapa (M)">🗺</button>
+    <button id="btn-phone" class="iconbtn" title="Phone (P)">📱</button>
     <button id="btn-pause" class="iconbtn" title="Pause (Esc)">☰</button>
   </div>
   <div id="status">
@@ -231,6 +232,13 @@
   </div>
 </div>
 
+<div id="phone" class="screen hidden">
+  <div class="phone-dev">
+    <div class="ph-notch"></div>
+    <div id="phone-body" class="ph-body"></div>
+    <div class="ph-apps"><button data-app="home">🏠</button><button data-app="msg">💬</button><button data-app="gps">🧭</button><button data-app="fam">💗</button><button id="ph-close">✕</button></div>
+  </div>
+</div>
 <div id="shop" class="screen hidden">
   <div class="panel wide">
     <h2 id="shop-title">TINDAHAN</h2>
@@ -409,6 +417,7 @@
 <script src="js/chapter5.js"></script>
 <script src="js/mapview.js"></script>
 <script src="js/phmap.js"></script>
+<script src="js/family.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/boot.js"></script>
 <script src="js/game.js"></script>

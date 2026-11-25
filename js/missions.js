@@ -846,7 +846,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'heli', 'kainan', 'mall', 'church', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'heli', 'kainan', 'mall', 'church', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race', 'famhome'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -878,6 +878,7 @@ const SHOP = {
       case 'hospital': return P.vehicle ? null : `Ospital — Full heal (${c(100)})`;
       case 'chop': return P.vehicle && MS.idx >= 2 && !(MS.active && MS.active.giver === 'ben') ? `Ibenta kay Mang Ben (~${U.money(this.value(P.vehicle))})` : null;
       case 'home': return P.vehicle ? null : 'I-save ang laro at magpahinga';
+      case 'famhome': return P.vehicle ? null : FAMILY.homeLabel();
       case 'ferry': return P.vehicle ? null : `${p.label} (${c(['ferry1', 'ferry2'].includes(p.key) ? 50 : 150)})`;
       case 'airport': return P.vehicle ? null : `✈️ ${p.label} — pumili ng lilipadan (${c(500)})`;
     }
@@ -978,6 +979,7 @@ const SHOP = {
         }, 900);
         break;
       }
+      case 'famhome': FAMILY.openHome(); break;
       case 'home': {
         P.hp = 100; G.save(); AUD.success(); UI.toast('💾 Na-save ang laro. Busog at pahinga!');
         G.spawnHomeCars(); break;

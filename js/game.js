@@ -75,7 +75,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; REPLAY.on = false;
+    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; FAMILY.reset(); REPLAY.on = false;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -151,6 +151,7 @@ const G = {
     else if (code === 'Space') { if (UI.talking) UI.nextLine(); else if (!this.player.vehicle) ARMS.attack(); }
     else if (code === 'KeyH') this.horn();
     else if (code === 'KeyR') MUSIC.nextStation();
+    else if (code === 'KeyP') PHONE.open();
     else if (code === 'KeyQ') { if (!this.player.vehicle) ARMS.cycle(); }
     else if (code === 'KeyX') { if (!UI.talking) GUNS.trigger(false); }
     else if (code === 'KeyG') GUNS.reload();
@@ -162,6 +163,7 @@ const G = {
     if (UI.talking) { UI.nextLine(); return; }
     if (MS.canRetry()) { MS.retry(); return; }
     if (STREET.near()) { STREET.use(); return; }
+    const lv = FAMILY.near(); if (lv) { FAMILY.open(lv); return; }
     const vend = WORLD.nearVendor(); if (vend) { WORLD.buy(vend); return; }
     if (MS.canStart()) { MS.start(MS.idx); return; }
     const shop = SHOP.near();
@@ -252,6 +254,7 @@ const G = {
     if (UI.talking || this.cutscene) return '';
     if (MS.canRetry()) return `Ulitin ang misyon mula checkpoint: ${MS.retryInfo.m.title} (${Math.ceil(MS.retryT)}s)`;
     const sn = STREET.near(); if (sn) return sn;
+    const lv = FAMILY.near(); if (lv) return FAMILY.label(lv);
     const vend = WORLD.nearVendor();
     if (vend) return `Bumili ng ${{ taho: 'taho', balut: 'balut', sorbetes: 'sorbetes', puso: 'puso at lechon', durian: 'durian' }[vend.vendor] || 'pagkain'} kay Manong (₱20)`;
     const m = MS.canStart();
@@ -277,7 +280,13 @@ const G = {
   shake(n) { this.cam.shake = Math.max(this.cam.shake, n); },
   fadeFlash() { const f = document.getElementById('fade'); f.classList.add('flash', 'on'); setTimeout(() => f.classList.remove('on'), 120); setTimeout(() => f.classList.remove('flash'), 500); },
   particle(type, x, y) {
-    if (this.particles.length > (SETTINGS.quality === 'low' ? 150 : 500)) return;
+    if (this.particles.length > (SETTINGS.quality === 'low' ? 150 : 500)) {
+      // rain drips / wakes / splashes can fill the budget; never let them crowd out fire, smoke or explosions
+      if (type === 'drip' || type === 'wake' || type === 'splash') return;
+      const i = this.particles.findIndex(q => q.type === 'drip' || q.type === 'wake' || q.type === 'splash');
+      if (i < 0) return; this.particles.splice(i, 1);
+    }
+    if (type === 'drip' && this.particles.length > (SETTINGS.quality === 'low' ? 90 : 300)) return;
     if (SETTINGS.quality === 'low' && (type === 'smoke' || type === 'wake' || type === 'drip') && Math.random() < 0.6) return;
     const p = { type, x, y, vx: U.rand(-20, 20), vy: U.rand(-20, 20), life: 1, max: 1, size: 8 };
     if (type === 'smoke') { p.life = p.max = U.rand(1, 1.8); p.size = U.rand(8, 14); p.vx *= 0.6; p.vy = U.rand(-30, -10); }
@@ -437,6 +446,7 @@ const G = {
     JOBS.update(dt);
     JOBS.depotTick(dt);
     STREET.update(dt);
+    FAMILY.update(dt); FAMILY.checkWedding(); PHONE.interest();
     COLL.update();
     DAILY.update(dt);
     REPLAY.update(dt);
@@ -594,10 +604,11 @@ const G = {
     else if (!t && JOBS.active) { t = JOBS.target(); this.tcol = '#3ad1ff'; }
     if (!t && PASADA.mode && PASADA.pt) t = Object.assign({ stop: true }, PASADA.pt);
     if (!t && STREET.ev) t = STREET.target();
-    if (!t && this.waypoint) {
+    // a place you picked on the map (shop, job, landmark...) gets its own purple arrow; anything else shrinks until you arrive
+    if (this.waypoint) {
       const P = this.player, me = P.vehicle || P;
       if (U.dist(me.x, me.y, this.waypoint.x, this.waypoint.y) < 90) { UI.toast('📍 Nandito ka na!'); AUD.checkpoint(); this.waypoint = null; }
-      else t = { x: this.waypoint.x, y: this.waypoint.y };
+      else { if (t) this.target2 = t; t = { x: this.waypoint.x, y: this.waypoint.y, wp: true }; this.tcol = '#c86bff'; }
     }
     this.target = t;
     this.gpsT -= dt;
@@ -806,7 +817,7 @@ const G = {
       g.beginPath(); g.moveTo(-10, -off - 16 + b); g.lineTo(10, -off - 16 + b); g.lineTo(0, -off + b); g.closePath(); g.fill(); g.stroke();
     } else {
       const r = (t.cp ? 70 : t.giver ? 30 : 50) * pulse;
-      g.fillStyle = C === '#ffd23f' ? (t.giver ? 'rgba(255,210,63,0.16)' : 'rgba(255,210,63,0.12)') : 'rgba(58,209,255,0.14)';
+      g.fillStyle = C === '#ffd23f' ? (t.giver ? 'rgba(255,210,63,0.16)' : 'rgba(255,210,63,0.12)') : C === '#c86bff' ? 'rgba(200,107,255,0.14)' : 'rgba(58,209,255,0.14)';
       g.strokeStyle = C; g.lineWidth = 4;
       g.beginPath(); g.arc(0, 0, r, 0, TAU); g.fill(); g.stroke();
       g.lineWidth = 2; g.globalAlpha = 0.5; g.beginPath(); g.arc(0, 0, r * 0.7, 0, TAU); g.stroke(); g.globalAlpha = 1;
@@ -815,6 +826,7 @@ const G = {
         g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(0, -52 * sc, 15 * sc, 0, TAU); g.fill();
         g.fillStyle = '#1a1205'; g.font = 'bold 18px Lilita One, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t.letter, 0, -51 * sc);
       }
+      if (t.wp && this.waypoint) { g.fillStyle = C; g.font = 'bold 15px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText(this.waypoint.name || '📍', 0, -r - 12); }
       if (t.stop) { g.fillStyle = C; g.font = 'bold 13px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText(I18N.t('PARA'), 0, 0); }
     }
     g.restore();

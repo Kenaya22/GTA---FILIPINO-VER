@@ -1,5 +1,13 @@
 # Changelog — Hari ng Kalsada
 
+## v2.6: Pamilya / Family (2026-11-25)
+- 💗 **Love & family**: meet Ligaya (Manila), Isabel (Cebu), Migo (Davao) or Rosa (Baguio) outside the 🍗 chicken houses. Chat daily, give flowers or chocolates (each has a favorite), go on dates (they follow you to a landmark, mall, videoke or restaurant with a purple GPS arrow and a 5-minute limit), propose with a ₱25,000 ring at 100 ❤️, then get married at the nearest church
+- 🏡 **Family House** (🏡 on the map, Manila): Nipa Hut ₱15,000 → Bungalow ₱60,000 → Mansion ₱250,000. Your spouse lives there: home-cooked meals (full heal + ENERGY), up to 3 kids who appear at home, play with them for XP, and a daily allowance (₱300 / ₱1,000) with a good-morning text
+- 📱 **Phone** (📱 button or P): messages with an unread badge, quick GPS to the nearest place of any kind, family contacts with GPS, a **bank** (+1% interest a day, max ₱5,000/day, safe from fines), challenges and skills
+- 🧭 **GPS arrow for map picks**: choosing a place on the map or in the phone now shows a purple arrow, ring and name to follow (other targets shrink until you arrive); "✕ GPS" chip on the map to clear it
+- 🔥 **Fire in the rain**: rain drops no longer crowd out fire and smoke effects, so fires (firefighter job, burning cars) are visible in the rain
+- 🏆 4 new achievements (first date, wedding, parent, family mansion)
+
 ## v2.5: Busina at Trabaho / Horn & Jobs (2026-11-25)
 - 💼 **Separate job arrow**: during a side job the job's goal gets a **blue** arrow, circle and minimap dot, and the job line in the HUD is outlined in blue; the next story mission stays visible as a smaller, faded yellow arrow and returns to full size when the job ends
 - 📯 **Horn**: a tap gives a short beep, holding the button (or H) honks continuously until you let go; novelty horns still play their tune

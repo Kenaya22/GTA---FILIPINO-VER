@@ -17,6 +17,13 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.6', title: 'Pamilya', date: 'Nobyembre 2026', items: [
+    '💗 <b>Pag-ibig at pamilya</b> — may makikilala ka sa 🍗 Manukan sa bawat lungsod (Ligaya, Isabel, Migo, Rosa): makipagkuwentuhan, magbigay ng regalo, mag-date, mag-propose at <b>magpakasal sa simbahan</b>!',
+    '🏡 <b>Bahay ng Pamilya</b> — Bahay Kubo → Bungalow → Mansyon; lutong-bahay, baon araw-araw at hanggang <b>3 anak</b>',
+    '📱 <b>Bagong cellphone</b> (📱 o P): mga mensahe, GPS, pamilya, bangko na may tubo, hamon at skills',
+    '🧭 <b>Lila na GPS arrow</b> — kapag pumili ka ng lugar sa mapa (tindahan, trabaho...), may arrow na susundan mo',
+    '🔥 Ayos na: nakikita na ang apoy kahit umuulan',
+  ] },
   { v: '2.5', title: 'Busina at Trabaho', date: 'Nobyembre 2026', items: [
     '💼 <b>Asul na arrow para sa trabaho</b> — habang nasa side job (bumbero, ambulansya, taxi...), asul ang arrow at bilog ng trabaho; mas maliit muna ang dilaw na arrow ng misyon',
     '📯 <b>Bagong busina</b>: pindot = maikling beep, pindutin nang matagal = tuloy-tuloy hangga\'t hindi binibitawan',
@@ -231,6 +238,9 @@ const UI = {
     $('btn-hclose').onclick = () => { this.hide('help'); };
     $('btn-pause').onclick = () => G.pause(true);
     $('btn-map').onclick = () => this.openMap();
+    $('btn-phone').onclick = () => { AUD.click(); PHONE.open(); };
+    $('ph-close').onclick = () => PHONE.close();
+    document.querySelectorAll('#phone .ph-apps button[data-app]').forEach(b => b.onclick = () => { AUD.click(); PHONE.open(b.dataset.app); });
     $('btn-resume').onclick = () => G.pause(false);
     $('btn-pmap').onclick = () => this.openMap();
     $('btn-missions').onclick = () => this.openMissions();
@@ -434,7 +444,7 @@ const UI = {
     this.set('weap', this.el.weapon, 'textContent', v ? (GUNS.driveGun() ? ARMS.label() : '') : ARMS.label());
     this.el.armorwrap.classList.toggle('hidden', !(P.armor > 0));
     if (P.armor > 0) this.el.armorbar.style.width = P.armor + '%';
-    let side = JOBS.objText() || PASADA.objText() || STREET.objText();
+    let side = FAMILY.dateText() || JOBS.objText() || PASADA.objText() || STREET.objText();
     this.set('lvl', $('lvl'), 'textContent', `⭐ Lv ${P.level || 1}${P.sp ? ' · +' + P.sp + ' skill' : ''}${P.buffT > 0 ? ' · 💪 SIGLA' : ''}`);
     if (!side && JOBS.avail()) side = `💼 Pindutin ang ${INPUT.touch ? '💼' : 'J'} para sa side job: ${JOB_NAMES[JOBS.avail()]}`;
     if (!MS.active && !side && MS.idx < MISSIONS.length) {
