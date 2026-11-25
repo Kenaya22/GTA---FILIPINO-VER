@@ -387,7 +387,7 @@ const PROV = {
 // ===== Sugbo (Chapter 3 city): traffic loops & people =====
 const SUGBO = {
   t: 0, folk: [], cars: [],
-  in(x) { return x > (SX0 - 6) * T; },
+  in(x) { return x > (SX0 - 12) * T; },
   near() { return MAP.sugbo && this.in(G.player.x); },
   update(dt) {
     this.t -= dt; if (this.t > 0) return; this.t = 1;

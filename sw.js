@@ -1,6 +1,6 @@
 // Service worker: makes the game work offline and installable.
 // Bump CACHE when releasing a new version so phones download the update.
-const CACHE = 'hnk-v1.7.1';
+const CACHE = 'hnk-v1.8';
 const SHELL = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ const SHELL = [
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
   './js/audio.js',
+  './js/chapter3.js',
   './js/economy.js',
   './js/events.js',
   './js/game.js',

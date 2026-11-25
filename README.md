@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila — v1.7
+# 👑 HARI NG KALSADA: Maynila — v1.8
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -18,6 +18,9 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 
 ## 📲 Install it like an app
 Open the game link on your phone and tap **📲 I-INSTALL ANG APP** on the home page (Android/Chrome), or **Share → Add to Home Screen** (iPhone). It opens fullscreen and works without internet. Back up your saves anytime: ☰ → I-SAVE → **📤 I-EXPORT**.
+
+## 🏝 Chapter 3: Sugbo (v1.8)
+Fly from the Manila Airport (or take the ferry from San Isidro) to **Sugbo**, a Visayan port city. 8 missions against the smuggling king **Kapitan Tiburon**, choices that carry over from Chapter 2, and **4 final endings**.
 
 ## 🔫 Guns, typhoons & fiestas (v1.7)
 * **Guns** at **🔫 Armas ni Kabo**: pistol, shotgun, SMG, rifle, grenades and a bulletproof vest. Aim with the mouse on PC (auto-aim on touch) and do **drive-bys**. Clear 3 **☠️ gang hideouts**.
@@ -75,7 +78,7 @@ All music is synthesized live in the browser; there are no audio files.
 Music and SFX volume · walking music on/off · difficulty (**Madali / Normal / Mahirap**) · graphics (Maganda / Mabilis for older phones) ·
 joystick size · left-handed controls · tutorial tips on/off.
 
-## 📖 Story missions
+## 📖 Story missions (Chapter 1)
 1. **Bagong Salta**: arrive in Manila and drive Tito Boy's jeepney
 2. **Hiram Muna**: steal a red SUV for Mang Ben's talyer
 3. **Mainit Pa!**: deliver a lechon to the Tondo fiesta before it gets cold
@@ -99,7 +102,8 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/people.js` | Pedestrians, cops on foot, player |
 | `js/traffic.js` | Lane-following traffic AI, spawning |
 | `js/police.js` | 6-star wanted system, suspect profile, cop AI, helicopter, roadblocks |
-| `js/missions.js` | Story missions, shops, pasada |
+| `js/missions.js` | Story missions (chapters 1–2), shops, pasada |
+| `js/chapter3.js` | Chapter 3 missions and the final endings |
 | `js/ui.js` | HUD, minimap, map, dialogue, menus, touch controls |
 | `js/game.js` | Main loop, collisions, camera, lighting, save/load |
 | `js/audio.js` | Synthesized sound effects (WebAudio) |

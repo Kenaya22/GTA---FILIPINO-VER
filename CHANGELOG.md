@@ -1,5 +1,22 @@
 # Changelog — Hari ng Kalsada
 
+## v1.8: Kabanata 3 — Sugbo (2026-11-25)
+- 🏝 **Chapter 3: Sugbo**, a new Cebu-inspired Visayan city across a sea strait east of San Isidro: the port with containers and Tiburon's warehouse, Kolon (old downtown), Plaza Krus, IT Park towers, markets, a hospital and a police station, the Busay hills with a winding road up to the Tops lookout, and an airport with a runway. It has its own traffic (multicabs, taxis, habal-habal), pedestrians and police
+- ✈️ **Travel**: fly from the Manila Airport (south of Pasay) for ₱500, or take the ferry from the new San Isidro pier for ₱150. You can also cross the strait in any boat
+- 📖 **8 new missions** (22 total) against Kapitan Tiburon's smuggling syndicate: Biyahe sa Sugbo, Habal-Habal (timed motorbike rides), Mata sa Pantalan (night stealth photos), Habol sa Dagat (speedboat chase), Bagyong Agila (typhoon rescue), Pista sa Sugbo (tail an armored van through a parade), Kuta ni Tiburon (warehouse gunfight) and Hari ng Dagat (yacht boss chase)
+- ⚖️ **Choices carry over**: if you sold the titles in Chapter 2, Don Severo shows up as a mini-boss with extra guards; if you helped the town, the farmers send grenades. A **final choice** (expose the ledger or take ₱100,000) leads to **4 final endings** with a summary of your choices
+- 👥 New characters with portraits and Bisaya lines: **Inday Bebing**, **Dodong** and **Kapitan Tiburon**
+- 🚐 New vehicles: **Multicab**, **Speedboat** and the **yacht**. A **boss health bar** for big fights
+- 🗺 The big map opens on your region, with a **Whole map** toggle
+- 🏆 3 new achievements (Bayani ng Sugbo, Tunay na Hari, Frequent Flyer)
+
+## v1.7.1: Fixes (2026-11-25)
+- 🔊 **Sound on iPhone**: audio is unlocked on the first tap, and a silent audio loop keeps sound working with the silent switch on and inside Messenger's browser
+- 📲 The **install button** is always shown. It opens the browser's install prompt, or step-by-step help for iPhone, Android and Messenger/Facebook in-app browsers (with a copy-link button)
+- 🔫 **Kabo's gun shop is open from the start** (gang hideouts still appear after Mission 2)
+- 📍 **Place finder on the map**: tap a place type (guns, ukay, hospital...) for GPS to the nearest one, or tap the map to set a waypoint
+- 📱 The speedometer no longer covers the touch buttons
+
 ## v1.7: Baril, Bagyo at Pista / Guns, Typhoons & Fiestas (2026-11-24)
 - 🔫 **Guns**: Pistola, Shotgun, SMG (auto), Riple (auto) and Granada. Magazines, reserve ammo, reload (`G`), tracers, muzzle flash and shell casings. Desktop: aim with the mouse, click / `X` to fire (hold for automatics). Touch: the fire button auto-aims at the nearest threat
 - 🚗 **Drive-by**: fire the Pistola or SMG from any vehicle (mouse, `X`, or the new 🔫 touch button)

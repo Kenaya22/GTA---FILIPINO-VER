@@ -17,6 +17,16 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '1.8', title: 'Kabanata 3: Sugbo', date: 'Nobyembre 2026', items: [
+    '🏝 <b>KABANATA 3: SUGBO</b> — isang bagong lungsod sa Kabisayaan, sa kabila ng kipot: pantalan, Kolon, Plaza Krus, IT Park, ang burol ng Busay at isang paliparan',
+    '✈️ <b>Sumakay ng eroplano</b> mula sa Paliparan ng Maynila (Pasay), o ⛴ ferry mula sa San Isidro — pwede ring tawirin ang kipot gamit ang bangka',
+    '📖 <b>8 bagong misyon</b> laban sa sindikato ni <b>Kapitan Tiburon</b>: habal-habal, stealth na litrato, habulan sa dagat, rescue sa bagyo, parada, lusob sa bodega at boss fight sa yate',
+    '⚖️ <b>Ang mga pinili mo sa Kabanata 2 ay may epekto</b> — at may <b>bagong pagpipilian</b> at <b>4 na huling wakas</b> na pinagsasama ang buong kuwento',
+    '👥 Bagong tauhan: <b>Inday Bebing</b>, <b>Dodong</b> at <b>Kapitan Tiburon</b> — may salitang Bisaya!',
+    '🚐 Bagong sasakyan: <b>Multicab</b>, <b>Speedboat</b> at ang yate ni Tiburon · ❤️ <b>Boss health bar</b>',
+    '🗺 Ang malaking mapa ay nagpapakita ng rehiyon mo — pindutin ang <b>Buong mapa</b> para makita lahat',
+    '🏆 3 bagong tagumpay',
+  ] },
   { v: '1.7.1', title: 'Mga Ayos', date: 'Nobyembre 2026', items: [
     '🔊 <b>May tunog na sa iPhone</b> — kahit naka-silent at kahit sa loob ng Messenger',
     '📲 Laging may <b>I-INSTALL</b> na button — may sunod-sunod na gabay para sa iPhone, Android at Messenger',
