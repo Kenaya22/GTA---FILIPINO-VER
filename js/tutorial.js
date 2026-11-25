@@ -11,7 +11,7 @@ const TUT = {
   makeSteps() {
     const P = () => G.player;
     return [
-      { t: () => '👋 <b>Maligayang pagdating sa Maynila!</b> Ituturo ko kung paano maglaro. Pwede mo itong laktawan anumang oras.', ok: true },
+      { t: () => '👋 <b>Maligayang pagdating sa Manila!</b> Ituturo ko kung paano maglaro. Pwede mo itong laktawan anumang oras.', ok: true },
       { t: () => '🚶 ' + this.ctlText(), hl: () => (INPUT.touch ? (SETTINGS.touchCtl === 'dpad' ? 'dpad' : 'joyzone') : null),
         enter: () => { this.sx = P().x; this.sy = P().y; }, done: () => U.dist(this.sx, this.sy, P().x, P().y) > 120 },
       { t: () => '🗺 Ito ang <b>minimap</b>. Ang <b>DILAW</b> na tuldok ang pupuntahan mo, at ang <b>LILANG linya</b> ang daan.', hl: () => 'minimap', ok: true },
@@ -91,7 +91,7 @@ const DEV = {
     let ch = 0;
     list.innerHTML = MISSIONS.map((m, i) => {
       let head = '';
-      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}${ch === 1 ? ': MAYNILA' : ch === 2 ? ': PROBINSYA' : ch === 3 ? ': SUGBO' : ch === 4 ? ': DABAW' : ': BAGIW'}</div>`; }
+      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}${ch === 1 ? ': MANILA' : ch === 2 ? ': PROBINSYA' : ch === 3 ? ': CEBU' : ch === 4 ? ': DAVAO' : ': BAGUIO'}</div>`; }
       const st = i < MS.idx ? '✓' : i === MS.idx ? '▶' : '';
       return `${head}<button class="dev-m" data-i="${i}"><span class="n">${i + 1}</span><span class="t"><b>${m.title}</b><small>${CHARS[m.giver].name} · ${U.money(m.reward)}</small></span><span class="s">${st}</span></button>`;
     }).join('');

@@ -53,14 +53,14 @@ const MISSIONS = [
   { // 1
     id: 'bagong-salta', title: 'Bagong Salta', giver: 'tito', reward: 800,
     cp: { stage: 2, pos: () => MAP.pois.tito },
-    desc: 'Dumating sa Maynila at tulungan si Tito Boy sa pamamasada.',
+    desc: 'Dumating sa Manila at tulungan si Tito Boy sa pamamasada.',
     stages: [
       {
         obj: 'Puntahan si Tito Boy sa jeepney terminal (Tondo). Tip: hiramin ang tricycle!',
         target: () => MAP.pois.tito,
         enter(c) {
           UI.say([
-            [N, 'Grabe, Maynila na talaga! Ang daming jeep, ang daming tao...'],
+            [N, 'Grabe, Manila na talaga! Ang daming jeep, ang daming tao...'],
             [N, 'Kailangan kong mahanap si Tito Boy. Siya raw ang tutulong sa amin para mabawi ang lupa namin sa probinsya.'],
             [N, 'Nasa terminal daw siya ng jeep sa Tondo. Medyo malayo... may tricycle dito oh.'],
           ]);
@@ -232,11 +232,11 @@ const MISSIONS = [
   { // 5
     id: 'karera', title: 'Karera sa Baywalk', giver: 'paeng', reward: 2500,
     cp: { stage: 1, pos: () => MAP.pois.paeng },
-    desc: 'Talunin ang mga karerista ng Maynila.',
+    desc: 'Talunin ang mga karerista ng Manila.',
     stages: [
       talk([
         ['Kuya Paeng', 'Ikaw yung probinsyanong mabilis daw mag-drive? Patunayan mo.'],
-        ['Kuya Paeng', 'Karera tayo, 10 checkpoints, ikot sa buong Maynila. Pahihiramin kita ng kotse ko.'],
+        ['Kuya Paeng', 'Karera tayo, 10 checkpoints, ikot sa buong Manila. Pahihiramin kita ng kotse ko.'],
         ['Kuya Paeng', 'Pag nanalo ka, sa iyo na ang kotse. Pag natalo ka... ikaw ang maghuhugas nito buong taon.'],
       ]),
       {
@@ -411,7 +411,7 @@ const MISSIONS = [
       },
       talk([
         [N, 'Pumasok ang SUV sa pantalan... sa isang malaking bodega!'],
-        [N, 'May nakita akong ARMORED VAN sa loob. Puno ng pera — ang ayuda ng buong Maynila!'],
+        [N, 'May nakita akong ARMORED VAN sa loob. Puno ng pera — ang ayuda ng buong Manila!'],
         ['Tito Boy (sa telepono)', 'Yan na ang pagkakataon natin, Nonoy. Bumalik ka dito sa terminal, magplano tayo.'],
       ]),
     ],
@@ -425,7 +425,7 @@ const MISSIONS = [
         ['Tito Boy', 'Ito na, Nonoy. Nakausap ko si Mang Ben — bubuksan niya ang garahe ng talyer para sa iyo.'],
         ['Aling Nena', 'At ako na ang bahala sa media. Kapag nasa talyer na ang van, ilalabas namin ang ebidensya sa TV!'],
         ['Tito Boy', 'Pero mag-ingat ka. Pag kinuha mo ang van, buong pulis ni Mayor ang hahabol sa iyo. Pati sundalo.'],
-        [N, 'Para sa Samar. Para sa Maynila. Tara na.'],
+        [N, 'Para sa Samar. Para sa Manila. Tara na.'],
       ]),
       {
         obj: 'Pumunta sa bodega ni Mayor sa pantalan at nakawin ang armored van',
@@ -440,7 +440,7 @@ const MISSIONS = [
         obj: (c) => `Dalhin ang armored van sa talyer ni Mang Ben — bukas ang garahe! (Van ${Math.round(c.van.hp / c.van.maxhp * 100)}%)`,
         enter(c) {
           WANTED.setStars(5); WANTED.spotted('cop', 50); WANTED.lock = true; WANTED.minStars = 5; c.t = 0;
-          UI.big('5 BITUIN!', 'Buong Maynila ang humahabol!', 2);
+          UI.big('5 BITUIN!', 'Buong Manila ang humahabol!', 2);
         },
         target: (c) => G.player.vehicle === c.van ? MAP.pois.mangben : c.van,
         update(c, dt) {
@@ -463,7 +463,7 @@ const MISSIONS = [
         ['Balita sa TV', 'BREAKING NEWS: Bilyon-bilyong ayuda, natagpuan sa armored van ni Mayor Kurakot! Ang Mayor at si Boss Tikboy, INARESTO!'],
         ['Balita sa TV', 'Ang pera ay ibabalik sa mga tao. Ang mga lupang kinuha ni Tikboy, ibabalik sa mga may-ari!'],
         ['Tito Boy', 'NONOY! Nabawi na ang lupa ninyo sa Samar! Ikaw na talaga ang HARI NG KALSADA!'],
-        [N, 'Salamat, Tito. Pero... parang gusto ko pang mag-stay sa Maynila. Ang dami pang pwedeng gawin.'],
+        [N, 'Salamat, Tito. Pero... parang gusto ko pang mag-stay sa Manila. Ang dami pang pwedeng gawin.'],
       ]),
     ],
     done(c, ok) { WANTED.lock = false; WANTED.minStars = 0; if (ok) setTimeout(() => UI.ending('ch1'), 600); },
@@ -479,7 +479,7 @@ MISSIONS.push(
     cp: { stage: 2, pos: () => ({ x: (MAP.rs(8) + RW + 6) * T, y: (pr().hy + 3) * T }), car: 'sedan' },
     stages: [
       comic([
-        ['🏙️👑🚔', 'Nakulong na si Mayor Kurakot. Payapa na ulit ang Maynila...'],
+        ['🏙️👑🚔', 'Nakulong na si Mayor Kurakot. Payapa na ulit ang Manila...'],
         ['✉️👵🌾', '"Apo, bumalik ka. May bagong panginoon dito sa San Isidro — si DON SEVERO. Inaagaw niya ang mga bukid."'],
         ['🛣️🚙🌅', 'KABANATA 2: PROBINSYA'],
       ]),
@@ -673,7 +673,7 @@ MISSIONS.push(
           if (G.flags.ch2 === 'pera') UI.say([
             ['Lola Isyang', 'Nonoy... totoo ba? Ibinenta mo ang mga titulo kay Don Severo?'],
             ['Lola Isyang', 'Ang mga Pedring, ang mga Kanor... wala na silang lupa. Hindi kita pinalaki para diyan, apo.'],
-            ['Tito Boy (sa telepono)', 'NONOY! Tumakbo ka! Si Don Severo — ayaw niya ng saksi. Pinapahabol ka niya! Bumalik ka sa Maynila, sa terminal ko!'],
+            ['Tito Boy (sa telepono)', 'NONOY! Tumakbo ka! Si Don Severo — ayaw niya ng saksi. Pinapahabol ka niya! Bumalik ka sa Manila, sa terminal ko!'],
           ]);
           else UI.say([
             ['Lola Isyang', 'Ngayong araw dadalhin ng mga magsasaka ang mga titulo sa munisipyo, sakay ng dalawang jeep.'],
@@ -683,7 +683,7 @@ MISSIONS.push(
       },
       {
         obj: (c) => G.flags.ch2 === 'pera'
-          ? `Tumakas papuntang Maynila — sa terminal ni Tito Boy! ${c.goons ? '· Mga SUV ni Don: ' + c.goons.filter(v => !v.dead).length : ''}`
+          ? `Tumakas papuntang Manila — sa terminal ni Tito Boy! ${c.goons ? '· Mga SUV ni Don: ' + c.goons.filter(v => !v.dead).length : ''}`
           : `Protektahan ang convoy ng magsasaka! 🚌 ${c.jeeps ? c.jeeps.map(j => Math.max(0, Math.round(j.hp / j.maxhp * 100)) + '%').join(' · ') : ''} · 🚙 Kalaban: ${c.goons ? c.goons.filter(v => !v.dead).length : 0}`,
         enter(c) {
           c.goons = []; c.t = 0; c.spawned = 0;
@@ -719,7 +719,7 @@ MISSIONS.push(
       },
       { obj: '', enter() {
           if (G.flags.ch2 === 'pera') UI.comic([
-            ['🚙💨🌃', 'Nakatakas ka pabalik ng Maynila. Mayaman ka na...'],
+            ['🚙💨🌃', 'Nakatakas ka pabalik ng Manila. Mayaman ka na...'],
             ['🏚️🌾😢', '...pero ang mga bukid ng San Isidro, nabakuran ni Don Severo.'],
             ['👵💔', '"Ang tunay na hari ng kalsada, hindi nagbebenta ng sariling bayan." — Lola Isyang'],
             ['🔚', 'WAKAS (Ending B: Ang Presyo)'],
@@ -955,7 +955,7 @@ const SHOP = {
         G.paused = true;
         document.getElementById('shop-title').textContent = '✈️ ' + p.label.toUpperCase();
         const el = document.getElementById('shop-list');
-        const dests = [['airport_m', '🏙', 'Maynila'], ['airport_s', '🏝', 'Sugbo'], ['airport_d', '🦅', 'Dabaw'], ['airport_b', '🌲', 'Bagiw']].filter(d => d[0] !== p.key && MAP.pois[d[0]]);
+        const dests = [['airport_m', '🏙', 'Manila'], ['airport_s', '🏝', 'Cebu'], ['airport_d', '🦅', 'Davao'], ['airport_b', '🌲', 'Baguio']].filter(d => d[0] !== p.key && MAP.pois[d[0]]);
         el.innerHTML = dests.map(([k, ic, n]) => `<div class="shoprow"><span class="ic">${ic}</span><div><b>${n}</b><small>${MAP.pois[k].label}</small></div><button data-to="${k}">LIPAD · ${MS.freeShops ? 'LIBRE' : U.money(500)}</button></div>`).join('');
         el.querySelectorAll('button[data-to]').forEach(b => b.onclick = () => { if (!this.pay(500)) return; UI.hide('shop'); G.paused = false; FLY.go(MAP.pois[b.dataset.to]); });
         UI.show('shop');
@@ -972,7 +972,7 @@ const SHOP = {
           P.x = dest.x; P.y = dest.y + (p.key === 'ferry1' ? 0 : 8); P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
           WORLD.clock = (WORLD.clock + (far ? 90 : 40)) % 1440;
           f.classList.remove('on'); G.cutscene = false;
-          const nm = { ferry1: ['ISLA MALIGAYA', 'Maligayang pagdating sa isla!'], ferry2: ['MAYNILA', 'Balik sa lungsod'], ferry_si: ['SUGBO', 'Maayong pag-abot! (Maligayang pagdating!)'], ferry_sg: ['SAN ISIDRO', 'Balik sa probinsya'], ferry_sg2: ['DABAW', 'Madayaw nga pag-abot! (Maligayang pagdating!)'], ferry_dw: ['SUGBO', 'Balik sa Sugbo'] }[p.key];
+          const nm = { ferry1: ['ISLA MALIGAYA', 'Maligayang pagdating sa isla!'], ferry2: ['MANILA', 'Balik sa lungsod'], ferry_si: ['CEBU', 'Maayong pag-abot! (Maligayang pagdating!)'], ferry_sg: ['SAN ISIDRO', 'Balik sa probinsya'], ferry_sg2: ['DAVAO', 'Madayaw nga pag-abot! (Maligayang pagdating!)'], ferry_dw: ['CEBU', 'Balik sa Cebu'] }[p.key];
           UI.big(nm[0], nm[1], 2);
           if (!far) TIP.show('island'); else TIP.show('sugbo');
         }, 900);

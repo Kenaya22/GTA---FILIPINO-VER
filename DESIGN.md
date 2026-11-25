@@ -25,7 +25,7 @@ The reference clip is a flat, top-down, night-time explainer of a **6-star wante
 
 ## 2. Concept
 
-**Title:** HARI NG KALSADA: Maynila
+**Title:** HARI NG KALSADA: Manila
 **Genre:** Top-down open-world action / driving (2D)
 **Platform:** Browser — desktop keyboard or mobile touch (portrait or landscape)
 **Tone:** Cartoonish, funny Taglish dialogue, Filipino street culture — jeepneys, tricycles,
@@ -47,7 +47,7 @@ can steal the mayor's armored van full of stolen money and become *Hari ng Kalsa
 
 ---
 
-## 3. The City — "Maynila"
+## 3. The City — "Manila"
 
 A 9×9 grid of streets (≈6 km² in game scale) with Manila Bay on the west.
 

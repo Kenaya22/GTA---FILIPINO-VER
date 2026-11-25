@@ -17,10 +17,15 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
-  { v: '2.1', title: 'Kabanata 5: Bagiw', date: 'Nobyembre 2026', items: [
-    '🌲 <b>KABANATA 5: BAGIW</b> — malamig na lungsod sa bundok: Kalye Sesyon, lawa, strawberry farm, Mines View at mahamog na gabi',
+  { v: '2.2', title: 'Bagong Hugis ng Mapa', date: 'Nobyembre 2026', items: [
+    '🏝 <b>Hindi na parisukat ang mapa</b> — may mga look, baybayin at dalampasigan na ang Manila, probinsya, Cebu, Davao at Baguio',
+    '🗺 Bagong pangalan: <b>Manila, Cebu, Davao at Baguio</b>',
+    '🌊 Dagat na ang paligid ng mapa — at magkahiwalay na isla ang Davao at Baguio',
+  ] },
+  { v: '2.1', title: 'Kabanata 5: Baguio', date: 'Nobyembre 2026', items: [
+    '🌲 <b>KABANATA 5: BAGUIO</b> — malamig na lungsod sa bundok: Kalye Sesyon, lawa, strawberry farm, Mines View at mahamog na gabi',
     '📖 <b>5 bagong misyon</b> (33 lahat) laban kay <b>Don Magno</b>: karera ng bisikleta pababa, palihim sa hamog, helicopter at huling habulan',
-    '🚁 <b>Helicopter</b> (umarkila sa helipad) at 🚲 <b>bisikleta</b> · ✈️ Lumipad sa Bagiw mula sa kahit anong paliparan',
+    '🚁 <b>Helicopter</b> (umarkila sa helipad) at 🚲 <b>bisikleta</b> · ✈️ Lumipad sa Baguio mula sa kahit anong paliparan',
     '💼 Bagong trabaho: 📱 <b>Sakay App</b>, 🎣 <b>Mangingisda</b>, 📸 <b>Tour Guide</b> · 🥫 Bagong laro sa korte: <b>Tumbang Preso</b> at <b>Sipa</b>',
     '⏱ <b>Ghost Time Trial</b> sa Baywalk — talunin ang sarili mong multo at <b>ipadala ang link</b> sa kaibigan para labanan ka nila!',
     '📤 <b>I-share ang litrato</b> mula sa Photo Mode diretso sa Messenger/Facebook · 🍓 10 gintong strawberry · 🏆 10 bagong achievement',
@@ -31,21 +36,21 @@ const CHANGES = [
     '🔁 <b>Replay ng misyon</b> para sa 🥇🥈🥉 medalya · ✨ <b>New Game+</b> pagkatapos ng Kabanata 4',
     '🚨 <b>Pangyayari sa kalye</b>: snatcher, batang nawawala, aksidente — at 🐕 <b>mag-ampon ng askal</b> na susunod sa iyo!',
     '🍗 <b>Pumasok sa loob</b>: Manukan sa Kanto, Mall (magtago sa pulis!) at mga Simbahan (Simbang Gabi tuwing Pasko)',
-    '🍦 Bagong naglalako: sorbetes sa Maynila, puso sa Sugbo, durian sa Dabaw · 📻 Balita sa radyo tungkol sa mga ginawa mo',
-    '🐚 <b>20 bagong koleksyon</b>: kabibe sa Sugbo at balahibo ng agila sa Dabaw',
+    '🍦 Bagong naglalako: sorbetes sa Manila, puso sa Cebu, durian sa Davao · 📻 Balita sa radyo tungkol sa mga ginawa mo',
+    '🐚 <b>20 bagong koleksyon</b>: kabibe sa Cebu at balahibo ng agila sa Davao',
     '⚙️ Bagong setting: dami ng tao/sasakyan (tipid baterya) at auto/manual na pagtutok · 🏥 Sa pinakamalapit na ospital/presinto ka na dadalhin',
   ] },
-  { v: '1.9', title: 'Kabanata 4: Dabaw', date: 'Nobyembre 2026', items: [
-    '🦅 <b>KABANATA 4: DABAW</b> — bagong lungsod sa Mindanao: Bundok Apo, Sentro ng Agila, saging na plantasyon, Durian Market at paliparan',
+  { v: '1.9', title: 'Kabanata 4: Davao', date: 'Nobyembre 2026', items: [
+    '🦅 <b>KABANATA 4: DAVAO</b> — bagong lungsod sa Mindanao: Bundok Apo, Sentro ng Agila, saging na plantasyon, Durian Market at paliparan',
     '📖 <b>6 bagong misyon</b> (28 lahat) laban kay <b>Ninong</b> — durian delivery, trak ng troso, pagligtas sa sisiw ng agila, convoy ng saging at huling laban sa bundok',
     '🗺 <b>Bagong mapa</b> — i-drag, i-pinch at i-zoom; lumalabas ang mga pangalan habang nag-zo-zoom; pumili ng kategorya; i-tap ang lugar para sa GPS',
-    '✈️ Pumili kung saan lilipad (Maynila, Sugbo, Dabaw) · ⛴ ferry mula Sugbo papuntang Dabaw',
+    '✈️ Pumili kung saan lilipad (Manila, Cebu, Davao) · ⛴ ferry mula Cebu papuntang Davao',
     '📸 <b>10 pasyalan</b> sa mapa (Luneta, Intramuros, Quiapo, Baywalk, Tops, Bundok Apo...) at bagong tagumpay',
-    '📲 <b>I-install</b> sa ⚙️ Settings · ⚡ Wala nang lag pagdating sa Sugbo · Naayos ang pagbalik sa Maynila sakay ng eroplano',
+    '📲 <b>I-install</b> sa ⚙️ Settings · ⚡ Wala nang lag pagdating sa Cebu · Naayos ang pagbalik sa Manila sakay ng eroplano',
   ] },
-  { v: '1.8', title: 'Kabanata 3: Sugbo', date: 'Nobyembre 2026', items: [
-    '🏝 <b>KABANATA 3: SUGBO</b> — isang bagong lungsod sa Kabisayaan, sa kabila ng kipot: pantalan, Kolon, Plaza Krus, IT Park, ang burol ng Busay at isang paliparan',
-    '✈️ <b>Sumakay ng eroplano</b> mula sa Paliparan ng Maynila (Pasay), o ⛴ ferry mula sa San Isidro — pwede ring tawirin ang kipot gamit ang bangka',
+  { v: '1.8', title: 'Kabanata 3: Cebu', date: 'Nobyembre 2026', items: [
+    '🏝 <b>KABANATA 3: CEBU</b> — isang bagong lungsod sa Kabisayaan, sa kabila ng kipot: pantalan, Kolon, Plaza Krus, IT Park, ang burol ng Busay at isang paliparan',
+    '✈️ <b>Sumakay ng eroplano</b> mula sa Paliparan ng Manila (Pasay), o ⛴ ferry mula sa San Isidro — pwede ring tawirin ang kipot gamit ang bangka',
     '📖 <b>8 bagong misyon</b> laban sa sindikato ni <b>Kapitan Tiburon</b>: habal-habal, stealth na litrato, habulan sa dagat, rescue sa bagyo, parada, lusob sa bodega at boss fight sa yate',
     '⚖️ <b>Ang mga pinili mo sa Kabanata 2 ay may epekto</b> — at may <b>bagong pagpipilian</b> at <b>4 na huling wakas</b> na pinagsasama ang buong kuwento',
     '👥 Bagong tauhan: <b>Inday Bebing</b>, <b>Dodong</b> at <b>Kapitan Tiburon</b> — may salitang Bisaya!',
@@ -136,7 +141,7 @@ const CHANGES = [
     '🐞 Ayos: ang pagkabigo sa huling misyon ay hindi na nagpapakita ng ending',
   ] },
   { v: '1.0', title: 'Unang Labas', date: 'Nobyembre 2026', items: [
-    '🏙 Ang lungsod ng Maynila — 16 na distrito, trapiko, jeepney, tricycle',
+    '🏙 Ang lungsod ng Manila — 16 na distrito, trapiko, jeepney, tricycle',
     '⭐ 6-star wanted system na may suspect clues at search zone',
     '📖 8 story missions, pasada, pagbebenta ng kotse, 20 Gintong Tsinelas',
   ] },
@@ -502,7 +507,7 @@ const UI = {
     this.show('mapscreen');
     const c = $('bigmap'), g = c.getContext('2d');
     const pr = Math.min(2, devicePixelRatio || 1);
-    // show the region you're in (Luzon or Sugbo) unless "whole map" is on
+    // show the region you're in (Luzon or Cebu) unless "whole map" is on
     const inS = G.player.x > (PROV_END + 6) * T, all = this.mapAll;
     const cx0 = all ? 0 : inS ? PROV_END - 30 : 0, cw = all ? MW : inS ? MW - cx0 : PROV_END + 6;
     this.mapView = { cx0, cw };
@@ -588,7 +593,7 @@ const UI = {
     let ch = 0;
     $('mission-list').innerHTML = MISSIONS.map((m, i) => {
       let head = '';
-      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'SUGBO' : ch === 4 ? 'DABAW' : 'BAGIW'}</div>`; }
+      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MANILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'CEBU' : ch === 4 ? 'DAVAO' : 'BAGUIO'}</div>`; }
       const st = i < MS.idx ? 'done' : i === MS.idx ? 'next' : 'locked';
       const label = st === 'done' ? '✓ TAPOS' : st === 'next' ? (MS.active === m ? 'GINAGAWA' : 'SUSUNOD') : '🔒';
       return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title} ${REPLAY.gradeIcon(m)}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}${st === 'done' && !MS.active ? `<button class="rep" data-r="${i}">🔁 REPLAY</button>` : ''}</div></div>`;
@@ -600,7 +605,7 @@ const UI = {
     G.paused = true;
     const E = {
       ch1: ['TAPOS ANG KABANATA 1!', 'Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Pero may sulat mula sa probinsya... BUKAS NA ANG KABANATA 2 — puntahan si Tito Boy!'],
-      ch2a: ['🌾 BAYANI NG SAN ISIDRO!', 'Nakulong si Don Severo at nabawi ng mga magsasaka ang kanilang lupa (Ending A). Pero may tawag mula sa Sugbo... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
+      ch2a: ['🌾 BAYANI NG SAN ISIDRO!', 'Nakulong si Don Severo at nabawi ng mga magsasaka ang kanilang lupa (Ending A). Pero may tawag mula sa Cebu... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
       ch2b: ['💰 ANG PRESYO', 'Mayaman ka na, pero nawalan ng lupa ang San Isidro (Ending B). May pagkakataon ka pang ituwid ito... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
       final: FINAL.ending(),
       epilogue: ['🦅 TAPOS ANG KABANATA 4!', EPILOGUE.text()],

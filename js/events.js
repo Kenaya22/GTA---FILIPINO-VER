@@ -162,7 +162,7 @@ const FIESTA = {
     return this._route;
   },
   banner() {
-    if (this.floats) return this.custom ? '🎉 Pista Señor sa Sugbo!' : '🎉 Pista sa Tondo — may parada!';
+    if (this.floats) return this.custom ? '🎉 Pista Señor sa Cebu!' : '🎉 Pista sa Tondo — may parada!';
     if (this.undas()) return '🕯 Undas — dalaw sa mga yumao';
     return '';
   },
@@ -171,7 +171,7 @@ const FIESTA = {
     if (!this.greeted && G.frame > 300) {
       this.greeted = true;
       if (this.undas()) UI.toast('🕯 Undas na — may mga kandila sa paligid ng simbahan.');
-      else if (this.pasko()) UI.toast('🎄 Simoy ng Pasko na! May mga parol sa buong Maynila.');
+      else if (this.pasko()) UI.toast('🎄 Simoy ng Pasko na! May mga parol sa buong Manila.');
     }
     const r = this.route(), cx = (r[0].x + r[2].x) / 2, cy = (r[0].y + r[2].y) / 2, P = G.player;
     const d = U.dist(P.x, P.y, cx, cy);
@@ -204,7 +204,7 @@ const FIESTA = {
       if (MAP.solidAt(x, y) || MAP.tileAt(x, y) === TL.ROAD) continue;
       const p = new Person(x, y, 'ped'); p.npc = true; p.keep = true; p.state = 'idle'; p.umb = null; p.cheer = true; G.peds.push(p); this.crowd.push(p);
     }
-    UI.toast(this.custom ? '🎉 Pista Señor sa Sugbo! Sayaw, tambol at karosa!' : '🎉 May parada sa Tondo! Sumabay sa paglakad para sa tip.');
+    UI.toast(this.custom ? '🎉 Pista Señor sa Cebu! Sayaw, tambol at karosa!' : '🎉 May parada sa Tondo! Sumabay sa paglakad para sa tip.');
   },
   endParade() {
     for (const v of this.floats || []) v.remove = true;

@@ -220,7 +220,7 @@ const WANTED = {
   spawnUnit(type) {
     const cx = this.mode === 'search' ? this.lastX : G.player.x, cy = this.mode === 'search' ? this.lastY : G.player.y;
     if (MAP.prov && cx > (CITY_W - 20) * T) {
-      // province / Sugbo: spawn on known road points
+      // province / Cebu: spawn on known road points
       const pts = regionPts(cx);
       for (let tries = 0; tries < 16; tries++) {
         const p = U.choice(pts), d = U.dist(p.x, p.y, cx, cy);

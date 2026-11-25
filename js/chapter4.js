@@ -1,5 +1,5 @@
 'use strict';
-// ===== KABANATA 4: DABAW — the forest, the eagles and the last name in the ledger =====
+// ===== KABANATA 4: DAVAO — the forest, the eagles and the last name in the ledger =====
 Object.assign(CHARS, {
   maya: { name: 'Ate Maya', look: { skin: '#a86b3c', shirt: '#4b5a32', pat: 'plain', outfit: 'npc', hair: 'cap_blue', hairCol: '#1b1410', pants: '#3b3b3b' } },
   islaw: { name: 'Mang Islaw', look: { skin: '#9a5f35', shirt: '#f1c40f', pat: 'sando', outfit: 'npc', hair: 'bucket', hairCol: '#222', pants: '#4a3b2a' } },
@@ -25,23 +25,23 @@ function holdAlive(v, frac = 0.08) { if (v.hp < v.maxhp * frac) { v.hp = v.maxhp
 
 MISSIONS.push(
   { // 23
-    id: 'lipad-dabaw', title: 'Lipad sa Dabaw', giver: 'bebing', reward: 3000, chapter: 4,
-    desc: 'Lumipad sa Dabaw at kilalanin si Ate Maya.',
+    id: 'lipad-dabaw', title: 'Lipad sa Davao', giver: 'bebing', reward: 3000, chapter: 4,
+    desc: 'Lumipad sa Davao at kilalanin si Ate Maya.',
     cp: { stage: 3, pos: () => MAP.pois.airport_d },
     stages: [
       comic([
         ['📒🔍', 'May isang pangalan sa ledger ni Tiburon na hindi pa nahuhuli... "NINONG".'],
-        ['🌲🪓🦅', 'Sa Dabaw, unti-unting nauubos ang gubat ng Bundok Apo — at nawawala ang mga agila.'],
-        ['🦅🏔️🍈', 'KABANATA 4: DABAW'],
+        ['🌲🪓🦅', 'Sa Davao, unti-unting nauubos ang gubat ng Bundok Apo — at nawawala ang mga agila.'],
+        ['🦅🏔️🍈', 'KABANATA 4: DAVAO'],
       ]),
       talk(() => [
-        ['Inday Bebing', 'Dong, may tumawag kay Dodong — si Ate Maya, ranger sa Sentro ng Agila sa Dabaw.'],
+        ['Inday Bebing', 'Dong, may tumawag kay Dodong — si Ate Maya, ranger sa Sentro ng Agila sa Davao.'],
         ['Inday Bebing', 'May sindikato raw ng ilegal na pagtotroso doon. Ang amo nila? Isang tinatawag na "NINONG" — ang huling pangalan sa ledger ni Tiburon!'],
         ...(tookBribe() ? [[N, '(Tinanggap ko ang pera ni Tiburon... pero hindi pa huli para gumawa ng tama.)']] : [[N, 'Tapusin na natin ito. Para sa gubat, para sa mga agila.']]),
-        ['Inday Bebing', 'Lumipad ka mula sa Paliparan ng Sugbo. Amping, Dong!'],
+        ['Inday Bebing', 'Lumipad ka mula sa Paliparan ng Cebu. Amping, Dong!'],
       ]),
       {
-        obj: 'Pumunta sa ✈️ Paliparan ng Sugbo at lumipad papuntang Dabaw', target: () => MAP.pois.airport_s,
+        obj: 'Pumunta sa ✈️ Paliparan ng Cebu at lumipad papuntang Davao', target: () => MAP.pois.airport_s,
         update(c) {
           if (DABAW.in(G.player.x)) return true;
           if (c.flying) return false;
@@ -62,7 +62,7 @@ MISSIONS.push(
   },
   { // 24
     id: 'durian-express', title: 'Durian Express', giver: 'maya', reward: 3500, chapter: 4,
-    desc: 'Mag-deliver ng durian para kumita ang Sentro — at makilala ang Dabaw.',
+    desc: 'Mag-deliver ng durian para kumita ang Sentro — at makilala ang Davao.',
     cp: { stage: 1, pos: () => MAP.pois.maya },
     stages: [
       talk([
@@ -168,7 +168,7 @@ MISSIONS.push(
       talk(() => [
         ['Ate Maya', 'Ligtas siya! Tatawagin namin siyang... "Nonoy". Hahaha!'],
         ['Mang Islaw (sa telepono)', 'Ma\'am Maya! Hinaharangan ng mga tauhan ni Ninong ang mga trak ng saging namin! Sabi nila, kanila na raw ang plantasyon!'],
-        ...(tookBribe() ? [['Ninong (sa telepono)', 'Nonoy... Akala ko kasosyo ka na namin. Kinuha mo ang pera ni Tiburon, di ba? Bakit mo kami ginugulo?']] : [['Ninong (sa telepono)', 'Ikaw pala ang batang nagpakulong kay Tiburon. Lumayo ka sa Dabaw kung ayaw mong mapahamak.']]),
+        ...(tookBribe() ? [['Ninong (sa telepono)', 'Nonoy... Akala ko kasosyo ka na namin. Kinuha mo ang pera ni Tiburon, di ba? Bakit mo kami ginugulo?']] : [['Ninong (sa telepono)', 'Ikaw pala ang batang nagpakulong kay Tiburon. Lumayo ka sa Davao kung ayaw mong mapahamak.']]),
       ]),
     ],
     done(c) { UI.boss = null; removePeds(c.pating); if (c.v) { c.v.mission = false; c.v.criminal = false; } },
@@ -179,7 +179,7 @@ MISSIONS.push(
     cp: { stage: 1, pos: () => MAP.pois.islaw, car: 'pickup' },
     stages: [
       talk([
-        ['Mang Islaw', 'Nonoy! Dalawang trak ng saging ang kailangang makarating sa pantalan — doon naghihintay ang barko papuntang Maynila.'],
+        ['Mang Islaw', 'Nonoy! Dalawang trak ng saging ang kailangang makarating sa pantalan — doon naghihintay ang barko papuntang Manila.'],
         ['Mang Islaw', 'Kapag hindi nakarating ngayon, mabubulok ang ani at mapipilitan kaming ibenta ang lupa kay Ninong. Bantayan mo sila!'],
       ]),
       {
@@ -224,7 +224,7 @@ MISSIONS.push(
       {
         obj: '', enter() {
           const P = G.player, lines = [['Ate Maya', 'Nasa kampo sa gitna ng bundok si Ninong at ang mga tauhan niya. Mag-ingat ka.']];
-          if (!GUNS.owned('smg')) { P.weapons.smg = 120; P.mags.smg = 30; lines.push(['Ate Maya', 'Heto — SMG mula kay Kabo. Pinadala niya mula Maynila para sa iyo.']); }
+          if (!GUNS.owned('smg')) { P.weapons.smg = 120; P.mags.smg = 30; lines.push(['Ate Maya', 'Heto — SMG mula kay Kabo. Pinadala niya mula Manila para sa iyo.']); }
           P.armor = 100;
           if (G.flags.ch2 !== 'pera') lines.push(['Lola Isyang (sa telepono)', 'Apo, ipinagdarasal ka namin dito sa San Isidro. Umuwi ka nang buo!']);
           if (!tookBribe()) lines.push(['Kapitana Luz (sa telepono)', 'Nonoy, nakausap ko ang NBI. Darating sila pagkatapos mong mabuksan ang kampo.']);
@@ -294,7 +294,7 @@ const EPILOGUE = {
     return [
       ['🚔🕴️📰', 'Inaresto si Ninong. Isinara ang lahat ng ilegal na pagtotroso sa Bundok Apo.'],
       ['🌲🌲🦅', 'Bumalik ang mga agila sa gubat. Ang sisiw na iniligtas mo — lumilipad na.'],
-      ['🏙🌾🏝🏔', 'Maynila, San Isidro, Sugbo, Dabaw — apat na lugar, isang Nonoy.'],
+      ['🏙🌾🏝🏔', 'Manila, San Isidro, Cebu, Davao — apat na lugar, isang Nonoy.'],
       last,
     ];
   },

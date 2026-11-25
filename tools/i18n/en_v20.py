@@ -1,6 +1,6 @@
 EXTRA20 = {
- '🍗 MANUKAN SA KANTO': '🍗 THE CORNER CHICKEN HOUSE', 'Manukan sa Kanto': 'Corner Chicken House', 'Manukan sa Kanto (Sugbo)': 'Corner Chicken House (Sugbo)', 'Manukan sa Kanto (Dabaw)': 'Corner Chicken House (Dabaw)',
- 'Mall ng Bayan': "People's Mall", 'IT Park Mall': 'IT Park Mall', 'Basilika sa Plaza Krus': 'Plaza Krus Basilica', 'Katedral ng Dabaw': 'Dabaw Cathedral', 'Simbahan ng San Isidro': 'San Isidro Church',
+ '🍗 MANUKAN SA KANTO': '🍗 THE CORNER CHICKEN HOUSE', 'Manukan sa Kanto': 'Corner Chicken House', 'Manukan sa Kanto (Cebu)': 'Corner Chicken House (Cebu)', 'Manukan sa Kanto (Davao)': 'Corner Chicken House (Davao)',
+ 'Mall ng Bayan': "People's Mall", 'IT Park Mall': 'IT Park Mall', 'Basilika sa Plaza Krus': 'Plaza Krus Basilica', 'Katedral ng Davao': 'Davao Cathedral', 'Simbahan ng San Isidro': 'San Isidro Church',
  'Mabangong manok, mainit na kanin at malamig na halo-halo.': 'Fragrant chicken, hot rice and cold halo-halo.', 'Malamig ang aircon! Mamili, maglaro o magtago muna.': 'The aircon is cold! Shop, play or lie low for a while.', 'Tahimik. Mabango ang kandila.': 'Quiet. The candles smell sweet.',
  'Pritong Manok + Kanin': 'Fried Chicken + Rice', 'Matamis na Spaghetti': 'Sweet Spaghetti', '+50 buhay at 90s na SIGLA (mas mabilis tumakbo)': '+50 health and 90s of ENERGY (run faster)', '+30 buhay': '+30 health', 'Halo-halo': 'Halo-halo',
  'Boutique': 'Boutique', 'Damit at aksesorya': 'Clothes and accessories', 'Arcade: 3-Point Shootout': 'Arcade: 3-Point Shootout', 'Libre!': 'Free!', 'Videoke Booth': 'Videoke Booth', '₱20 kada kanta': '₱20 per song',
@@ -24,7 +24,7 @@ EXTRA20 = {
  '🔁 REPLAY — para sa medalya! 🥇🥈🥉': '🔁 REPLAY — go for a medal! 🥇🥈🥉', '🔁 REPLAY': '🔁 REPLAY', '✨ NEW GAME+': '✨ NEW GAME+', '✨  NEW GAME+': '✨  NEW GAME+',
  '🔋 Dami ng tao at sasakyan': '🔋 People and traffic', 'KAUNTI (TIPID)': 'FEW (SAVER)', 'MARAMI': 'MANY', '🎯 Pagtutok sa phone': '🎯 Aiming on phone', 'AUTO-AIM': 'AUTO-AIM', 'MANUAL': 'MANUAL',
  'Kumain — buhay at SIGLA': 'Eat — health and ENERGY', 'Mamili, maglaro o magtago sa pulis': 'Shop, play or hide from the police', 'Magdasal (libreng full heal araw-araw)': 'Pray (free full heal every day)', 'Kainan': 'Restaurant', 'Mall': 'Mall', 'Simbahan': 'Church', '🩴 Koleksyon': '🩴 Collectibles',
- 'Beterano': 'Veteran', 'Umabot sa Level 10': 'Reach Level 10', 'Kolektor ng Kabibe': 'Shell Collector', 'Makuha ang 10 kabibe sa Sugbo': 'Collect 10 seashells in Sugbo', 'Makuha ang 10 balahibo sa Dabaw': 'Collect 10 feathers in Dabaw',
+ 'Beterano': 'Veteran', 'Umabot sa Level 10': 'Reach Level 10', 'Kolektor ng Kabibe': 'Shell Collector', 'Makuha ang 10 kabibe sa Cebu': 'Collect 10 seashells in Cebu', 'Makuha ang 10 balahibo sa Davao': 'Collect 10 feathers in Davao',
  'Mabuting Kapitbahay': 'Good Neighbor', 'Tumulong sa 5 pangyayari sa kalye': 'Help at 5 street events', 'May Kaibigan': 'Best Friend', 'Mag-ampon ng askal': 'Adopt a stray dog', 'Kumpletuhin ang 9 na Simbang Gabi': 'Complete all 9 Simbang Gabi', 'Masipag': 'Hard Worker',
  'Kumpletuhin ang lahat ng hamon sa isang araw': 'Complete all challenges in one day', 'Gintong Driver': 'Golden Driver', 'Makakuha ng 5 gintong medalya sa replay': 'Earn 5 gold medals in replays',
  'Sorbeteees! Ding-ding!': 'Sorbeteees! Ding-ding!', '🍦 Sorbetes na ube at keso! +15 buhay': '🍦 Ube and cheese ice cream! +15 health', '🍚 Puso at lechon — lami! +25 buhay': '🍚 Puso rice and lechon — delicious! +25 health', '🍈 Durian! Amoy-impyerno, lasang-langit! +30 buhay': '🍈 Durian! Smells like hell, tastes like heaven! +30 health',
@@ -45,7 +45,7 @@ EXTRA20.update({ 'Buhay na Lungsod': 'A Living City', 'v2.0 — Buhay na Lungsod
  '🔁 <b>Replay ng misyon</b> para sa 🥇🥈🥉 medalya · ✨ <b>New Game+</b> pagkatapos ng Kabanata 4': '🔁 <b>Mission replays</b> for 🥇🥈🥉 medals · ✨ <b>New Game+</b> after Chapter 4',
  '🚨 <b>Pangyayari sa kalye</b>: snatcher, batang nawawala, aksidente — at 🐕 <b>mag-ampon ng askal</b> na susunod sa iyo!': '🚨 <b>Street events</b>: bag snatchers, lost children, accidents — and 🐕 <b>adopt a stray dog</b> that follows you!',
  '🍗 <b>Pumasok sa loob</b>: Manukan sa Kanto, Mall (magtago sa pulis!) at mga Simbahan (Simbang Gabi tuwing Pasko)': '🍗 <b>Go inside</b>: the Corner Chicken House, Malls (hide from the police!) and Churches (Simbang Gabi at Christmas)',
- '🍦 Bagong naglalako: sorbetes sa Maynila, puso sa Sugbo, durian sa Dabaw · 📻 Balita sa radyo tungkol sa mga ginawa mo': "🍦 New vendors: sorbetes in Manila, puso in Sugbo, durian in Dabaw · 📻 Radio news about what you've done",
- '🐚 <b>20 bagong koleksyon</b>: kabibe sa Sugbo at balahibo ng agila sa Dabaw': '🐚 <b>20 new collectibles</b>: seashells in Sugbo and eagle feathers in Dabaw',
+ '🍦 Bagong naglalako: sorbetes sa Manila, puso sa Cebu, durian sa Davao · 📻 Balita sa radyo tungkol sa mga ginawa mo': "🍦 New vendors: sorbetes in Manila, puso in Cebu, durian in Davao · 📻 Radio news about what you've done",
+ '🐚 <b>20 bagong koleksyon</b>: kabibe sa Cebu at balahibo ng agila sa Davao': '🐚 <b>20 new collectibles</b>: seashells in Cebu and eagle feathers in Davao',
  '⚙️ Bagong setting: dami ng tao/sasakyan (tipid baterya) at auto/manual na pagtutok · 🏥 Sa pinakamalapit na ospital/presinto ka na dadalhin': '⚙️ New settings: amount of people/traffic (battery saver) and auto/manual aiming · 🏥 You now wake up at the nearest hospital/police station',
 })

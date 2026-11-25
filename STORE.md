@@ -16,8 +16,8 @@ The game is already an installable PWA, so it can go on Google Play as a **Trust
 ## Play Console listing
 | Field | Value |
 |---|---|
-| App name | Hari ng Kalsada: Maynila |
-| Short description (80) | Open-world na laro sa kalye ng Maynila, Sugbo, Dabaw at Bagiw. Offline! |
+| App name | Hari ng Kalsada: Manila |
+| Short description (80) | Open-world na laro sa kalye ng Manila, Cebu, Davao at Baguio. Offline! |
 | Category | Game → Action (or Racing) |
 | Icon (512×512) | `icons/icon-512.png` |
 | Feature graphic (1024×500) | `media/feature-1024x500.png` |

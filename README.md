@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Maynila — v2.1
+# 👑 HARI NG KALSADA: Manila — v2.2
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -19,17 +19,17 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 ## 📲 Install it like an app
 Open the game link on your phone and tap **📲 I-INSTALL ANG APP** on the home page (Android/Chrome), or **Share → Add to Home Screen** (iPhone). It opens fullscreen and works without internet. Back up your saves anytime: ☰ → I-SAVE → **📤 I-EXPORT**. Publishing kits: `ITCH.md` (itch.io) and `STORE.md` (Google Play).
 
-## 🌲 Chapter 5: Bagiw (v2.1)
-Fly to **Bagiw**, a cold, foggy pine-mountain city: Sesyon Street, a lake park, a strawberry farm, Mines View and a winding road down to the airport. 5 missions against **Don Magno**, the "Ninong of Ninongs" — a downhill bike race, a fog stealth break-in, a helicopter photo flight and a final armored-SUV chase. **33 missions in all.**
+## 🌲 Chapter 5: Baguio (v2.1)
+Fly to **Baguio**, a cold, foggy pine-mountain city: Sesyon Street, a lake park, a strawberry farm, Mines View and a winding road down to the airport. 5 missions against **Don Magno**, the "Ninong of Ninongs" — a downhill bike race, a fog stealth break-in, a helicopter photo flight and a final armored-SUV chase. **33 missions in all.**
 
 ## ⏱ Ghost Time Trial & sharing (v2.1)
 At the 🏁 race spot on Baywalk, race a fixed course against your own best run's ghost. Tap **📤 IBAHAGI** to send your run as a link — friends who open it race your ghost. Photo Mode pictures can be shared straight to Messenger/Facebook.
 
-## 🦅 Chapter 4: Dabaw (v1.9)
-Fly to **Dabaw**: Bundok Apo, the Eagle Center and a banana plantation. 6 missions against the illegal-logging boss **Ninong**, plus a brand-new pan-and-zoom map.
+## 🦅 Chapter 4: Davao (v1.9)
+Fly to **Davao**: Bundok Apo, the Eagle Center and a banana plantation. 6 missions against the illegal-logging boss **Ninong**, plus a brand-new pan-and-zoom map.
 
-## 🏝 Chapter 3: Sugbo (v1.8)
-Fly from the Manila Airport (or take the ferry from San Isidro) to **Sugbo**, a Visayan port city. 8 missions against the smuggling king **Kapitan Tiburon**, choices that carry over from Chapter 2, and **4 final endings**.
+## 🏝 Chapter 3: Cebu (v1.8)
+Fly from the Manila Airport (or take the ferry from San Isidro) to **Cebu**, a Visayan port city. 8 missions against the smuggling king **Kapitan Tiburon**, choices that carry over from Chapter 2, and **4 final endings**.
 
 ## 🔫 Guns, typhoons & fiestas (v1.7)
 * **Guns** at **🔫 Armas ni Kabo**: pistol, shotgun, SMG, rifle, grenades and a bulletproof vest. Aim with the mouse on PC (auto-aim on touch) and do **drive-bys**. Clear 3 **☠️ gang hideouts**.
@@ -114,7 +114,7 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/missions.js` | Story missions (chapters 1–2), shops, pasada |
 | `js/chapter3.js` | Chapter 3 missions and the final endings |
 | `js/chapter4.js` | Chapter 4 missions and the epilogue |
-| `js/chapter5.js` | Chapter 5 (Bagiw) missions and the series finale |
+| `js/chapter5.js` | Chapter 5 (Baguio) missions and the series finale |
 | `js/share.js` | Ghost time trial, share links, photo sharing |
 | `js/life.js` | Interiors, street events, pet dog, collectibles |
 | `js/progression.js` | Levels/skills, daily challenges, replays, New Game+ |

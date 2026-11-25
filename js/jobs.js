@@ -450,7 +450,7 @@ Object.assign(JOBS, {
   // a random sidewalk stop in whatever region the player is in
   stopNear(minD, maxD) {
     const P = G.player;
-    if (regionName(P.x) === 'MAYNILA') return PASADA.randomStop(minD, maxD);
+    if (regionName(P.x) === 'MANILA') return PASADA.randomStop(minD, maxD);
     for (let k = 0; k < 60; k++) { const a = Math.random() * TAU, r = U.rand(minD, maxD), x = P.x + Math.cos(a) * r, y = P.y + Math.sin(a) * r; if (MAP.tileAt(x, y) === TL.SIDE && regionName(x) === regionName(P.x)) return { x, y }; }
     return null;
   },

@@ -8,15 +8,15 @@ const OX = 72, OY = 16;   // OX leaves room for Manila Bay + Isla Maligaya on th
 const CITY_W = OX + (NR - 1) * PER + RW + 16;   // city width in tiles
 const PROV_W = 72;                                // province (San Isidro) to the east
 const PROV_END = CITY_W + PROV_W;
-const STRAIT_W = 26;                              // sea between the province and Sugbo
-const SX0 = PROV_END + STRAIT_W;                  // Sugbo (Chapter 3 city) starts here
+const STRAIT_W = 26;                              // sea between the province and Cebu
+const SX0 = PROV_END + STRAIT_W;                  // Cebu (Chapter 3 city) starts here
 const SUGBO_W = 112;
 const SUGBO_END = SX0 + SUGBO_W;
-const STRAIT2_W = 26;                             // sea between Sugbo and Dabaw
-const DX0 = SUGBO_END + STRAIT2_W;                // Dabaw (Chapter 4 city)
+const STRAIT2_W = 26;                             // sea between Cebu and Davao
+const DX0 = SUGBO_END + STRAIT2_W;                // Davao (Chapter 4 city)
 const DABAW_W = 104;
 const DABAW_END = DX0 + DABAW_W;
-const BX0 = DABAW_END + 6;                         // Bagiw (Chapter 5 mountain city), behind a pine ridge
+const BX0 = DABAW_END + 6;                         // Baguio (Chapter 5 mountain city), behind a pine ridge
 const BAGIW_W = 100;
 const MW = BX0 + BAGIW_W;
 const MH = OY + (NR - 1) * PER + RW + 16;
@@ -167,6 +167,7 @@ const MAP = {
     this.makeDabaw();
     this.makeBagiw();
     this.makeLandmarks();
+    this.makeCoast();
     this.makeLabels();
     this.makeMini();
   },
@@ -543,7 +544,7 @@ const MAP = {
     add('fiesta', this.door(1, 1, 'E'), 'spot', 'Pista sa Tondo', '🎉');
     add('mansion', { x: (this.rs(8) + RW + 1.5) * T, y: (this.rsy(2) + RW + 8.5) * T }, 'spot', 'Mansyon ni Mayor', '🏛');
     add('ferry1', { x: (OX - 13) * T, y: 27.5 * T }, 'ferry', 'Ferry papuntang Isla Maligaya', '⛴');
-    add('ferry2', this.island.dock, 'ferry', 'Ferry pabalik sa Maynila', '⛴');
+    add('ferry2', this.island.dock, 'ferry', 'Ferry pabalik sa Manila', '⛴');
     add('hardware1', this.door(3, 0, 'N', 3), 'weapon', 'Hardware ni Mang Tonyo', '🔨');
     add('hardware2', this.door(5, 5, 'E'), 'weapon', 'Hardware ni Mang Tonyo', '🔨');
     add('gunshop1', this.door(2, 2, 'N'), 'gunshop', 'Armas ni Kabo', '🔫');
@@ -591,15 +592,15 @@ const MAP = {
     // add a pier one
     if (this.tsinelas.length < 20) this.tsinelas.push({ id: this.tsinelas.length, x: (OX - 13) * T, y: 7.5 * T });
   },
-  // ===== Chapter 3: Sugbo — a Visayan port city across the strait =====
+  // ===== Chapter 3: Cebu — a Visayan port city across the strait =====
   makeSugbo() {
     const fill = this.fill, R = U.rng(7777), X = SX0, hy = this.prov.hy;
     // the strait
     fill(PROV_END, 0, STRAIT_W, MH, TL.WATER);
-    // San Isidro pier at the end of the highway (ferry to Sugbo)
+    // San Isidro pier at the end of the highway (ferry to Cebu)
     fill(PROV_END - 1, hy, 1, RW, TL.ROAD);
     fill(PROV_END, hy, 9, RW, TL.PIER);
-    // Sugbo base: grass, tree border on the far east
+    // Cebu base: grass, tree border on the far east
     fill(X, 0, SUGBO_W, MH, TL.GRASS);
     for (let y = 0; y < MH; y++) this.set(SUGBO_END - 1, y, TL.TREE);
     const VX = [X + 12, X + 34, X + 56, X + 78, X + 100], HY = [26, 48, 70, 92, 114, 136, 158];
@@ -677,19 +678,19 @@ const MAP = {
     const add = (key, x, y, type, label, icon, extra) => { this.pois[key] = Object.assign({ key, x: x * T, y: y * T, type, label, icon }, extra || {}); };
     const door = (b, side, off = 0) => side === 'S' ? [b.x0 + b.w / 2 + off, b.y0 + b.h - 0.5] : side === 'N' ? [b.x0 + b.w / 2 + off, b.y0 + 0.5] : side === 'E' ? [b.x0 + b.w - 0.5, b.y0 + b.h / 2 + off] : [b.x0 + 0.5, b.y0 + b.h / 2 + off];
     const B = (i, j) => sg.blocks.find(b => b.i === i && b.j === j);
-    add('ferry_si', PROV_END + 7, hy + 2, 'ferry', 'Ferry papuntang Sugbo', '⛴');
+    add('ferry_si', PROV_END + 7, hy + 2, 'ferry', 'Ferry papuntang Cebu', '⛴');
     add('ferry_sg', X - 7, HY[4] + 10.5, 'ferry', 'Ferry pabalik sa San Isidro', '⛴');
-    add('airport_s', X + 48, ay + 7.6, 'airport', 'Paliparan ng Sugbo', '✈️');
+    add('airport_s', X + 48, ay + 7.6, 'airport', 'Paliparan ng Cebu', '✈️');
     add('bebing', ...door(B(1, 1), 'S', 4), 'npc', 'Inday Bebing', 'I');
     add('lechon_sg', ...door(B(1, 1), 'S', -2), 'spot', 'Lechonan ni Inday Bebing', '🐷');
     add('dodong', ...door(B(0, 2), 'E'), 'npc', 'Dodong', 'D');
     add('plazakrus', ...door(B(2, 1), 'S'), 'spot', 'Plaza Krus', '✝️');
     add('evac_sg', ...door(B(2, 1), 'E'), 'evac', 'Evacuation Center (Plaza Krus)', '⛺');
-    add('sg_hospital', ...door(B(2, 3), 'S'), 'hospital', 'Ospital ng Sugbo', '🏥');
-    add('sg_presinto', ...door(B(3, 3), 'S'), 'police', 'Presinto ng Sugbo', '🚓');
+    add('sg_hospital', ...door(B(2, 3), 'S'), 'hospital', 'Ospital ng Cebu', '🏥');
+    add('sg_presinto', ...door(B(3, 3), 'S'), 'police', 'Presinto ng Cebu', '🚓');
     add('sg_ukay', ...door(B(1, 2), 'S'), 'ukay', 'Ukay-Ukay sa Kolon', '👕');
     add('sg_sari', ...door(B(2, 4), 'N'), 'sari', 'Sari-sari ni Nang Pacing', '🏪');
-    add('sg_gun', ...door(B(1, 4), 'E'), 'gunshop', 'Armas ni Kabo (Sugbo)', '🔫');
+    add('sg_gun', ...door(B(1, 4), 'E'), 'gunshop', 'Armas ni Kabo (Cebu)', '🔫');
     add('sg_paint', ...door(B(3, 2), 'S'), 'paint', 'Pintura sa IT Park', '🎨');
     add('sg_barber', ...door(B(0, 4), 'E'), 'barber', 'Barberya ni Toto', '💈');
     add('tops', X + 88, 9, 'spot', 'Tops Lookout', '⛰');
@@ -699,16 +700,16 @@ const MAP = {
       this.decor.push({ type: 'sign', x: pp.x, y: pp.y, color: a[0], text: a[1] });
     }
     this.decor.push({ type: 'sign', x: this.pois.lechon_sg.x, y: this.pois.lechon_sg.y, color: '#c0392b', text: 'LECHON' });
-    // Manila airport (fly to Sugbo) at the south edge of Pasay
+    // Manila airport (fly to Cebu) at the south edge of Pasay
     const [mx0, my0, mw, mh] = this.blockRect(5, 8);
-    add('airport_m', mx0 + mw / 2, my0 + mh - 0.5, 'airport', 'Paliparan ng Maynila', '✈️');
+    add('airport_m', mx0 + mw / 2, my0 + mh - 0.5, 'airport', 'Paliparan ng Manila', '✈️');
     this.decor.push({ type: 'sign', x: this.pois.airport_m.x, y: this.pois.airport_m.y, color: '#2c5aa0', text: 'PALIPARAN' });
   },
-  // ===== Chapter 4: Dabaw — mountain, eagles, bananas and durian =====
+  // ===== Chapter 4: Davao — mountain, eagles, bananas and durian =====
   makeDabaw() {
     const fill = this.fill, R = U.rng(4242), X = DX0, sg = this.sugbo;
     fill(SUGBO_END, 0, STRAIT2_W, MH, TL.WATER);
-    // Sugbo east pier (ferry to Dabaw)
+    // Cebu east pier (ferry to Davao)
     const py = sg.HY[3];
     fill(sg.VX[4] + RW, py, SUGBO_END - sg.VX[4] - RW, RW, TL.ROAD);
     fill(SUGBO_END, py, 9, RW, TL.PIER);
@@ -768,25 +769,25 @@ const MAP = {
     const add = (key, x, y, type, label, icon, extra) => { this.pois[key] = Object.assign({ key, x: x * T, y: y * T, type, label, icon }, extra || {}); };
     const B = (i, j) => dw.blocks.find(b => b.i === i && b.j === j);
     const door = (b, side, off = 0) => side === 'S' ? [b.x0 + b.w / 2 + off, b.y0 + b.h - 0.5] : side === 'N' ? [b.x0 + b.w / 2 + off, b.y0 + 0.5] : side === 'E' ? [b.x0 + b.w - 0.5, b.y0 + b.h / 2 + off] : [b.x0 + 0.5, b.y0 + b.h / 2 + off];
-    add('ferry_sg2', SUGBO_END + 7, py + 2, 'ferry', 'Ferry papuntang Dabaw', '⛴');
-    add('ferry_dw', X - 7, HY[2] + 10.5, 'ferry', 'Ferry pabalik sa Sugbo', '⛴');
-    add('airport_d', X + 37, ay + 7.6, 'airport', 'Paliparan ng Dabaw', '✈️');
+    add('ferry_sg2', SUGBO_END + 7, py + 2, 'ferry', 'Ferry papuntang Davao', '⛴');
+    add('ferry_dw', X - 7, HY[2] + 10.5, 'ferry', 'Ferry pabalik sa Cebu', '⛴');
+    add('airport_d', X + 37, ay + 7.6, 'airport', 'Paliparan ng Davao', '✈️');
     add('maya', VX[3] + 14, HY[1] + 11, 'npc', 'Ate Maya', 'M');
     add('islaw', DABAW_END - 14, HY[3] - 1, 'npc', 'Mang Islaw', 'I');
     add('eagle', VX[3] + 14, HY[1] + 10.4, 'spot', 'Sentro ng Agila', '🦅', { landmark: true });
     add('durian', ...door(B(1, 0), 'S'), 'sari', 'Durian Market', '🍈');
-    add('dw_hospital', ...door(B(2, 3), 'N'), 'hospital', 'Ospital ng Dabaw', '🏥');
-    add('dw_presinto', ...door(B(1, 3), 'N'), 'police', 'Presinto ng Dabaw', '🚓');
-    add('dw_gun', ...door(B(0, 1), 'E'), 'gunshop', 'Armas ni Kabo (Dabaw)', '🔫');
-    add('dw_ukay', ...door(B(2, 1), 'S'), 'ukay', 'Ukay-Ukay sa Dabaw', '👕');
-    add('dw_paint', ...door(B(0, 2), 'E'), 'paint', 'Pintura sa Dabaw', '🎨');
+    add('dw_hospital', ...door(B(2, 3), 'N'), 'hospital', 'Ospital ng Davao', '🏥');
+    add('dw_presinto', ...door(B(1, 3), 'N'), 'police', 'Presinto ng Davao', '🚓');
+    add('dw_gun', ...door(B(0, 1), 'E'), 'gunshop', 'Armas ni Kabo (Davao)', '🔫');
+    add('dw_ukay', ...door(B(2, 1), 'S'), 'ukay', 'Ukay-Ukay sa Davao', '👕');
+    add('dw_paint', ...door(B(0, 2), 'E'), 'paint', 'Pintura sa Davao', '🎨');
     add('summit', X + 82, 7, 'spot', 'Tuktok ng Bundok Apo', '⛰', { landmark: true });
     add('camp', X + 16, 24.5, 'spot', 'Kampo ng mga Ilegal na Mangangahoy', '🪓');
     add('banana', DABAW_END - 9, MH - 12, 'spot', 'Saging na Plantasyon', '🍌', { landmark: true });
     for (const k of ['durian', 'dw_gun', 'dw_ukay', 'dw_paint']) { const pp = this.pois[k], a = { sari: ['#7fb800', 'DURIAN'], gunshop: ['#3b3b3b', 'ARMAS'], ukay: ['#e84393', 'UKAY-UKAY'], paint: ['#e67e22', 'PINTURA'] }[pp.type]; this.decor.push({ type: 'sign', x: pp.x, y: pp.y, color: a[0], text: a[1] }); }
   },
   // photo spots / tourist landmarks (map category "Pasyalan")
-  // ===== Chapter 5: Bagiw — the cool mountain city of pines, fog and strawberries =====
+  // ===== Chapter 5: Baguio — the cool mountain city of pines, fog and strawberries =====
   makeBagiw() {
     const fill = this.fill, R = U.rng(5151), X = BX0;
     fill(DABAW_END, 0, BX0 - DABAW_END, MH, TL.GRASS);
@@ -849,19 +850,19 @@ const MAP = {
     const add = (key, x, y, type, label, icon, extra) => { this.pois[key] = Object.assign({ key, x: x * T, y: y * T, type, label, icon }, extra || {}); };
     const B = (i, j) => bg.blocks.find(b => b.i === i && b.j === j);
     const door = (b, side, off = 0) => side === 'S' ? [b.x0 + b.w / 2 + off, b.y0 + b.h - 0.5] : side === 'N' ? [b.x0 + b.w / 2 + off, b.y0 + 0.5] : side === 'E' ? [b.x0 + b.w - 0.5, b.y0 + b.h / 2 + off] : [b.x0 + 0.5, b.y0 + b.h / 2 + off];
-    add('airport_b', X + 45, ay + 3.5, 'airport', 'Paliparan ng Bagiw', '✈️');
+    add('airport_b', X + 45, ay + 3.5, 'airport', 'Paliparan ng Baguio', '✈️');
     add('pining', X + 8, HY[2] - 1.5, 'npc', 'Lola Pining', 'P');
-    add('bg_ukay', ...door(B(1, 0), 'W'), 'ukay', 'Ukay-Ukay sa Bagiw', '👕');
+    add('bg_ukay', ...door(B(1, 0), 'W'), 'ukay', 'Ukay-Ukay sa Baguio', '👕');
     add('bg_sari', ...door(B(0, 0), 'S'), 'sari', 'Strawberry Taho', '🍓');
-    add('bg_gun', ...door(B(1, 1), 'S'), 'gunshop', 'Armas ni Kabo (Bagiw)', '🔫');
-    add('bg_hospital', ...door(B(0, 2), 'N'), 'hospital', 'Ospital ng Bagiw', '🏥');
-    add('bg_presinto', ...door(B(1, 2), 'N'), 'police', 'Presinto ng Bagiw', '🚓');
-    add('bg_church', ...door(B(0, 1), 'E'), 'church', 'Katedral ng Bagiw', '⛪');
-    add('bg_kainan', ...door(B(1, 2), 'W'), 'kainan', 'Manukan sa Kanto (Bagiw)', '🍗');
+    add('bg_gun', ...door(B(1, 1), 'S'), 'gunshop', 'Armas ni Kabo (Baguio)', '🔫');
+    add('bg_hospital', ...door(B(0, 2), 'N'), 'hospital', 'Ospital ng Baguio', '🏥');
+    add('bg_presinto', ...door(B(1, 2), 'N'), 'police', 'Presinto ng Baguio', '🚓');
+    add('bg_church', ...door(B(0, 1), 'E'), 'church', 'Katedral ng Baguio', '⛪');
+    add('bg_kainan', ...door(B(1, 2), 'W'), 'kainan', 'Manukan sa Kanto (Baguio)', '🍗');
     add('bg_heli', X + 72, HY[1] + 2, 'heli', 'Helicopter Tour', '🚁');
     add('heli_m', this.door(8, 6, 'N').x / T, this.door(8, 6, 'N').y / T, 'heli', 'Helipad ng Makati', '🚁');
     add('lm_mines', X + 90, 24.5, 'spot', 'Mines View Lookout', '🏔', { landmark: true });
-    add('lm_lake', lcx, lcy + 8.5, 'spot', 'Liwasang Bagiw (Lawa)', '🦢', { landmark: true });
+    add('lm_lake', lcx, lcy + 8.5, 'spot', 'Liwasang Baguio (Lawa)', '🦢', { landmark: true });
     add('lm_farm', X + 12, HY[1] + 2, 'spot', 'Presahan (Strawberry Farm)', '🍓', { landmark: true });
     add('magno_gate', bg.mansion.gate.x / T, bg.mansion.gate.y / T, 'spot', 'Mansyon ni Don Magno', '🏰');
     for (const k of ['bg_ukay', 'bg_sari', 'bg_gun', 'bg_church', 'bg_kainan']) { const pp = this.pois[k], a = { ukay: ['#e84393', 'UKAY-UKAY'], sari: ['#c0392b', 'STRAWBERRY'], gunshop: ['#3b3b3b', 'ARMAS'], church: ['#7a6a58', 'SIMBAHAN'], kainan: ['#c0392b', 'MANUKAN'] }[pp.type]; this.decor.push({ type: 'sign', x: pp.x, y: pp.y, color: a[0], text: a[1] }); }
@@ -878,14 +879,73 @@ const MAP = {
     const ins = (key, pt, type, label, icon, sign, col) => { if (!pt) return; this.pois[key] = { key, x: pt.x, y: pt.y, type, label, icon }; this.decor.push({ type: 'sign', x: pt.x, y: pt.y, color: col, text: sign }); };
     const sdoor = (reg, i, j, side) => { const b = reg.blocks.find(q => q.i === i && q.j === j); if (!b) return null; const [x, y] = side === 'S' ? [b.x0 + b.w / 2 + 3, b.y0 + b.h - 0.5] : side === 'N' ? [b.x0 + b.w / 2 + 3, b.y0 + 0.5] : side === 'E' ? [b.x0 + b.w - 0.5, b.y0 + b.h / 2 + 3] : [b.x0 + 0.5, b.y0 + b.h / 2 + 3]; return { x: x * T, y: y * T }; };
     ins('kainan_m', this.door(3, 4, 'N', 3), 'kainan', 'Manukan sa Kanto', '🍗', 'MANUKAN', '#c0392b');
-    ins('kainan_s', sdoor(this.sugbo, 2, 2, 'N'), 'kainan', 'Manukan sa Kanto (Sugbo)', '🍗', 'MANUKAN', '#c0392b');
-    ins('kainan_d', sdoor(this.dabaw, 0, 0, 'S'), 'kainan', 'Manukan sa Kanto (Dabaw)', '🍗', 'MANUKAN', '#c0392b');
+    ins('kainan_s', sdoor(this.sugbo, 2, 2, 'N'), 'kainan', 'Manukan sa Kanto (Cebu)', '🍗', 'MANUKAN', '#c0392b');
+    ins('kainan_d', sdoor(this.dabaw, 0, 0, 'S'), 'kainan', 'Manukan sa Kanto (Davao)', '🍗', 'MANUKAN', '#c0392b');
     ins('mall_m', this.door(7, 6, 'N'), 'mall', 'Mall ng Bayan', '🏬', 'MALL', '#2c5aa0');
     ins('mall_s', sdoor(this.sugbo, 3, 1, 'W'), 'mall', 'IT Park Mall', '🏬', 'MALL', '#2c5aa0');
     ins('church_m', this.door(6, 1, 'W'), 'church', 'Simbahan ng Quiapo', '⛪', 'SIMBAHAN', '#7a6a58');
     ins('church_s', sdoor(this.sugbo, 2, 1, 'W'), 'church', 'Basilika sa Plaza Krus', '⛪', 'SIMBAHAN', '#7a6a58');
-    ins('church_d', sdoor(this.dabaw, 1, 2, 'N'), 'church', 'Katedral ng Dabaw', '⛪', 'SIMBAHAN', '#7a6a58');
+    ins('church_d', sdoor(this.dabaw, 1, 2, 'N'), 'church', 'Katedral ng Davao', '⛪', 'SIMBAHAN', '#7a6a58');
     if (this.prov) ins('church_p', { x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy - 4.5) * T }, 'church', 'Simbahan ng San Isidro', '⛪', 'SIMBAHAN', '#7a6a58');
+  },
+  // ---------- irregular coastline: noisy bays carved into open land along the sea, edges and straits ----------
+  makeCoast() {
+    const N = MW * MH, t = this.tiles, R = U.rng(777);
+    // smooth value noise (2 octaves)
+    const G1 = 14, gw = Math.ceil(MW / G1) + 2, gh = Math.ceil(MH / G1) + 2, grid = new Float32Array(gw * gh).map(() => R());
+    const G2 = 5, gw2 = Math.ceil(MW / G2) + 2, gh2 = Math.ceil(MH / G2) + 2, grid2 = new Float32Array(gw2 * gh2).map(() => R());
+    const vn = (gr, gwid, sc, x, y) => { const fx = x / sc, fy = y / sc, ix = Math.floor(fx), iy = Math.floor(fy), u = fx - ix, v = fy - iy, s1 = u * u * (3 - 2 * u), s2 = v * v * (3 - 2 * v);
+      const a = gr[iy * gwid + ix], b = gr[iy * gwid + ix + 1], c = gr[(iy + 1) * gwid + ix], d = gr[(iy + 1) * gwid + ix + 1];
+      return a + (b - a) * s1 + (c - a) * s2 + (a - b - c + d) * s1 * s2; };
+    const depth = (x, y) => { const n = vn(grid, gw, G1, x, y) * 0.75 + vn(grid2, gw2, G2, x, y) * 0.25; return Math.max(0, (n - 0.24) * 38); };
+    // protected: anything people use, plus a margin around it
+    const KEEP = new Set([TL.ROAD, TL.SIDE, TL.PIER, TL.PLAZA, TL.LOT, TL.PROM, TL.WALL, TL.SAND, TL.DIRT]);
+    const prot = new Uint8Array(N);
+    const mark = (cx, cy, r) => { for (let y = cy - r; y <= cy + r; y++) for (let x = cx - r; x <= cx + r; x++) if (x >= 0 && y >= 0 && x < MW && y < MH) prot[y * MW + x] = 1; };
+    const nearRoad = (x, y) => { for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) if (this.get(x + dx, y + dy) === TL.ROAD) return true; return false; };
+    for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) { const v = t[y * MW + x]; if (KEEP.has(v) && (v !== TL.SIDE || nearRoad(x, y))) mark(x, y, v === TL.SIDE ? 1 : 2); }
+    const pt = (o, r) => mark(Math.floor(o.x / T), Math.floor(o.y / T), r);
+    for (const k in this.pois) pt(this.pois[k], 5);
+    for (const a of [this.spots, this.tsinelas, this.lamps, this.courts, this.boatSpots]) for (const o of a) if (o && o.x != null) pt(o, 3);
+    for (const d of this.decor) if (d.x != null) pt(d, 3);
+    for (const b of this.buildings) if (b.kind && !/^(comm|resid|slum|china|towers|house|shop|hut|farm|warehouse|bld|market|container|stall|nipa|port)$/.test(b.kind)) mark(b.tx + (b.tw >> 1), b.ty + (b.th >> 1), Math.max(b.tw, b.th));
+    const open = (i) => !prot[i] && (t[i] === TL.GRASS || t[i] === TL.TREE || t[i] === TL.BLD || t[i] === TL.ALLEY || t[i] === TL.PADDY || t[i] === TL.SIDE);
+    // flood from the sea / map edge / straits through open land, carving while within the local depth
+    const dist = new Int16Array(N).fill(-1), q = [];
+    for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
+      const i = y * MW + x;
+      if (t[i] === TL.WATER) { dist[i] = 0; q.push(i); }
+      else if ((x === MW - 1 || y === 0 || y === MH - 1 || (x >= DABAW_END && x < BX0)) && open(i)) { dist[i] = 1; q.push(i); }
+    }
+    const carve = new Uint8Array(N);
+    for (let h = 0; h < q.length; h++) {
+      const i = q[h], x = i % MW, y = (i / MW) | 0;
+      if (t[i] !== TL.WATER) { if (dist[i] > depth(x, y) && !(x >= DABAW_END && x < BX0)) continue; carve[i] = 1; }
+      for (const [dx, dy] of DIRS) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= MW || ny >= MH) continue; const j = ny * MW + nx; if (dist[j] < 0 && open(j)) { dist[j] = dist[i] + 1; q.push(j); } }
+    }
+    // buildings go only if the sea takes all of them
+    for (const b of this.buildings) {
+      let all = true, any = false;
+      for (let y = b.ty; y < b.ty + b.th; y++) for (let x = b.tx; x < b.tx + b.tw; x++) { const c = carve[y * MW + x]; all = all && c; any = any || c; }
+      if (!any) continue;
+      const generic = !b.kind || /^(comm|resid|slum|china|towers|house|shop|hut|farm|warehouse|bld|market|container|stall|nipa|port)$/.test(b.kind);
+      let cnt = 0; for (let y = b.ty; y < b.ty + b.th; y++) for (let x = b.tx; x < b.tx + b.tw; x++) cnt += carve[y * MW + x];
+      if (generic && cnt * 3 >= b.tw * b.th) { all = true; for (let y = b.ty; y < b.ty + b.th; y++) for (let x = b.tx; x < b.tx + b.tw; x++) if (!prot[y * MW + x]) carve[y * MW + x] = 1; else all = false; }
+      if (all) { b.gone = true; for (let y = b.ty; y < b.ty + b.th; y++) for (let x = b.tx; x < b.tx + b.tw; x++) this.bldAt[y * MW + x] = -1; }
+      else for (let y = b.ty; y < b.ty + b.th; y++) for (let x = b.tx; x < b.tx + b.tw; x++) carve[y * MW + x] = 0;
+    }
+    for (let i = 0; i < N; i++) if (carve[i]) t[i] = TL.WATER;
+    // beaches where the new shore meets grass
+    for (let y = 1; y < MH - 1; y++) for (let x = 1; x < MW - 1; x++) {
+      const i = y * MW + x; if (t[i] !== TL.GRASS || prot[i]) continue;
+      if (DIRS.some(([dx, dy]) => carve[(y + dy) * MW + x + dx]) && vn(grid2, gw2, G2, x * 1.7, y * 1.7) > 0.45) t[i] = TL.SAND;
+    }
+    this.buildings = this.buildings.filter(b => !b.gone);
+    for (let i = 0; i < N; i++) this.bldAt[i] = -1;
+    this.buildings.forEach((b, id) => { for (let y = b.ty; y < b.ty + b.th; y++) for (let x = b.tx; x < b.tx + b.tw; x++) this.bldAt[y * MW + x] = id; });
+    const dry = (o) => this.get(Math.floor(o.x / T), Math.floor(o.y / T)) !== TL.WATER;
+    this.trees = this.trees.filter(dry); this.lamps = this.lamps.filter(dry);
+    this.decor = this.decor.filter(d => d.type === 'boat' || d.x == null || dry(d));
   },
   makeLabels() {
     const L = [['PANTALAN', 0, -0.5], ['TONDO', 1.5, 0], ['DIVISORIA', 3, -0.5], ['BINONDO', 4.5, 0], ['SAMPALOC', 7, -0.5], ['QUIAPO', 6, 1],
@@ -898,18 +958,18 @@ const MAP = {
       this.labels.push({ name: n, x: (x0 + w / 2) * T + fx * PER * T, y: (y0 + h / 2) * T + fy * PER * T });
     }
     if (this.prov) { this.labels.push({ name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 20) * T }, { name: 'HACIENDA SEVERO', x: (this.prov.tcx + 0.5) * T, y: 10 * T }, { name: 'PALAYAN', x: (this.prov.tcx + 0.5) * T, y: 150 * T }); }
-    this.regions = [{ name: 'MAYNILA', x: this.cx(4), y: this.cy(4) }, { name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 6) * T }, { name: 'ISLA MALIGAYA', x: this.island.cx * T, y: this.island.cy * T }];
-    if (this.sugbo) this.regions.push({ name: 'SUGBO', x: (SX0 + 56) * T, y: 90 * T });
-    if (this.dabaw) this.regions.push({ name: 'DABAW', x: (DX0 + 50) * T, y: 100 * T });
-    if (this.bagiw) this.regions.push({ name: 'BAGIW', x: (BX0 + 50) * T, y: 90 * T });
+    this.regions = [{ name: 'MANILA', x: this.cx(4), y: this.cy(4) }, { name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 6) * T }, { name: 'ISLA MALIGAYA', x: this.island.cx * T, y: this.island.cy * T }];
+    if (this.sugbo) this.regions.push({ name: 'CEBU', x: (SX0 + 56) * T, y: 90 * T });
+    if (this.dabaw) this.regions.push({ name: 'DAVAO', x: (DX0 + 50) * T, y: 100 * T });
+    if (this.bagiw) this.regions.push({ name: 'BAGUIO', x: (BX0 + 50) * T, y: 90 * T });
     this.labels.push({ name: 'MANILA BAY', x: (OX - 8) * T, y: this.cy(5), vert: true });
     if (this.sugbo) {
       const sg = this.sugbo, bc = (i, j) => ({ x: (sg.VX[i] + RW + 9) * T, y: (sg.HY[j] + RW + 9) * T });
       for (const [n, i, j] of [['KOLON', 1, 1], ['PLAZA KRUS', 2, 1.75], ['IT PARK', 3, 0.5], ['MERKADO', 0, 0.3], ['LAHUG', 2, 2.6], ['MABOLO', 3, 4.6], ['PARDO', 0.5, 5.4], ['TEJERO', 1, 4]]) { const c = bc(Math.floor(i), Math.floor(j)); this.labels.push({ name: n, x: c.x + (i % 1) * 22 * T, y: c.y + (j % 1) * 22 * T }); }
-      this.labels.push({ name: 'SUGBO', x: (SX0 + 56) * T, y: 22 * T }, { name: 'BUSAY', x: (SX0 + 60) * T, y: 8 * T }, { name: 'PANTALAN NG SUGBO', x: (SX0 + 7) * T, y: (sg.HY[2] + 4) * T, vert: true }, { name: 'PALIPARAN', x: (SX0 + 48) * T, y: (sg.HY[6] + 20) * T });
-      if (this.dabaw) { const d = this.dabaw; this.labels.push({ name: 'DABAW', x: (DX0 + 40) * T, y: (d.HY[0] - 3) * T }, { name: 'BUNDOK APO', x: (DX0 + 50) * T, y: 30 * T }, { name: 'SENTRO NG AGILA', x: (d.VX[3] + 14) * T, y: (d.HY[0] + 4) * T }, { name: 'SAGINGAN', x: (DX0 + 92) * T, y: (d.HY[3] + 12) * T }, { name: 'BANKEROHAN', x: (d.VX[1] + 13) * T, y: (d.HY[1] + 13) * T }, { name: 'KIPOT NG DABAW', x: (SUGBO_END + STRAIT2_W / 2) * T, y: this.cy(6), vert: true }); }
-      if (this.bagiw) { const b = this.bagiw; this.labels.push({ name: 'BAGIW', x: (BX0 + 42) * T, y: (b.HY[0] - 4) * T }, { name: 'KALYE SESYON', x: (b.VX[1] + 2) * T, y: (b.HY[1] + 10) * T }, { name: 'LIWASANG BAGIW', x: b.lake.x, y: b.lake.y - 9 * T }, { name: 'PRESAHAN', x: (BX0 + 11) * T, y: (b.HY[0] - 3) * T }, { name: 'MINES VIEW', x: (BX0 + 90) * T, y: 13 * T }, { name: 'KENNON', x: (BX0 + 48) * T, y: 152 * T }); }
-      this.labels.push({ name: 'KIPOT NG SUGBO', x: (PROV_END + STRAIT_W / 2) * T, y: this.cy(6), vert: true });
+      this.labels.push({ name: 'CEBU', x: (SX0 + 56) * T, y: 22 * T }, { name: 'BUSAY', x: (SX0 + 60) * T, y: 8 * T }, { name: 'PANTALAN NG CEBU', x: (SX0 + 7) * T, y: (sg.HY[2] + 4) * T, vert: true }, { name: 'PALIPARAN', x: (SX0 + 48) * T, y: (sg.HY[6] + 20) * T });
+      if (this.dabaw) { const d = this.dabaw; this.labels.push({ name: 'DAVAO', x: (DX0 + 40) * T, y: (d.HY[0] - 3) * T }, { name: 'BUNDOK APO', x: (DX0 + 50) * T, y: 30 * T }, { name: 'SENTRO NG AGILA', x: (d.VX[3] + 14) * T, y: (d.HY[0] + 4) * T }, { name: 'SAGINGAN', x: (DX0 + 92) * T, y: (d.HY[3] + 12) * T }, { name: 'BANKEROHAN', x: (d.VX[1] + 13) * T, y: (d.HY[1] + 13) * T }, { name: 'KIPOT NG DAVAO', x: (SUGBO_END + STRAIT2_W / 2) * T, y: this.cy(6), vert: true }); }
+      if (this.bagiw) { const b = this.bagiw; this.labels.push({ name: 'BAGUIO', x: (BX0 + 42) * T, y: (b.HY[0] - 4) * T }, { name: 'KALYE SESYON', x: (b.VX[1] + 2) * T, y: (b.HY[1] + 10) * T }, { name: 'LIWASANG BAGUIO', x: b.lake.x, y: b.lake.y - 9 * T }, { name: 'PRESAHAN', x: (BX0 + 11) * T, y: (b.HY[0] - 3) * T }, { name: 'MINES VIEW', x: (BX0 + 90) * T, y: 13 * T }, { name: 'KENNON', x: (BX0 + 48) * T, y: 152 * T }); }
+      this.labels.push({ name: 'KIPOT NG CEBU', x: (PROV_END + STRAIT_W / 2) * T, y: this.cy(6), vert: true });
     }
     this.labels.push({ name: 'ISLA MALIGAYA', x: (this.island.cx + 5) * T, y: (this.island.cy - 38) * T });
   },
@@ -968,7 +1028,7 @@ const MAP = {
     const tx0 = Math.floor(ox / T), ty0 = Math.floor(oy / T), n = S / T;
     // ground
     for (let ty = ty0 - 1; ty < ty0 + n + 1; ty++) for (let tx = tx0 - 1; tx < tx0 + n + 1; tx++) {
-      const t = this.get(tx, ty); if (t === 255) { g.fillStyle = '#0d111b'; g.fillRect(tx * T, ty * T, T, T); continue; }
+      const t = this.get(tx, ty); if (t === 255) { g.fillStyle = GROUND[0]; g.fillRect(tx * T, ty * T, T, T); continue; }
       const x = tx * T, y = ty * T;
       g.fillStyle = GROUND[t]; g.fillRect(x, y, T + 0.5, T + 0.5);
       const h = U.hash(tx, ty);

@@ -127,7 +127,7 @@ const PHOTO = {
       g.font = `400 ${Math.round(H * 0.06)}px Bungee, Nunito, sans-serif`; g.textAlign = 'left'; g.textBaseline = 'bottom';
       g.fillStyle = 'rgba(0,0,0,0.5)'; g.fillText('HARI NG KALSADA', b * 2 + 3, H - b * 1.6 + 3); g.fillStyle = '#f39c2b'; g.fillText('HARI NG KALSADA', b * 2, H - b * 1.6);
       g.font = `900 ${Math.round(H * 0.025)}px Nunito, sans-serif`; g.textAlign = 'right'; g.fillStyle = '#fff';
-      g.fillText(`${WORLD.timeStr()} · ${(MAP.labels.slice().sort((a, l) => U.d2(a.x, a.y, G.cam.x, G.cam.y) - U.d2(l.x, l.y, G.cam.x, G.cam.y))[0] || { name: 'MAYNILA' }).name}`, W - b * 2, H - b * 1.6);
+      g.fillText(`${WORLD.timeStr()} · ${(MAP.labels.slice().sort((a, l) => U.d2(a.x, a.y, G.cam.x, G.cam.y) - U.d2(l.x, l.y, G.cam.x, G.cam.y))[0] || { name: 'MANILA' }).name}`, W - b * 2, H - b * 1.6);
     }
     const url = c.toDataURL('image/png');
     const a = document.createElement('a'); a.href = url; a.download = `harinkalsada-${Date.now()}.png`; document.body.appendChild(a); a.click(); a.remove();

@@ -104,7 +104,7 @@ const G = {
     this.vehicles.push(tr);
     this.beginPlay();
     if (dev) { this.save(); return; }
-    UI.big('HARI NG KALSADA', 'Maynila', 2.5);
+    UI.big('HARI NG KALSADA', 'Manila', 2.5);
     MS.start(0);
     TUT.pending = true;
     this.save();
@@ -627,7 +627,7 @@ const G = {
     const g = this.ctx, cam = this.cam, z = cam.zoom * this.dpr;
     const W = this.canvas.width, H = this.canvas.height;
     g.setTransform(1, 0, 0, 1, 0, 0);
-    g.fillStyle = '#0d111b'; g.fillRect(0, 0, W, H);
+    g.fillStyle = this.started ? GROUND[0] : '#0d111b'; g.fillRect(0, 0, W, H);
     const ox = cam.x + cam.sx, oy = cam.y + cam.sy;
     g.setTransform(z, 0, 0, z, W / 2 - ox * z, H / 2 - oy * z);
     const x0 = ox - cam.vw / 2 - 20, x1 = ox + cam.vw / 2 + 20, y0 = oy - cam.vh / 2 - 20, y1 = oy + cam.vh / 2 + 20;

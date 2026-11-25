@@ -1,5 +1,9 @@
 # Changelog — Hari ng Kalsada
 
+## v2.2: Bagong Hugis ng Mapa / A New Map Shape (2026-11-25)
+- 🗺 Places renamed to their real names: **Manila, Cebu, Davao and Baguio** (was Maynila, Sugbo, Dabaw, Bagiw), in Filipino and English
+- 🏝 **Irregular coastlines**: the world is no longer a row of rectangles. Noisy bays, inlets and beaches are carved into open land along the map edges and straits (roads, places and mission areas are never touched); the sea now surrounds the whole map, and Davao and Baguio are separate islands
+
 ## v2.1: Kabanata 5 — Bagiw (2026-11-25)
 **New content**
 - 🌲 **Chapter 5: Bagiw**, a cold pine-mountain city north of everything: Sesyon Street, Bagiw Park with a lake, the strawberry farm, Mines View, Don Magno's walled mansion, a cathedral, hospital, police, shops and a winding mountain road down to its airport. Fog rolls in at night and dawn

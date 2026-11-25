@@ -204,10 +204,10 @@ function drawDog(g, p) {
   g.restore();
 }
 
-// ---------- regional collectibles: shells (Sugbo) and eagle feathers (Dabaw) ----------
+// ---------- regional collectibles: shells (Cebu) and eagle feathers (Davao) ----------
 const COLL = {
   list: null,
-  kinds: { kabibe: { icon: '🐚', name: 'Kabibe', region: 'Sugbo' }, balahibo: { icon: '🪶', name: 'Balahibo ng Agila', region: 'Dabaw' }, presa: { icon: '🍓', name: 'Gintong Strawberry', region: 'Bagiw' } },
+  kinds: { kabibe: { icon: '🐚', name: 'Kabibe', region: 'Cebu' }, balahibo: { icon: '🪶', name: 'Balahibo ng Agila', region: 'Davao' }, presa: { icon: '🍓', name: 'Gintong Strawberry', region: 'Baguio' } },
   make() {
     const out = [], R = U.rng(9191);
     const pick = (kind, x0, x1, n) => {

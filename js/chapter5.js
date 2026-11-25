@@ -1,5 +1,5 @@
 'use strict';
-// ===== KABANATA 5: BAGIW — "Ang Huling Ninong" (grand finale) =====
+// ===== KABANATA 5: BAGUIO — "Ang Huling Ninong" (grand finale) =====
 Object.assign(CHARS, {
   pining: { name: 'Lola Pining', look: { skin: '#c68b59', shirt: '#7a2e4a', pat: 'stripe', outfit: 'npc', hair: 'long', hairCol: '#d8d8d8', pants: '#3b3b3b' } },
   magno: { name: 'Don Magno', look: { skin: '#e0b07a', shirt: '#1d2a3a', pat: 'barong', outfit: 'npc', hair: 'short', hairCol: '#9a9a9a', pants: '#111' } },
@@ -20,23 +20,23 @@ function bagiwGoonCar(c, near, target) {
 
 MISSIONS.push(
   { // 29
-    id: 'akyat-bagiw', title: 'Akyat Bagiw', giver: 'maya', reward: 4000, chapter: 5,
-    desc: 'Lumipad sa Bagiw at puntahan si Lola Pining.',
+    id: 'akyat-bagiw', title: 'Akyat Baguio', giver: 'maya', reward: 4000, chapter: 5,
+    desc: 'Lumipad sa Baguio at puntahan si Lola Pining.',
     cp: { stage: 3, pos: () => MAP.pois.airport_b },
     stages: [
       comic([
         ['🕴️📞', '"Hindi lang ako ang Ninong..." — ang huling sinabi ni Ninong bago makulong.'],
-        ['🏔️🌲⛏️', 'Sa malamig na kabundukan ng Bagiw, may nagmimina nang ilegal sa ilalim ng mga pine... at may iisang pangalan sa likod nito: DON MAGNO.'],
-        ['🌲🍓🌫️', 'KABANATA 5: BAGIW — ANG HULING NINONG'],
+        ['🏔️🌲⛏️', 'Sa malamig na kabundukan ng Baguio, may nagmimina nang ilegal sa ilalim ng mga pine... at may iisang pangalan sa likod nito: DON MAGNO.'],
+        ['🌲🍓🌫️', 'KABANATA 5: BAGUIO — ANG HULING NINONG'],
       ]),
       talk(() => [
-        ['Ate Maya', 'Nonoy, may tumawag mula sa Bagiw — si Lola Pining, kapatid ni Lola Isyang! Ang strawberry farm niya, nasisira ng ilegal na minahan.'],
+        ['Ate Maya', 'Nonoy, may tumawag mula sa Baguio — si Lola Pining, kapatid ni Lola Isyang! Ang strawberry farm niya, nasisira ng ilegal na minahan.'],
         ['Ate Maya', 'At hulaan mo kung sino ang may-ari ng minahan... si DON MAGNO. Siya raw ang "Ninong ng mga Ninong" — ang nasa itaas nina Mayor, Don Severo, Tiburon at Ninong.'],
-        [N, 'Ito na ang huli. Pupunta ako sa Bagiw.'],
+        [N, 'Ito na ang huli. Pupunta ako sa Baguio.'],
         ['Ate Maya', 'Lumipad ka mula sa kahit anong paliparan. Magdala ka ng jacket — malamig doon!'],
       ]),
       {
-        obj: 'Lumipad papuntang ✈️ Bagiw (mula sa kahit anong paliparan)',
+        obj: 'Lumipad papuntang ✈️ Baguio (mula sa kahit anong paliparan)',
         target: () => { const P = G.player; return ['airport_d', 'airport_s', 'airport_m'].map(k => MAP.pois[k]).reduce((a, b) => U.d2(a.x, a.y, P.x, P.y) < U.d2(b.x, b.y, P.x, P.y) ? a : b); },
         update(c) {
           if (BAGIW.in(G.player.x)) return true;
@@ -52,7 +52,7 @@ MISSIONS.push(
         ['Lola Pining', 'Ikaw na ba ang apo ni Isyang? Ang tangkad mo! Halika, kain ka muna ng strawberry taho.'],
         ['Lola Pining', 'Tingnan mo ang bundok — kalbo na sa ilang bahagi. Ang minahan ni Don Magno ang dahilan. Ang putik, napupunta sa mga bukid namin.'],
         ...(G.flags.ch2 === 'pera' ? [['Lola Pining', 'Sinabi sa akin ni Isyang ang nangyari sa San Isidro... pero pinatawad ka na niya. Ipakita mo sa akin na tama siya.']] : [['Lola Pining', 'Ipinagmamalaki ka ni Isyang. Sabi niya, ikaw ang tunay na Hari ng Kalsada.']]),
-        ['Lola Pining', 'Una — kailangan nating makuha ang tiwala ng mga taga-Bagiw. May karera ng bisikleta pababa ng bundok bukas. Sumali ka!'],
+        ['Lola Pining', 'Una — kailangan nating makuha ang tiwala ng mga taga-Baguio. May karera ng bisikleta pababa ng bundok bukas. Sumali ka!'],
       ]),
     ],
   },
@@ -61,7 +61,7 @@ MISSIONS.push(
     desc: 'Manalo sa karera ng bisikleta pababa ng paliko-likong daan.',
     cp: { stage: 1, pos: () => bgw().down[0] },
     stages: [
-      talk([['Lola Pining', 'Ito ang bisikleta ng Lolo mo! Pababa sa paliko-likong daan hanggang sa paliparan. Ingat sa mga kurbada — at talunin ang mga taga-Bagiw!']]),
+      talk([['Lola Pining', 'Ito ang bisikleta ng Lolo mo! Pababa sa paliko-likong daan hanggang sa paliparan. Ingat sa mga kurbada — at talunin ang mga taga-Baguio!']]),
       {
         obj: 'Sumakay sa bisikleta sa simula ng karera',
         enter(c) { const s = bgw().down[0]; c.bike = laneSpawn('bisikleta', s.x - 20, s.y - 60, Math.PI / 2, { color: '#c0392b' }); },
@@ -85,7 +85,7 @@ MISSIONS.push(
             return false;
           }
           if (G.player.vehicle !== v) return 'Bumaba ka sa bisikleta — talo!';
-          if (U.dist(v.x, v.y, c.cps[c.pi].x, c.cps[c.pi].y) < 110) { c.pi++; AUD.checkpoint(); if (c.pi >= c.cps.length) { UI.big('🚲 PANALO!', 'Ikaw ang pinakamabilis sa Bagiw!', 2.2, 'good'); return true; } }
+          if (U.dist(v.x, v.y, c.cps[c.pi].x, c.cps[c.pi].y) < 110) { c.pi++; AUD.checkpoint(); if (c.pi >= c.cps.length) { UI.big('🚲 PANALO!', 'Ikaw ang pinakamabilis sa Baguio!', 2.2, 'good'); return true; } }
           const prog = (i, o) => i * 10000 - U.dist(o.x, o.y, c.cps[Math.min(i, c.cps.length - 1)].x, c.cps[Math.min(i, c.cps.length - 1)].y);
           const pp = prog(c.pi, v); let pos = 1;
           for (const r of c.rivals) {
@@ -98,7 +98,7 @@ MISSIONS.push(
         },
       },
       talk([
-        ['Lola Pining', 'Ang bilis mo! Ngayon, kilala ka na ng buong Bagiw. May nagbigay sa akin ng impormasyon: nasa mansyon ni Don Magno sa Mines View ang mga PEKENG permit ng minahan.'],
+        ['Lola Pining', 'Ang bilis mo! Ngayon, kilala ka na ng buong Baguio. May nagbigay sa akin ng impormasyon: nasa mansyon ni Don Magno sa Mines View ang mga PEKENG permit ng minahan.'],
         ['Lola Pining', 'Mahamog ngayong gabi — mahirap kang makita ng mga bantay. Ito na ang pagkakataon mo.'],
       ]),
     ],
@@ -139,7 +139,7 @@ MISSIONS.push(
     desc: 'Lumipad sa ibabaw ng gubat at kuhanan ng litrato ang mga ilegal na minahan.',
     cp: { stage: 1, pos: () => MAP.pois.bg_heli },
     stages: [
-      talk([['Lola Pining', 'May apat na minahan sa gubat sa paligid ng Bagiw. Lumipad ka sa ibabaw ng bawat isa at bagalan para makakuha ng malinaw na litrato!']]),
+      talk([['Lola Pining', 'May apat na minahan sa gubat sa paligid ng Baguio. Lumipad ka sa ibabaw ng bawat isa at bagalan para makakuha ng malinaw na litrato!']]),
       {
         obj: 'Sumakay sa helicopter sa may lawa',
         enter(c) { const p = MAP.safeNear(MAP.pois.bg_heli.x, MAP.pois.bg_heli.y - 80); c.h = laneSpawn('heli', p.x, p.y, -Math.PI / 2); TIP.show('heli'); },
@@ -201,7 +201,7 @@ MISSIONS.push(
       },
       talk([
         ['Don Magno', 'Bata... alam mo ba kung sino ako? Ako ang nagpondo sa lahat — kay Mayor, kay Don Severo, kay Tiburon, kay Ninong!'],
-        [N, 'Alam ko. Kaya ka nga namin hinabol mula Maynila hanggang Bagiw.'],
+        [N, 'Alam ko. Kaya ka nga namin hinabol mula Manila hanggang Baguio.'],
         ['Lola Pining', 'Ang Pambansang Ledger... ipapasa natin sa Senado at sa media. Ito na ang katapusan ng mga Ninong.'],
       ]),
       { obj: '', enter() { UI.comic(GRAND.panels()); }, update: () => !UI.talking },
@@ -221,7 +221,7 @@ const GRAND = {
     const good = G.flags.ch2 !== 'pera' && G.flags.ch3 !== 'itago';
     return [
       ['📒⚖️🏛️', 'Naipasa ang Pambansang Ledger. Isa-isang bumagsak ang mga Ninong sa buong bansa.'],
-      ['🏙🌾🏝🦅🌲', 'Maynila, San Isidro, Sugbo, Dabaw, Bagiw — limang lugar na naging mas malaya.'],
+      ['🏙🌾🏝🦅🌲', 'Manila, San Isidro, Cebu, Davao, Baguio — limang lugar na naging mas malaya.'],
       ['👵👵🧓🧑‍🍳🛵🦅🐕', 'Si Lola Isyang at Lola Pining, magkasama ulit. Si Tito Boy, Inday Bebing, Dodong, Ate Maya — isang malaking pamilya.'],
       good ? ['👑🛣️🌅', 'WAKAS NG SERYE: Ang Hari ng Kalsada — hindi dahil sa yaman o takot, kundi dahil sa puso para sa bayan.']
         : ['🌅🛣️🙏', 'WAKAS NG SERYE: Nagkamali ka sa daan, pero pinili mong bumalik. Iyan ang tunay na Hari ng Kalsada.'],

@@ -324,7 +324,7 @@ const NEWS = {
     if (f.ending2 === 'B') out.push('BALITA: Mga magsasaka ng San Isidro, nagpoprotesta — nabakuran ang kanilang mga bukid.');
     if (f.ch3 === 'ilantad') out.push('BALITA: Ledger ni Kapitan Tiburon, inilabas! Mga pulitiko at hepe, iniimbestigahan.');
     if (f.ch3 === 'itago') out.push('BALITA: Kapitan Tiburon, nakalaya dahil "kulang sa ebidensya". Saan napunta ang ledger?');
-    if (f.ch4) out.push('BALITA: Ninong, arestado sa Dabaw! Ilegal na pagtotroso sa Bundok Apo, itinigil na.');
+    if (f.ch4) out.push('BALITA: Ninong, arestado sa Davao! Ilegal na pagtotroso sa Bundok Apo, itinigil na.');
     if (f.kuta && Object.keys(f.kuta).length) out.push(`BALITA: ${Object.keys(f.kuta).length} kuta ng sindikato, nilinis ng isang misteryosong bayani!`);
     if ((st.rescued || 0) >= 5) out.push(`BALITA: ${st.rescued} katao, nailigtas ng isang driver habang may bagyo. Saludo kami sa iyo!`);
     if ((st.escapes || 0) >= 5) out.push(`BALITA: Isang driver, ${st.escapes} beses nang nakatakas sa pulis. "Hari ng Kalsada" daw ang tawag sa kanya.`);

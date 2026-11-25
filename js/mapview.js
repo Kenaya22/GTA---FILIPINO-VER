@@ -130,7 +130,7 @@ const MAPVIEW = {
     if (document.getElementById('mapscreen').classList.contains('hidden')) return;
     const c = document.getElementById('bigmap'), g = c.getContext('2d'), pr = this.pr, W = this.W, H = this.H, s = this.s, tile = s * T;
     g.setTransform(pr, 0, 0, pr, 0, 0);
-    g.fillStyle = '#0a1422'; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#163454'; g.fillRect(0, 0, W, H);
     // the map image (1 px per tile)
     const [x0, y0] = this.toWorld(0, 0);
     g.imageSmoothingEnabled = tile < 2;

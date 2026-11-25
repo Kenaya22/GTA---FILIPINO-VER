@@ -94,12 +94,12 @@ const WORLD = {
     const P = G.player, h = this.hour();
     // vendors
     const reg = regionName(P.x);
-    const type = reg === 'SUGBO' ? (h >= 6 && h < 22 ? 'puso' : null) : reg === 'DABAW' ? (h >= 6 && h < 21 ? 'durian' : null) : reg === 'SAN ISIDRO' ? null
+    const type = reg === 'CEBU' ? (h >= 6 && h < 22 ? 'puso' : null) : reg === 'DAVAO' ? (h >= 6 && h < 21 ? 'durian' : null) : reg === 'SAN ISIDRO' ? null
       : h >= 5 && h < 11 ? 'taho' : h >= 11 && h < 17 ? 'sorbetes' : (h >= 18 || h < 3) ? 'balut' : null;
     this.vendors = this.drop(this.vendors, p => (p.vendor !== type && !TRAFFIC.inView(p.x, p.y, 50)) || this.far(p, 1700));
     if (type && this.vendors.length < 2 && !this.onIsland(P.x, P.y)) {
       let p = null;
-      if (reg === 'MAYNILA') p = this.spawnOnSidewalk(450, 900);
+      if (reg === 'MANILA') p = this.spawnOnSidewalk(450, 900);
       else for (let k = 0; k < 12 && !p; k++) { const a = Math.random() * TAU, r = U.rand(450, 900), x = P.x + Math.cos(a) * r, y = P.y + Math.sin(a) * r; if (MAP.tileAt(x, y) === TL.SIDE && !TRAFFIC.inView(x, y, 30)) { p = new Person(x, y, 'ped'); p.state = 'wander'; p.home = { x, y }; p.wtiles = [TL.SIDE, TL.PLAZA]; G.peds.push(p); } }
       if (p) {
         p.vendor = type; p.speed = 42; p.keep = true; p.amb = true; p.umb = null;
@@ -393,7 +393,7 @@ const PROV = {
   reset() { this.folk = []; this.cars = []; },
 };
 
-// ===== Sugbo (Chapter 3 city): traffic loops & people =====
+// ===== Cebu (Chapter 3 city): traffic loops & people =====
 function cityLife(region, x0, x1, carTypes) { return {
   t: 0, folk: [], cars: [],
   in(x) { return x > x0() * T && x < x1() * T; },
@@ -435,15 +435,15 @@ const DABAW = cityLife(() => MAP.dabaw, () => DX0 - 12, () => DABAW_END + 3, ['j
 const BAGIW = cityLife(() => MAP.bagiw, () => BX0 - 4, () => MW + 1, ['jeepney', 'jeepney', 'taxi', 'sedan', 'suv', 'pickup', 'pickup', 'van', 'motor']);
 // road points used by police in the outer regions
 function regionPts(x) { return BAGIW.in(x) ? MAP.bagiw.pts : DABAW.in(x) ? MAP.dabaw.pts : SUGBO.in(x) ? MAP.sugbo.pts : MAP.prov.pts; }
-function regionName(x) { return BAGIW.in(x) ? 'BAGIW' : DABAW.in(x) ? 'DABAW' : SUGBO.in(x) ? 'SUGBO' : MAP.inProvince(x) ? 'SAN ISIDRO' : 'MAYNILA'; }
+function regionName(x) { return BAGIW.in(x) ? 'BAGUIO' : DABAW.in(x) ? 'DAVAO' : SUGBO.in(x) ? 'CEBU' : MAP.inProvince(x) ? 'SAN ISIDRO' : 'MANILA'; }
 
-// ===== Flights between Manila and Sugbo (short animated transition) =====
+// ===== Flights between Manila and Cebu (short animated transition) =====
 const FLY = {
   go(dest, done) {
     const P = G.player, el = document.getElementById('flight');
     if (P.vehicle) G.exitVehicle(true);
     G.cutscene = true; AUD.whoosh(); AUD.tone(180, 2.4, 'sawtooth', 0.04, 120);
-    const toSugbo = dest.key === 'airport_s', nm = { airport_m: 'MAYNILA', airport_s: 'SUGBO', airport_d: 'DABAW', airport_b: 'BAGIW' }, from = regionName(P.x);
+    const toSugbo = dest.key === 'airport_s', nm = { airport_m: 'MANILA', airport_s: 'CEBU', airport_d: 'DAVAO', airport_b: 'BAGUIO' }, from = regionName(P.x);
     document.getElementById('fl-to').textContent = `${from} ✈️ ${nm[dest.key]}`;
     el.classList.remove('hidden'); el.classList.add('on');
     const arr = MAP.safeNear(dest.x, dest.y + (dest.key === 'airport_m' ? -50 : 30));
@@ -454,7 +454,7 @@ const FLY = {
     }, 1600);
     setTimeout(() => {
       el.classList.remove('on'); el.classList.add('hidden'); G.cutscene = false;
-      UI.big(nm[dest.key], dest.key === 'airport_m' ? 'Balik sa Maynila' : dest.key === 'airport_d' ? 'Madayaw nga pag-abot! (Maligayang pagdating!)' : dest.key === 'airport_b' ? 'Malamig dito! Brrr... 🌲' : 'Maayong pag-abot! (Maligayang pagdating!)', 2.2);
+      UI.big(nm[dest.key], dest.key === 'airport_m' ? 'Balik sa Manila' : dest.key === 'airport_d' ? 'Madayaw nga pag-abot! (Maligayang pagdating!)' : dest.key === 'airport_b' ? 'Malamig dito! Brrr... 🌲' : 'Maayong pag-abot! (Maligayang pagdating!)', 2.2);
       if (toSugbo) TIP.show('sugbo'); if (dest.key === 'airport_d') TIP.show('dabaw'); if (dest.key === 'airport_b') TIP.show('bagiw');
       G.stats.flights = (G.stats.flights || 0) + 1; ACH.check();
       if (done) done();

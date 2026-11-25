@@ -1,5 +1,5 @@
 'use strict';
-// ===== KABANATA 3: SUGBO — the smuggling syndicate of Kapitan Tiburon =====
+// ===== KABANATA 3: CEBU — the smuggling syndicate of Kapitan Tiburon =====
 Object.assign(CHARS, {
   bebing: { name: 'Inday Bebing', look: { skin: '#c68b59', shirt: '#e67e22', pat: 'floral', outfit: 'npc', hair: 'long', hairCol: '#2b1d14', pants: '#3b3b3b' } },
   dodong: { name: 'Dodong', look: { skin: '#a86b3c', shirt: '#2e86c1', pat: 'jersey', outfit: 'npc', hair: 'cap_blue', hairCol: '#111', pants: '#1f2633' } },
@@ -45,32 +45,32 @@ const ch2pera = () => G.flags.ch2 === 'pera';
 
 MISSIONS.push(
   { // 15
-    id: 'biyahe-sugbo', title: 'Biyahe sa Sugbo', giver: 'tito', reward: 2000, chapter: 3,
-    desc: 'Lumipad papuntang Sugbo at hanapin si Inday Bebing.',
+    id: 'biyahe-sugbo', title: 'Biyahe sa Cebu', giver: 'tito', reward: 2000, chapter: 3,
+    desc: 'Lumipad papuntang Cebu at hanapin si Inday Bebing.',
     cp: { stage: 3, pos: () => MAP.pois.airport_s },
     stages: [
       comic([
-        ['🌊🚢📦', 'Sa daungan ng Sugbo, gabi-gabi may dumarating na mga bangkang walang ilaw...'],
+        ['🌊🚢📦', 'Sa daungan ng Cebu, gabi-gabi may dumarating na mga bangkang walang ilaw...'],
         ['🦈🕶️💰', 'Si KAPITAN TIBURON — ang hari ng smuggling sa Kabisayaan. Sa kanya dumadaan ang maruming pera ng mga kurakot.'],
-        ['✈️🏝️🔥', 'KABANATA 3: SUGBO'],
+        ['✈️🏝️🔥', 'KABANATA 3: CEBU'],
       ]),
       {
         obj: '', enter() {
           UI.say(ch2pera() ? [
             ['Tito Boy', 'Nonoy... alam ko ang ginawa mo sa probinsya. Hindi ako galit — pero may pagkakataon kang ituwid ito.'],
-            ['Tito Boy', 'Ang pinsan kong si Inday Bebing sa Sugbo, ginigipit ng sindikato ni Kapitan Tiburon. Sa kanya rin dumaan ang pera ni Don Severo.'],
+            ['Tito Boy', 'Ang pinsan kong si Inday Bebing sa Cebu, ginigipit ng sindikato ni Kapitan Tiburon. Sa kanya rin dumaan ang pera ni Don Severo.'],
             [N, 'Kung ganoon... baka ako ang makapagpabagsak sa kanila. Pupunta ako.'],
             ['Tito Boy', 'Heto ang tiket ng eroplano. Nasa Paliparan sa timog ng Pasay. Ingat, pamangkin.'],
           ] : [
-            ['Tito Boy', 'Nonoy! Bayani ka ng San Isidro! Pero may tumawag sa akin — ang pinsan kong si Inday Bebing sa Sugbo.'],
+            ['Tito Boy', 'Nonoy! Bayani ka ng San Isidro! Pero may tumawag sa akin — ang pinsan kong si Inday Bebing sa Cebu.'],
             ['Tito Boy', 'Ginigipit daw ang lechonan niya ng sindikato ni Kapitan Tiburon. Sa kanya rin dumaan ang pera nina Mayor Kurakot at Don Severo!'],
-            [N, 'Kung ganoon, siya ang ugat ng lahat. Pupunta ako sa Sugbo.'],
+            [N, 'Kung ganoon, siya ang ugat ng lahat. Pupunta ako sa Cebu.'],
             ['Tito Boy', 'Heto ang tiket ng eroplano — libre, regalo ko. Nasa Paliparan sa timog ng Pasay.'],
           ]);
         }, update: () => !UI.talking,
       },
       {
-        obj: 'Pumunta sa ✈️ Paliparan ng Maynila (timog ng Pasay)', target: () => MAP.pois.airport_m,
+        obj: 'Pumunta sa ✈️ Paliparan ng Manila (timog ng Pasay)', target: () => MAP.pois.airport_m,
         update(c) {
           if (SUGBO.in(G.player.x)) return true;
           if (!near(MAP.pois.airport_m, 90) || c.flying) return false;
@@ -82,20 +82,20 @@ MISSIONS.push(
       { obj: 'Hanapin ang lechonan ni Inday Bebing sa Kolon', target: () => MAP.pois.bebing, update: () => near(MAP.pois.bebing, 110) },
       talk([
         ['Inday Bebing', 'Ikaw na ba si Nonoy? Maayong pag-abot, Dong! (Maligayang pagdating!) Ang gwapo mo pala, parang si Tito Boy noong bata pa.'],
-        ['Inday Bebing', 'Kaon sa ta! (Kain muna tayo!) Lechon ng Sugbo — walang sarsa, kasi lami na! (masarap na!)'],
+        ['Inday Bebing', 'Kaon sa ta! (Kain muna tayo!) Lechon ng Cebu — walang sarsa, kasi lami na! (masarap na!)'],
         ['Inday Bebing', 'Pero seryoso, Dong... Ang mga tauhan ni Kapitan Tiburon, pinagbabayad ako ng "proteksyon" linggo-linggo. Kung hindi, susunugin daw ang tindahan ko.'],
         [N, 'Hindi ako papayag, Tiya. Tutulungan kita.'],
-        ['Inday Bebing', 'Salamat kaayo! (Maraming salamat!) Kausapin mo muna ang pamangkin kong si Dodong — habal-habal driver siya, kilala niya ang buong Sugbo.'],
+        ['Inday Bebing', 'Salamat kaayo! (Maraming salamat!) Kausapin mo muna ang pamangkin kong si Dodong — habal-habal driver siya, kilala niya ang buong Cebu.'],
       ]),
     ],
   },
   { // 16
     id: 'habal-habal', title: 'Habal-Habal', giver: 'dodong', reward: 2500, chapter: 3,
-    desc: 'Mag-habal-habal kasama si Dodong para makilala ang Sugbo.',
+    desc: 'Mag-habal-habal kasama si Dodong para makilala ang Cebu.',
     cp: { stage: 1, pos: () => MAP.pois.dodong },
     stages: [
       talk([
-        ['Dodong', 'Uy, ikaw si Nonoy! Taga-Maynila, ha? Diri sa Sugbo, motor ang hari — habal-habal ang tawag namo! (namin!)'],
+        ['Dodong', 'Uy, ikaw si Nonoy! Taga-Manila, ha? Diri sa Cebu, motor ang hari — habal-habal ang tawag namo! (namin!)'],
         ['Dodong', 'Sakay ka sa motor ko. Ihatid mo ang tatlong pasahero. Para makabisado mo ang lungsod — pati ang daan paakyat sa Busay!'],
       ]),
       {
@@ -121,7 +121,7 @@ MISSIONS.push(
         },
       },
       talk([
-        ['Dodong', 'Maayo kaayo! (Ang galing!) Kabisado mo na ang Sugbo, Nonoy!'],
+        ['Dodong', 'Maayo kaayo! (Ang galing!) Kabisado mo na ang Cebu, Nonoy!'],
         ['Dodong', 'May sasabihin ako... tuwing gabi, may mga bangkang walang ilaw sa pantalan. Diretso sa bodega ni Tiburon. Walang pulis na pumapansin.'],
         ['Dodong', 'Kung may litrato tayo, may maipapakita tayo sa media. Kausapin mo si Tiya Bebing.'],
       ]),
@@ -214,7 +214,7 @@ MISSIONS.push(
   },
   { // 19
     id: 'bagyong-agila', title: 'Bagyong Agila', giver: 'bebing', reward: 4500, chapter: 3,
-    desc: 'Sagipin ang mga tao sa baha habang may bagyo sa Sugbo.',
+    desc: 'Sagipin ang mga tao sa baha habang may bagyo sa Cebu.',
     cp: { stage: 1, pos: () => MAP.pois.bebing },
     stages: [
       talk([
@@ -257,13 +257,13 @@ MISSIONS.push(
       talk([
         ['Inday Bebing', 'Ligtas silang lahat! Salamat kaayo, Dong!'],
         ['Dodong', 'Pero tingnan mo ito — ang mga relief goods para sa mga nasalanta, nakita kong isinasakay ng mga tauhan ni Tiburon sa armored van! Ibebenta nila!'],
-        ['Inday Bebing', 'Walang hiya! Bukas ang Pista sa Sugbo. Siguradong gagamitin nila ang parada para itago ang van...'],
+        ['Inday Bebing', 'Walang hiya! Bukas ang Pista sa Cebu. Siguradong gagamitin nila ang parada para itago ang van...'],
       ]),
     ],
     done(c) { if (c.groups) for (const g of c.groups) removePeds(g.peds); if (c.car) c.car.mission = false; if (TYPHOON.s) TYPHOON.s.t = Math.min(TYPHOON.s.t, 20); },
   },
   { // 20
-    id: 'pista-sugbo', title: 'Pista sa Sugbo', giver: 'bebing', reward: 5000, chapter: 3,
+    id: 'pista-sugbo', title: 'Pista sa Cebu', giver: 'bebing', reward: 5000, chapter: 3,
     desc: 'Sundan ang armored van sa gitna ng parada at agawin ito.',
     cp: { stage: 1, pos: () => MAP.pois.plazakrus },
     stages: [
@@ -304,7 +304,7 @@ MISSIONS.push(
       },
       talk([
         ['Inday Bebing', 'Ang mga relief goods! Ibabalik natin ito sa mga nasalanta. Ikaw talaga, Dong!'],
-        ['Dodong', 'Nag-text si Tiburon: "Bukas ng gabi, sa bodega. Pumunta ka kung matapang ka, taga-Maynila."'],
+        ['Dodong', 'Nag-text si Tiburon: "Bukas ng gabi, sa bodega. Pumunta ka kung matapang ka, taga-Manila."'],
       ]),
     ],
     done(c) { FIESTA.endParade(); removePeds(c.pating); if (c.v) { c.v.mission = false; c.v.criminal = false; } },
@@ -317,7 +317,7 @@ MISSIONS.push(
       {
         obj: '', enter() {
           const P = G.player, lines = [['Dodong', 'Ito na, Nonoy. Nasa loob ng bodega ang LEDGER — ang listahan ng lahat ng binayaran ni Tiburon.']];
-          if (!GUNS.owned('pistola')) { P.weapons.pistola = 48; P.mags.pistola = 12; lines.push(['Dodong', 'Wala kang baril? Heto — pinadala ni Kabo mula Maynila. Pistola at bala.']); }
+          if (!GUNS.owned('pistola')) { P.weapons.pistola = 48; P.mags.pistola = 12; lines.push(['Dodong', 'Wala kang baril? Heto — pinadala ni Kabo mula Manila. Pistola at bala.']); }
           if ((P.armor || 0) < 100) { P.armor = 100; lines.push(['Dodong', 'At isuot mo itong bulletproof vest. Amping! (Ingat!)']); }
           if (ch2pera()) lines.push(['Inday Bebing (sa telepono)', 'Dong! Nakita ko si Don Severo na pumasok sa bodega! Magkasosyo pala sila ni Tiburon — mas maraming bantay ngayon!']);
           else { P.weapons.granada = (P.weapons.granada || 0) + 3; lines.push(['Lola Isyang (sa telepono)', 'Apo! Pinadalhan ka ng mga magsasaka ng San Isidro ng "pasalubong" — tatlong granada! At tumawag si Kapitana Luz sa NBI: naka-abang sila sa labas.']); }
@@ -355,8 +355,8 @@ MISSIONS.push(
     cp: { stage: 1, pos: () => MAP.pois.ferry_sg },
     stages: [
       talk([
-        ['Inday Bebing', 'Dong, nasa pier ang pinakamabilis na speedboat sa Sugbo. Habulin mo si Tiburon bago siya makalabas ng kipot!'],
-        ['Kapitan Tiburon (sa radyo)', 'Hahaha! Taga-Maynila, akala mo kaya mo ako? Ako ang HARI NG DAGAT! Mga bata — lunurin siya!'],
+        ['Inday Bebing', 'Dong, nasa pier ang pinakamabilis na speedboat sa Cebu. Habulin mo si Tiburon bago siya makalabas ng kipot!'],
+        ['Kapitan Tiburon (sa radyo)', 'Hahaha! Taga-Manila, akala mo kaya mo ako? Ako ang HARI NG DAGAT! Mga bata — lunurin siya!'],
       ]),
       {
         obj: 'Sumakay sa speedboat', enter(c) { const s = sg().piers[1]; c.boat = laneSpawn('lancha', s.x + 30, s.y - 100, Math.PI, { color: '#c0392b' }); c.boat.maxhp = c.boat.hp = 200; },
@@ -396,7 +396,7 @@ MISSIONS.push(
           ], (k) => {
             G.flags.ch3 = k === 0 ? 'ilantad' : 'itago';
             if (k === 1) { G.addMoney(100000, true); UI.say([['Kapitan Tiburon', 'Hahaha! Matalino ka, bata. Maligayang pagdating sa pamilya.']]); }
-            else UI.say([['Inday Bebing', 'Dong... salamat. Ngayong gabi, malaya na ang Sugbo. At sa wakas, mananagot ang lahat.']]);
+            else UI.say([['Inday Bebing', 'Dong... salamat. Ngayong gabi, malaya na ang Cebu. At sa wakas, mananagot ang lahat.']]);
             c.picked = true;
           });
         },
@@ -417,9 +417,9 @@ MISSIONS.forEach(m => { m.chapter = m.chapter || 1; });
 const FINAL = {
   ending() {
     return {
-      AC: ['👑 ANG TUNAY NA HARI NG KALSADA', 'Ibinigay mo ang lupa sa bayan at inilantad mo ang mga kurakot. Ito ang TUNAY NA WAKAS — ang Hari ng Kalsada ay naglilingkod sa bayan. Pero may isa pang pangalan sa ledger... BUKAS NA ANG KABANATA 4 — puntahan si Inday Bebing sa Sugbo!'],
+      AC: ['👑 ANG TUNAY NA HARI NG KALSADA', 'Ibinigay mo ang lupa sa bayan at inilantad mo ang mga kurakot. Ito ang TUNAY NA WAKAS — ang Hari ng Kalsada ay naglilingkod sa bayan. Pero may isa pang pangalan sa ledger... BUKAS NA ANG KABANATA 4 — puntahan si Inday Bebing sa Cebu!'],
       AD: ['🦈 ANG BAGONG TIBURON', 'Bayani ka ng San Isidro, pero pinili mo ang pera ng sindikato. Maglaro ulit (Developer Mode o ibang Slot) para makita ang ibang wakas.'],
-      BC: ['🙏 PAGBABALIK-LOOB', 'Nagkamali ka sa probinsya, pero itinuwid mo sa Sugbo. Hindi pa huli ang lahat para maging tama. Subukan din ang ibang mga pagpili!'],
+      BC: ['🙏 PAGBABALIK-LOOB', 'Nagkamali ka sa probinsya, pero itinuwid mo sa Cebu. Hindi pa huli ang lahat para maging tama. Subukan din ang ibang mga pagpili!'],
       BD: ['💰 HARI NG WALA', 'Ikaw na ang pinakamayaman sa tatlong lungsod — pero nawala ang lahat ng nagmamahal sa iyo. Maglaro ulit para makita ang ibang wakas.'],
     }[this.key()];
   },
@@ -431,7 +431,7 @@ const FINAL = {
   panels() {
     const k = this.key();
     const P = {
-      AC: [['📰📒⚖️', 'Lumabas sa balita ang ledger ni Tiburon. Isa-isang inaresto ang mga nasa listahan.'], ['🏙️🌾🏝', 'Maynila, San Isidro, Sugbo — malaya na sa mga kurakot. Pista sa tatlong lugar!'], ['👵👨‍🦳🧑‍🍳🛵', 'Lola Isyang, Tito Boy, Inday Bebing at Dodong — iisang pamilya, iisang mesa.'], ['👑', 'TUNAY NA WAKAS: "Ang Hari ng Kalsada ay naglilingkod sa bayan."']],
+      AC: [['📰📒⚖️', 'Lumabas sa balita ang ledger ni Tiburon. Isa-isang inaresto ang mga nasa listahan.'], ['🏙️🌾🏝', 'Manila, San Isidro, Cebu — malaya na sa mga kurakot. Pista sa tatlong lugar!'], ['👵👨‍🦳🧑‍🍳🛵', 'Lola Isyang, Tito Boy, Inday Bebing at Dodong — iisang pamilya, iisang mesa.'], ['👑', 'TUNAY NA WAKAS: "Ang Hari ng Kalsada ay naglilingkod sa bayan."']],
       AD: [['💰🛥️', 'Tinanggap mo ang alok ni Tiburon. Bayani ng San Isidro... na ngayon ay may lihim.'], ['👵📞', '"Apo, bakit hindi ka na tumatawag?" — Lola Isyang'], ['🦈👑', 'WAKAS: "Ang Bagong Tiburon." Mayaman, makapangyarihan... at mag-isa.']],
       BC: [['📰📒⚖️', 'Inilantad mo ang ledger — pati ang sarili mong pangalan, ang bayad ni Don Severo.'], ['🌾🔙', 'Ibinalik mo ang ₱30,000 sa mga magsasaka ng San Isidro. Unti-unti, pinatawad ka ni Lola.'], ['👵❤️', 'WAKAS: "Pagbabalik-loob." Hindi pa huli ang lahat para maging tama.']],
       BD: [['💰💰🛥️', 'Pera ni Don Severo, pera ni Tiburon... ikaw na ang pinakamayaman sa tatlong lungsod.'], ['🏚️😶', 'Pero wala nang tumatawag sa iyo ng "apo", "pamangkin" o "Dong".'], ['🦈', 'WAKAS: "Hari ng Wala." Nabili mo ang lahat — maliban sa pamilya.']],
