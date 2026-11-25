@@ -17,6 +17,16 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.0', title: 'Buhay na Lungsod', date: 'Nobyembre 2026', items: [
+    '⭐ <b>Level at Skills</b> — kumita ng XP at palakasin ang Pagmamaneho, Asinta, Tibay sa Takbo at Tibay ng Katawan (☰ → 📈)',
+    '📅 <b>Hamon araw-araw</b> — 3 bagong hamon bawat araw na may premyo (☰ → 📅)',
+    '🔁 <b>Replay ng misyon</b> para sa 🥇🥈🥉 medalya · ✨ <b>New Game+</b> pagkatapos ng Kabanata 4',
+    '🚨 <b>Pangyayari sa kalye</b>: snatcher, batang nawawala, aksidente — at 🐕 <b>mag-ampon ng askal</b> na susunod sa iyo!',
+    '🍗 <b>Pumasok sa loob</b>: Manukan sa Kanto, Mall (magtago sa pulis!) at mga Simbahan (Simbang Gabi tuwing Pasko)',
+    '🍦 Bagong naglalako: sorbetes sa Maynila, puso sa Sugbo, durian sa Dabaw · 📻 Balita sa radyo tungkol sa mga ginawa mo',
+    '🐚 <b>20 bagong koleksyon</b>: kabibe sa Sugbo at balahibo ng agila sa Dabaw',
+    '⚙️ Bagong setting: dami ng tao/sasakyan (tipid baterya) at auto/manual na pagtutok · 🏥 Sa pinakamalapit na ospital/presinto ka na dadalhin',
+  ] },
   { v: '1.9', title: 'Kabanata 4: Dabaw', date: 'Nobyembre 2026', items: [
     '🦅 <b>KABANATA 4: DABAW</b> — bagong lungsod sa Mindanao: Bundok Apo, Sentro ng Agila, saging na plantasyon, Durian Market at paliparan',
     '📖 <b>6 bagong misyon</b> (28 lahat) laban kay <b>Ninong</b> — durian delivery, trak ng troso, pagligtas sa sisiw ng agila, convoy ng saging at huling laban sa bundok',
@@ -149,6 +159,9 @@ const UI = {
     $('btn-slotclose').onclick = () => this.hide('slots');
     $('btn-pach').onclick = () => ACH.open();
     $('btn-photo').onclick = () => PHOTO.open();
+    $('btn-skills').onclick = () => PROG.open();
+    $('btn-daily').onclick = () => DAILY.open();
+    $('btn-ngplus').onclick = () => { AUD.init(); AUD.resume(); NGPLUS.start(); TUT.pending = false; TUT.end && TUT.end(true); };
     $('ph-close').onclick = () => PHOTO.close();
     $('ph-snap').onclick = () => PHOTO.snap();
     $('ph-frame').onclick = () => { PHOTO.frame = !PHOTO.frame; PHOTO.render(); AUD.click(); };
@@ -210,7 +223,7 @@ const UI = {
   },
   refreshTitle() {
     const l = SAVE.latest();
-    $('btn-continue').classList.toggle('hidden', !l); $('btn-load').classList.toggle('hidden', !l); $('t-save').classList.toggle('hidden', !l);
+    $('btn-continue').classList.toggle('hidden', !l); $('btn-ngplus').classList.toggle('hidden', !NGPLUS.available()); $('btn-load').classList.toggle('hidden', !l); $('t-save').classList.toggle('hidden', !l);
     $('btn-new').classList.toggle('primary', !l); $('btn-new').classList.toggle('t-big', !l);
     if (l) {
       const d = SAVE.describe(l.data), pct = ACH.percentOf(l.data);
@@ -374,7 +387,8 @@ const UI = {
     this.set('weap', this.el.weapon, 'textContent', v ? (GUNS.driveGun() ? ARMS.label() : '') : ARMS.label());
     this.el.armorwrap.classList.toggle('hidden', !(P.armor > 0));
     if (P.armor > 0) this.el.armorbar.style.width = P.armor + '%';
-    let side = JOBS.objText() || PASADA.objText();
+    let side = JOBS.objText() || PASADA.objText() || STREET.objText();
+    this.set('lvl', $('lvl'), 'textContent', `⭐ Lv ${P.level || 1}${P.sp ? ' · +' + P.sp + ' skill' : ''}${P.buffT > 0 ? ' · 💪 SIGLA' : ''}`);
     if (!side && JOBS.avail()) side = `💼 Pindutin ang ${INPUT.touch ? '💼' : 'J'} para sa side job: ${JOB_NAMES[JOBS.avail()]}`;
     if (!MS.active && !side && MS.idx < MISSIONS.length) {
       side = `Susunod na misyon: ${MISSIONS[MS.idx].title} — puntahan si ${CHARS[MISSIONS[MS.idx].giver].name} (${CHARS[MISSIONS[MS.idx].giver].name[0]} sa mapa)`;
@@ -568,10 +582,12 @@ const UI = {
       if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'SUGBO' : 'DABAW'}</div>`; }
       const st = i < MS.idx ? 'done' : i === MS.idx ? 'next' : 'locked';
       const label = st === 'done' ? '✓ TAPOS' : st === 'next' ? (MS.active === m ? 'GINAGAWA' : 'SUSUNOD') : '🔒';
-      return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}</div></div>`;
+      return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title} ${REPLAY.gradeIcon(m)}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}${st === 'done' && !MS.active ? `<button class="rep" data-r="${i}">🔁 REPLAY</button>` : ''}</div></div>`;
     }).join('');
+    $('mission-list').querySelectorAll('button[data-r]').forEach(b => b.onclick = () => REPLAY.start(+b.dataset.r));
   },
   ending(kind = 'ch1') {
+    if (REPLAY.noEndingUntil && performance.now() < REPLAY.noEndingUntil) return;
     G.paused = true;
     const E = {
       ch1: ['TAPOS ANG KABANATA 1!', 'Naibalik ang ayuda sa mga tao. Nakulong si Mayor Kurakot at si Boss Tikboy. Pero may sulat mula sa probinsya... BUKAS NA ANG KABANATA 2 — puntahan si Tito Boy!'],

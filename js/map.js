@@ -772,6 +772,7 @@ const MAP = {
     add('eagle', VX[3] + 14, HY[1] + 10.4, 'spot', 'Sentro ng Agila', '🦅', { landmark: true });
     add('durian', ...door(B(1, 0), 'S'), 'sari', 'Durian Market', '🍈');
     add('dw_hospital', ...door(B(2, 3), 'N'), 'hospital', 'Ospital ng Dabaw', '🏥');
+    add('dw_presinto', ...door(B(1, 3), 'N'), 'police', 'Presinto ng Dabaw', '🚓');
     add('dw_gun', ...door(B(0, 1), 'E'), 'gunshop', 'Armas ni Kabo (Dabaw)', '🔫');
     add('dw_ukay', ...door(B(2, 1), 'S'), 'ukay', 'Ukay-Ukay sa Dabaw', '👕');
     add('dw_paint', ...door(B(0, 2), 'E'), 'paint', 'Pintura sa Dabaw', '🎨');
@@ -788,6 +789,18 @@ const MAP = {
     add('lm_quiapo', this.door(6, 1, 'N').x, this.door(6, 1, 'N').y, 'Simbahan ng Quiapo', '⛪');
     add('lm_baywalk', (OX - 1.5) * T, this.cy(6), 'Baywalk (Paglubog ng Araw)', '🌅');
     for (const k of ['plaza', 'plazakrus', 'tops']) if (this.pois[k]) this.pois[k].landmark = true;
+    // places you can walk into
+    const ins = (key, pt, type, label, icon, sign, col) => { if (!pt) return; this.pois[key] = { key, x: pt.x, y: pt.y, type, label, icon }; this.decor.push({ type: 'sign', x: pt.x, y: pt.y, color: col, text: sign }); };
+    const sdoor = (reg, i, j, side) => { const b = reg.blocks.find(q => q.i === i && q.j === j); if (!b) return null; const [x, y] = side === 'S' ? [b.x0 + b.w / 2 + 3, b.y0 + b.h - 0.5] : side === 'N' ? [b.x0 + b.w / 2 + 3, b.y0 + 0.5] : side === 'E' ? [b.x0 + b.w - 0.5, b.y0 + b.h / 2 + 3] : [b.x0 + 0.5, b.y0 + b.h / 2 + 3]; return { x: x * T, y: y * T }; };
+    ins('kainan_m', this.door(3, 4, 'N', 3), 'kainan', 'Manukan sa Kanto', '🍗', 'MANUKAN', '#c0392b');
+    ins('kainan_s', sdoor(this.sugbo, 2, 2, 'N'), 'kainan', 'Manukan sa Kanto (Sugbo)', '🍗', 'MANUKAN', '#c0392b');
+    ins('kainan_d', sdoor(this.dabaw, 0, 0, 'S'), 'kainan', 'Manukan sa Kanto (Dabaw)', '🍗', 'MANUKAN', '#c0392b');
+    ins('mall_m', this.door(7, 6, 'N'), 'mall', 'Mall ng Bayan', '🏬', 'MALL', '#2c5aa0');
+    ins('mall_s', sdoor(this.sugbo, 3, 1, 'W'), 'mall', 'IT Park Mall', '🏬', 'MALL', '#2c5aa0');
+    ins('church_m', this.door(6, 1, 'W'), 'church', 'Simbahan ng Quiapo', '⛪', 'SIMBAHAN', '#7a6a58');
+    ins('church_s', sdoor(this.sugbo, 2, 1, 'W'), 'church', 'Basilika sa Plaza Krus', '⛪', 'SIMBAHAN', '#7a6a58');
+    ins('church_d', sdoor(this.dabaw, 1, 2, 'N'), 'church', 'Katedral ng Dabaw', '⛪', 'SIMBAHAN', '#7a6a58');
+    if (this.prov) ins('church_p', { x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy - 4.5) * T }, 'church', 'Simbahan ng San Isidro', '⛪', 'SIMBAHAN', '#7a6a58');
   },
   makeLabels() {
     const L = [['PANTALAN', 0, -0.5], ['TONDO', 1.5, 0], ['DIVISORIA', 3, -0.5], ['BINONDO', 4.5, 0], ['SAMPALOC', 7, -0.5], ['QUIAPO', 6, 1],

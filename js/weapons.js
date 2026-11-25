@@ -54,7 +54,7 @@ const ARMS = {
   },
   crimeOn(p) {
     if (p.kind === 'cop') WANTED.crime(3, p.x, p.y, true);
-    else if (p.kind === 'goon') p.hostile = true;
+    else if (p.kind === 'goon' || p.snatcher) p.hostile = true;
     else if (!p.npc) { WANTED.crime(1, G.player.x, G.player.y); G.panic(p.x, p.y, 260); }
   },
   aim(range, cone) {

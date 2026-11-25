@@ -5,15 +5,15 @@ const MAPCATS = [
   { id: 'shop', name: '🛒 Tindahan', types: [['gunshop', '🔫', 'Baril'], ['weapon', '🔨', 'Hardware'], ['ukay', '👕', 'Ukay-Ukay'], ['barber', '💈', 'Barberya'], ['paint', '🎨', 'Pintura'], ['sari', '🏪', 'Sari-sari'], ['chop', '🔧', 'Talyer']] },
   { id: 'serv', name: '🏥 Serbisyo', types: [['hospital', '🏥', 'Ospital'], ['home', '🏠', 'Bahay / Save'], ['garage', '🅿️', 'Garahe'], ['police', '🚓', 'Presinto'], ['evac', '⛺', 'Evacuation']] },
   { id: 'job', name: '💼 Trabaho', types: [['rider', '🛵', 'Rider Hub'], ['tow', '🛻', 'Impound'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['race', '🏁', 'Karera']] },
-  { id: 'fun', name: '🎉 Libangan', types: [['videoke', '🎤', 'Videoke'], ['court', '🏀', 'Basketball'], ['property', '🔑', 'Ibinebenta'], ['landmark', '📸', 'Pasyalan']] },
+  { id: 'fun', name: '🎉 Libangan', types: [['kainan', '🍗', 'Kainan'], ['mall', '🏬', 'Mall'], ['church', '⛪', 'Simbahan'], ['videoke', '🎤', 'Videoke'], ['court', '🏀', 'Basketball'], ['property', '🔑', 'Ibinebenta'], ['landmark', '📸', 'Pasyalan']] },
   { id: 'go', name: '✈️ Biyahe', types: [['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan']] },
-  { id: 'ts', name: '🩴 Tsinelas', types: [] },
+  { id: 'ts', name: '🩴 Koleksyon', types: [] },
 ];
 const PLACE_INFO = {
   gunshop: 'Baril, bala, granada, vest at shooting range', weapon: 'Pamalo, tirador at water gun', ukay: 'Damit at aksesorya — iba ang itsura mo para sa pulis', barber: 'Bagong gupit — iba ang mukha mo para sa pulis',
   paint: 'Kulay, makina, armor at sticker ng sasakyan', sari: 'Pagkain para sa buhay', chop: 'Ibenta ang mga sasakyan', hospital: 'Full heal', home: 'I-save ang laro', garage: 'Iparada ang mga sasakyan mo',
   police: 'Presinto ng pulis — iwasan kung wanted ka!', evac: 'Dalhin dito ang mga nasagip sa bagyo', rider: 'Food delivery na side job', tow: 'Tow truck na side job', depot: 'Ambulansya, fire truck at trak ng basura',
-  race: 'Underground race sa gabi', videoke: 'Kumanta para sa premyo', court: '3-Point Shootout', property: 'Ari-arian na may araw-araw na kita', ferry: 'Sakay ng barko', airport: 'Lumipad sa ibang lungsod', landmark: 'Magandang lugar para sa litrato (Photo Mode)',
+  kainan: 'Kumain — buhay at SIGLA', mall: 'Mamili, maglaro o magtago sa pulis', church: 'Magdasal (libreng full heal araw-araw)', race: 'Underground race sa gabi', videoke: 'Kumanta para sa premyo', court: '3-Point Shootout', property: 'Ari-arian na may araw-araw na kita', ferry: 'Sakay ng barko', airport: 'Lumipad sa ibang lungsod', landmark: 'Magandang lugar para sa litrato (Photo Mode)',
 };
 const MAPVIEW = {
   s: 0.1, cx: 0, cy: 0, cat: null, pop: null, ptrs: new Map(),
@@ -164,6 +164,7 @@ const MAPVIEW = {
       g.globalAlpha = 1;
     }
     // tsinelas
+    if (this.cat === 'ts' || tile >= 7) for (const c of COLL.all()) if (!COLL.got().has(c.id)) { const [x, y] = scr(c.x, c.y); g.font = '14px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(COLL.kinds[c.kind].icon, x, y); }
     if (this.cat === 'ts' || tile >= 7) for (const t of MAP.tsinelas) if (!G.tsinelas.has(t.id)) { const [x, y] = scr(t.x, t.y); g.fillStyle = '#ffd23f'; g.strokeStyle = '#5a4300'; g.lineWidth = 1.5; g.beginPath(); g.ellipse(x, y, 3.5, 6, 0.4, 0, TAU); g.fill(); g.stroke(); }
     // places
     const showNames = tile >= 9 || (!!this.cat && tile >= 4);

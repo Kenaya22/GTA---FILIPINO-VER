@@ -82,7 +82,7 @@ const JOBS = {
     this.active = null; this.c = null;
     SAVE.auto();
   },
-  pay(n, why) { n = Math.round(n); G.addMoney(n, true); this.c.earned += n; UI.toast(`${why} +${U.money(n)}`); },
+  pay(n, why) { n = Math.round(n); G.addMoney(n, true); this.c.earned += n; UI.toast(`${why} +${U.money(n)}`); PROG.xp(n / 10, 'Trabaho'); },
   // generic: stop near a point for a moment
   stopped(pt, r, hold = 0.7) {
     const v = this.c.v;

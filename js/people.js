@@ -100,6 +100,7 @@ class Person {
   }
   updateAI(dt) {
     this.atkCd -= dt;
+    if (this.kind === 'dog' && this.state === 'follow') return;
     if (this.state === 'down') {
       this.vx *= Math.pow(0.02, dt); this.vy *= Math.pow(0.02, dt); this.moveAmt = 0;
       this.move(dt); this.downT -= dt;
@@ -215,7 +216,7 @@ class Player extends Person {
   faceId() { return this.look.hair; }
   hurt(n, fx, fy) {
     if (this.downed || G.cutscene || DEV.god) return;
-    n *= D().dmg;
+    n *= D().dmg * PROG.dmgMul();
     if (this.armor > 0) { const soak = Math.min(this.armor, n * 0.7); this.armor -= soak; n -= soak; }
     this.hp -= n; this.hurtT = 0.3;
     G.shake(3);
@@ -228,7 +229,7 @@ class Player extends Person {
   }
   update(dt, inp) {
     if (this.downed) return;
-    this.punchCd -= dt; if (this.punchT > 0) this.punchT -= dt; if (this.hurtT > 0) this.hurtT -= dt;
+    this.punchCd -= dt; if (this.punchT > 0) this.punchT -= dt; if (this.hurtT > 0) this.hurtT -= dt; if (this.buffT > 0) this.buffT -= dt;
     if (this.vehicle) {
       const v = this.vehicle;
       this.x = v.x; this.y = v.y; this.a = v.a;
@@ -290,7 +291,7 @@ class Player extends Person {
     // on foot
     let mx = inp.mx, my = inp.my;
     const m = Math.hypot(mx, my);
-    const sp = (inp.run || m > 0.92 && inp.touch ? 235 : 140) * (m > 1 ? 1 / m : 1);
+    const sp = (inp.run || m > 0.92 && inp.touch ? 235 : 140) * (m > 1 ? 1 / m : 1) * PROG.runMul();
     if (m > 0.1) {
       this.vx = mx * sp; this.vy = my * sp;
       const ta = Math.atan2(my, mx);
@@ -315,7 +316,7 @@ class Player extends Person {
         if (p.hp <= 0 || p.kind !== 'cop' || Math.random() < 0.5) { p.knock(this.x, this.y, 160); p.hp = 100; }
         else { p.vx = Math.cos(this.a) * 120; p.vy = Math.sin(this.a) * 120; }
         if (p.kind === 'cop') WANTED.crime(3, p.x, p.y, true);
-        else if (p.kind === 'goon') p.hostile = true;
+        else if (p.kind === 'goon' || p.snatcher) p.hostile = true;
         else if (!p.npc) { WANTED.crime(1, this.x, this.y); G.panic(this.x, this.y, 260); }
         G.particle('hit', hx, hy);
       }
@@ -325,6 +326,8 @@ class Player extends Person {
 }
 
 function drawPerson(g, p, now) {
+  if (p.hidden) return;
+  if (p.kind === 'dog') { drawDog(g, p); return; }
   g.save(); g.translate(p.x, p.y);
   const L = p.look;
   if (p.state === 'down' || p.downed) {
@@ -436,6 +439,13 @@ function drawPerson(g, p, now) {
   if (p.vendor === 'taho') {
     g.strokeStyle = '#8a6a3a'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(0, -18); g.lineTo(0, 18); g.stroke();
     g.fillStyle = '#c9ced6'; g.beginPath(); g.arc(0, -20, 6, 0, TAU); g.arc(0, 20, 6, 0, TAU); g.fill();
+  } else if (p.vendor === 'sorbetes') {
+    g.fillStyle = '#e74c3c'; U.rr(g, 8, -12, 16, 24, 4); g.fill(); g.fillStyle = '#f1c40f'; g.fillRect(10, -10, 12, 6); g.fillStyle = '#2e86c1'; g.fillRect(10, -2, 12, 6); g.fillStyle = '#222'; g.beginPath(); g.arc(16, -14, 3, 0, TAU); g.arc(16, 14, 3, 0, TAU); g.fill();
+  } else if (p.vendor === 'puso') {
+    g.strokeStyle = '#8a6a3a'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(0, -18); g.lineTo(0, 18); g.stroke();
+    g.fillStyle = '#7fb800'; for (const yy of [-18, -12, 12, 18]) { g.beginPath(); g.moveTo(-4, yy); g.lineTo(0, yy - 4); g.lineTo(4, yy); g.lineTo(0, yy + 4); g.fill(); }
+  } else if (p.vendor === 'durian') {
+    g.fillStyle = '#9c8a2e'; g.beginPath(); g.arc(10, 8, 7, 0, TAU); g.fill(); g.fillStyle = '#6b5e1e'; for (let k = 0; k < 8; k++) { const a = k * TAU / 8; g.beginPath(); g.arc(10 + Math.cos(a) * 6, 8 + Math.sin(a) * 6, 1.6, 0, TAU); g.fill(); }
   } else if (p.vendor === 'balut') {
     g.fillStyle = '#a0784a'; g.beginPath(); g.arc(9, 9, 7, 0, TAU); g.fill();
     g.fillStyle = '#efe6cf'; g.beginPath(); g.arc(8, 8, 2, 0, TAU); g.arc(11, 10, 2, 0, TAU); g.fill();

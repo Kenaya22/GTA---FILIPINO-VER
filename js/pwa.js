@@ -19,7 +19,11 @@ const PWA = {
     window.addEventListener('appinstalled', () => { btn.classList.add('hidden'); UI.toast('📲 Naka-install na! Buksan mula sa home screen.'); });
     // always offer the button (except when already installed); explain the steps when the browser can't prompt
     if (!this.standalone() && location.protocol.startsWith('http')) btn.classList.remove('hidden');
-    if (this.inApp()) document.getElementById('t-inapp').classList.remove('hidden');
+    if (this.inApp()) {
+      document.getElementById('t-inapp').classList.remove('hidden');
+      let shown = false; try { shown = sessionStorage.getItem('hnk_inapp') === '1'; sessionStorage.setItem('hnk_inapp', '1'); } catch (e) { }
+      if (!shown) setTimeout(() => this.help(), 1500);
+    }
     btn.onclick = () => this.install();
     if (this.standalone()) { const si = document.getElementById('set-install'); if (si) si.textContent = '✅ Naka-install na ang app'; }
     document.getElementById('t-inapp').onclick = () => this.help();

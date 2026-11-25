@@ -55,8 +55,8 @@ const WORLD = {
     if (vig !== this.vig) { this.vig = vig; document.getElementById('vignette').style.opacity = vig; }
     // traffic density: rush hour & late night
     const base = SETTINGS.quality === 'low' ? 16 : 26, h = this.hour();
-    TRAFFIC.maxCars = Math.round(base * (this.rush() ? 1.45 : h >= 0 && h < 5 ? 0.6 : 1));
-    TRAFFIC.maxPeds = Math.round((SETTINGS.quality === 'low' ? 20 : 34) * (h >= 0 && h < 5 ? 0.5 : 1) * (1 - this.rain * 0.4));
+    TRAFFIC.maxCars = Math.round(base * SETTINGS.dens() * (this.rush() ? 1.45 : h >= 0 && h < 5 ? 0.6 : 1));
+    TRAFFIC.maxPeds = Math.round((SETTINGS.quality === 'low' ? 20 : 34) * SETTINGS.dens() * (h >= 0 && h < 5 ? 0.5 : 1) * (1 - this.rain * 0.4));
     // rain drops (screen space)
     const want = this.rain > 0.02 ? Math.round(this.rain * (SETTINGS.quality === 'low' ? 70 : 160)) : 0;
     while (this.drops.length < want) this.drops.push({ x: Math.random(), y: Math.random(), s: U.rand(0.8, 1.3) });
@@ -75,6 +75,9 @@ const WORLD = {
           const near = U.dist(p.x, p.y, G.player.x, G.player.y) < 600;
           if (p.vendor === 'taho') { p.say = 'Tahooooo!'; if (near) AUD.call('taho'); }
           else if (p.vendor === 'balut') { p.say = 'Baluuuut! Penoy!'; if (near) AUD.call('balut'); }
+          else if (p.vendor === 'sorbetes') { p.say = 'Sorbeteees! Ding-ding!'; if (near) { AUD.tone(1568, 0.15, 'sine', 0.05); AUD.tone(1568, 0.15, 'sine', 0.05, 0, 0.25); } }
+          else if (p.vendor === 'puso') { p.say = 'Puso! Puso! Lami ni!'; if (near) AUD.call('taho'); }
+          else if (p.vendor === 'durian') { p.say = 'Durian! Presko pa!'; if (near) AUD.call('balut'); }
           else { p.say = 'Priiiit!'; if (near) AUD.call('whistle'); }
           p.sayT = 2.4;
         }
@@ -90,13 +93,17 @@ const WORLD = {
   manageNPCs() {
     const P = G.player, h = this.hour();
     // vendors
-    const type = h >= 5 && h < 11 ? 'taho' : (h >= 18 || h < 3) ? 'balut' : null;
+    const reg = regionName(P.x);
+    const type = reg === 'SUGBO' ? (h >= 6 && h < 22 ? 'puso' : null) : reg === 'DABAW' ? (h >= 6 && h < 21 ? 'durian' : null) : reg === 'SAN ISIDRO' ? null
+      : h >= 5 && h < 11 ? 'taho' : h >= 11 && h < 17 ? 'sorbetes' : (h >= 18 || h < 3) ? 'balut' : null;
     this.vendors = this.drop(this.vendors, p => (p.vendor !== type && !TRAFFIC.inView(p.x, p.y, 50)) || this.far(p, 1700));
     if (type && this.vendors.length < 2 && !this.onIsland(P.x, P.y)) {
-      const p = this.spawnOnSidewalk(450, 900);
+      let p = null;
+      if (reg === 'MAYNILA') p = this.spawnOnSidewalk(450, 900);
+      else for (let k = 0; k < 12 && !p; k++) { const a = Math.random() * TAU, r = U.rand(450, 900), x = P.x + Math.cos(a) * r, y = P.y + Math.sin(a) * r; if (MAP.tileAt(x, y) === TL.SIDE && !TRAFFIC.inView(x, y, 30)) { p = new Person(x, y, 'ped'); p.state = 'wander'; p.home = { x, y }; p.wtiles = [TL.SIDE, TL.PLAZA]; G.peds.push(p); } }
       if (p) {
-        p.vendor = type; p.speed = 42; p.keep = true; p.amb = true;
-        p.look.shirt = type === 'taho' ? '#e9e2cc' : '#3a4a5c'; p.look.pat = 'plain'; p.look.hair = type === 'taho' ? 'bucket' : 'cap_red';
+        p.vendor = type; p.speed = 42; p.keep = true; p.amb = true; p.umb = null;
+        p.look.shirt = { taho: '#e9e2cc', balut: '#3a4a5c', sorbetes: '#f5f5f5', puso: '#2e86c1', durian: '#7fb800' }[type]; p.look.pat = 'plain'; p.look.hair = type === 'balut' ? 'cap_red' : 'bucket';
         this.vendors.push(p);
       }
     }
@@ -213,8 +220,9 @@ const WORLD = {
     const P = G.player;
     if (P.hp >= 100) { UI.toast('Busog ka pa!'); return; }
     if (P.money < 20) { UI.toast('Kulang ang pera mo!'); return; }
-    G.addMoney(-20); P.hp = Math.min(100, P.hp + (v.vendor === 'taho' ? 15 : 20)); AUD.coin();
-    UI.toast(v.vendor === 'taho' ? '🥣 Mainit-init na taho! +15 buhay' : '🥚 Balut na may asin at suka! +20 buhay');
+    const it = { taho: [15, '🥣 Mainit-init na taho! +15 buhay'], balut: [20, '🥚 Balut na may asin at suka! +20 buhay'], sorbetes: [15, '🍦 Sorbetes na ube at keso! +15 buhay'], puso: [25, '🍚 Puso at lechon — lami! +25 buhay'], durian: [30, '🍈 Durian! Amoy-impyerno, lasang-langit! +30 buhay'] }[v.vendor] || [15, ''];
+    G.addMoney(-20); P.hp = Math.min(100, P.hp + it[0]); AUD.coin();
+    UI.toast(it[1]); G.stats.snacks = (G.stats.snacks || 0) + 1;
     v.say = 'Salamat, suki!'; v.sayT = 2;
   },
   // ---------- drawing ----------
@@ -395,7 +403,7 @@ function cityLife(region, x0, x1, carTypes) { return {
     const near = this.near();
     this.folk = this.folk.filter(p => { if (p.remove) return false; if (!near || U.dist(p.x, p.y, P.x, P.y) > 1700) { p.remove = true; return false; } return true; });
     let tries = 0;
-    const want = SETTINGS.quality === 'low' ? 12 : 22;
+    const want = Math.round((SETTINGS.quality === 'low' ? 12 : 22) * SETTINGS.dens());
     let added = 0;
     while (near && this.folk.length < want && tries++ < 25 && added < 4) {
       const a = Math.random() * TAU, r = U.rand(500, 1100), x = P.x + Math.cos(a) * r, y = P.y + Math.sin(a) * r;
@@ -406,7 +414,7 @@ function cityLife(region, x0, x1, carTypes) { return {
       this.folk.push(p); G.peds.push(p); added++;
     }
     this.cars = this.cars.filter(v => { if (v.remove) return false; if (!near || U.dist(v.x, v.y, P.x, P.y) > 2300) { if (!TRAFFIC.inView(v.x, v.y, 60)) v.remove = true; return !v.remove; } return true; });
-    const cw = SETTINGS.quality === 'low' ? 7 : 12;
+    const cw = Math.round((SETTINGS.quality === 'low' ? 7 : 12) * SETTINGS.dens());
     for (let k = 0, made = 0; near && this.cars.length < cw && k < 8 && made < 3; k++) {
       const loop = U.choice(sg.loops), i = U.randi(0, loop.length - 1), a = loop[i], b = loop[(i + 1) % loop.length], f = U.rand(0.15, 0.85);
       const x = U.lerp(a.x, b.x, f), y = U.lerp(a.y, b.y, f);

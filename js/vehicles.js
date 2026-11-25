@@ -72,7 +72,7 @@ class Vehicle {
       const f = MAP.floodAt(this.x, this.y);
       if (f) { terrain *= 1 - 0.55 * WORLD.flood; if (this.speed > 120 && Math.random() < 0.5) G.particle('splash', this.x + U.rand(-20, 20), this.y + U.rand(-20, 20)); }
     }
-    const maxS = t.max * (this.speedMul || 1) * (this.popped ? 0.55 : 1) * terrain * (this.hp < this.maxhp * 0.2 ? 0.8 : 1);
+    const maxS = t.max * (this.driver === 'player' ? PROG.driveMul() : 1) * (this.speedMul || 1) * (this.popped ? 0.55 : 1) * terrain * (this.hp < this.maxhp * 0.2 ? 0.8 : 1);
     const th = this.throttle;
     this.braking = false;
     if (th > 0) {
@@ -87,7 +87,7 @@ class Vehicle {
     if (vf > maxS) vf = U.lerp(vf, maxS, dt * 2);
     vf -= vf * 0.12 * dt;
     if (this.hand) { const b = Math.min(Math.abs(vf), 260 * dt); vf -= Math.sign(vf) * b; this.braking = true; }
-    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1) * (t.boat ? 1 : 1 - WORLD.rain * 0.18) * (this.assist && this.driver === 'player' ? 1.35 : 1);
+    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1) * (t.boat ? 1 : 1 - WORLD.rain * 0.18) * (this.assist && this.driver === 'player' ? 1.35 : 1) * (this.driver === 'player' ? PROG.driveMul() : 1);
     vr *= Math.exp(-grip * dt);
     // steering
     const sf = U.clamp(vf / 150, -1, 1);

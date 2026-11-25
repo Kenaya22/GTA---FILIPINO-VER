@@ -92,7 +92,7 @@ const WANTED = {
     for (const p of G.peds) p.susp = 0;
     for (const h of this.helis) h.leaving = true;
     if (had && msg) {
-      UI.big('NAKATAKAS KA!', 'Nawala na ang mga pulis', 1.8); AUD.escaped(); G.stats.escapes++;
+      UI.big('NAKATAKAS KA!', 'Nawala na ang mga pulis', 1.8); AUD.escaped(); G.stats.escapes++; PROG.xp(15 + (this.peak || 1) * 15, 'Takas');
       if ((this.peak || 0) >= 3) ACH.flags.escape3 = true;
       if ((this.peak || 0) >= 6) ACH.flags.escape6 = true;
       ACH.check();

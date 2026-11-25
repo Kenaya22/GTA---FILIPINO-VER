@@ -487,3 +487,14 @@ body.touch #topleft { top: calc(max(10px, env(safe-area-inset-top)) + 186px); }
 .mappop { display: flex; gap: 10px; align-items: center; background: rgba(14,20,34,0.95); border: 1px solid var(--accent); border-radius: 14px; padding: 10px 12px; width: min(460px, 100%); box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
 .mappop .mp-ic { font-size: 28px; } .mappop div { flex: 1; min-width: 0; } .mappop b { display: block; font-size: 14px; } .mappop small { color: var(--muted); font-weight: 700; font-size: 11px; }
 #install { z-index: 13; }
+
+/* ===== v2.0 life & progression ===== */
+.int-art { width: 100%; height: 110px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 52px; letter-spacing: 14px; box-shadow: inset 0 -30px 40px rgba(0,0,0,0.25); }
+#interior, #skills, #daily { z-index: 12; }
+.skill-head { width: 100%; text-align: center; } .skill-head b { font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--accent); }
+.xpbar { height: 8px; margin: 6px 0 4px; } .xpbar > div { height: 100%; background: linear-gradient(90deg, #f39c2b, #ffd28a); }
+.pips { color: var(--accent); letter-spacing: 2px; font-size: 12px; }
+.shoprow.done { opacity: .7; border: 1px solid var(--good); }
+.lvl { font-weight: 900; font-size: 11px; color: #ffd28a; text-shadow: 0 1px 3px #000; }
+.t-ngplus { background: linear-gradient(90deg, #6a3093, #a044ff) !important; color: #fff !important; }
+.mrow .rep { border: 0; border-radius: 8px; background: var(--panel); color: #fff; font-weight: 900; font-size: 11px; padding: 6px 8px; margin-left: 6px; }

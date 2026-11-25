@@ -789,9 +789,12 @@ const MS = {
   complete() {
     const m = this.active;
     if (m.done) m.done(this.c, true);
-    G.addMoney(m.reward, true);
+    const pay = Math.round(m.reward * (REPLAY.on ? 0.25 : NGPLUS.mult()));
+    G.addMoney(pay, true);
     AUD.success();
-    UI.big('MISYON TAPOS!', `${m.title} · +${U.money(m.reward)}`, 3);
+    UI.big('MISYON TAPOS!', `${m.title} · +${U.money(pay)}`, 3);
+    PROG.xp(REPLAY.on ? 0 : 40 + m.reward / 25, 'Misyon');
+    if (REPLAY.on) REPLAY.complete(m);
     this.idx = Math.max(this.idx, MISSIONS.indexOf(m) + 1);
     this.active = null; this.c = null;
     G.save();
@@ -843,7 +846,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'kainan', 'mall', 'church', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -859,6 +862,9 @@ const SHOP = {
       case 'barber': return P.vehicle ? null : `Barberya — Bagong gupit (${c(100)})`;
       case 'paint': return P.vehicle ? `Pintura — kulay, makina, armor, sticker, busina` : null;
       case 'weapon': return P.vehicle ? null : ARMS.shopLabel();
+      case 'kainan': return P.vehicle ? null : `🍗 Pumasok sa ${p.label}`;
+      case 'mall': return P.vehicle ? null : `🏬 Pumasok sa ${p.label}`;
+      case 'church': return P.vehicle ? null : `⛪ Pumasok sa ${p.label}`;
       case 'videoke': return P.vehicle ? null : 'Videoke — kumanta para sa premyo (₱20 kada kanta)';
       case 'court': return P.vehicle ? null : `3-Point Shootout — libre! (Pinakamataas: ${G.stats.shootBest || 0})`;
       case 'gunshop': return P.vehicle ? null : (GUNS.unlocked() ? 'Armas ni Kabo — baril, bala, vest at shooting range' : '🔒 Armas — bukas pagkatapos ng Misyon 2');
@@ -905,6 +911,7 @@ const SHOP = {
       case 'weapon': ARMS.openShop(); break;
       case 'gunshop': GUNS.openShop(); break;
       case 'videoke': VIDEOKE.pick(); break;
+      case 'kainan': case 'mall': case 'church': INTERIOR.open(p); break;
       case 'court': MG.run(SHOOTOUT); break;
       case 'property': ECON.propUse(p); break;
       case 'garage': if (P.vehicle) ECON.store(P.vehicle); else ECON.openGarage(p); break;

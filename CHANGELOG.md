@@ -1,5 +1,24 @@
 # Changelog — Hari ng Kalsada
 
+## v2.0: Buhay na Lungsod / A Living City (2026-11-25)
+**Polish**
+- 🔋 New setting for the amount of people and traffic (Kaunti = battery saver) and 🎯 auto/manual aiming on phones
+- ⚠️ Opening the game inside Messenger/Facebook shows the "open in Chrome/Safari" help once per visit
+- 🏥 Fainting or being arrested now takes you to the **nearest** hospital/police station (it used to always be Manila). Fees scale a little with your wealth. Dabaw got a police station
+**A living city**
+- 🍗 **Interiors**: Corner Chicken House (full heal, ENERGY run boost), Malls (boutique, arcade, videoke, hide from 1–2 stars) and Churches (daily free heal, candles, 9-day Simbang Gabi at Christmas)
+- 🚨 **Random street events**: chase a bag snatcher, bring a lost child to their mother, help at a road accident (bonus in an ambulance)
+- 🐕 **Adopt a stray dog** that follows you everywhere and barks at the police
+- 🍦 New street vendors: sorbetes (Manila afternoons), puso and lechon (Sugbo), durian (Dabaw)
+- 📻 Radio news reacts to your story choices, escapes, rescues, hideouts and level
+**Progression**
+- ⭐ **Levels and skills**: XP from missions, jobs, escapes, events, collectibles and challenges; skill points for Driving, Aim, Stamina and Toughness
+- 📅 **Daily challenges**: 3 new ones each real day (₱500 + XP each, ₱1,500 bonus for all three)
+- 🔁 **Mission replays** with 🥇🥈🥉 medals based on time and damage (flags restored after)
+- 🐚 **20 new collectibles**: 10 seashells in Sugbo and 10 eagle feathers in Dabaw
+- ✨ **New Game+** after Chapter 4: keep money, weapons, garage, wardrobe, level, dog and medals; ×1.5 mission rewards
+- 🏆 8 new achievements
+
 ## v1.9: Kabanata 4 — Dabaw (2026-11-25)
 - 🦅 **Chapter 4: Dabaw**, a Davao-inspired city east of Sugbo across a second strait: the forested **Bundok Apo** with a winding trail, a loggers' camp and a summit lookout; the **Eagle Center**; a **banana plantation**; the Durian Market; a city grid with its own traffic; and an airport
 - 📖 **6 new missions** (28 total) against **Ninong**, the last name in Tiburon's ledger: Lipad sa Dabaw, Durian Express (careful driving), Bantay Gubat (stop 3 log trucks on the mountain), Agila (stop the poachers' van and save an eagle chick), Saging ng Bayan (banana convoy) and Ang Ninong (camp assault, a boss, then a truck chase down the mountain). Your Chapter 3 choice changes the dialogue and how many enemies you face. The epilogue has 4 variants

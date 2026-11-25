@@ -52,6 +52,7 @@
       <div class="bar armor hidden" id="armorwrap"><div id="armorbar"></div></div>
       <div class="bar car hidden" id="carbarwrap"><div id="carbar"></div></div>
       <div id="weapon"></div>
+      <div id="lvl" class="lvl"></div>
     </div>
   </div>
   <div id="speedo" class="hidden"><span id="kmh">0</span><small>km/h</small></div>
@@ -98,6 +99,7 @@
       </div>
       <button id="btn-continue" class="mbtn primary t-big hidden">▶&nbsp; ITULOY</button>
       <button id="btn-new" class="mbtn t-new">✚&nbsp; BAGONG LARO</button>
+      <button id="btn-ngplus" class="mbtn t-ngplus hidden">✨&nbsp; NEW GAME+</button>
       <button id="btn-load" class="mbtn hidden">📂&nbsp; I-LOAD ANG SAVE</button>
       <button id="btn-install" class="mbtn t-install hidden">📲&nbsp; I-INSTALL ANG APP</button>
       <button id="t-inapp" class="t-inapp hidden">⚠️ Nasa Messenger/Facebook ka — buksan sa Chrome/Safari para may tunog at ma-install ›</button>
@@ -134,6 +136,7 @@
       <button id="btn-resume" class="mbtn primary">ITULOY</button>
       <div class="menurow"><button id="btn-psave" class="mbtn">💾 I-SAVE</button><button id="btn-pload" class="mbtn">📂 I-LOAD</button></div>
       <div class="menurow"><button id="btn-pach" class="mbtn">🏆 MGA TAGUMPAY</button><button id="btn-photo" class="mbtn">📷 PHOTO MODE</button></div>
+      <div class="menurow"><button id="btn-skills" class="mbtn">📈 SKILLS</button><button id="btn-daily" class="mbtn">📅 HAMON</button></div>
       <button id="btn-pmap" class="mbtn">MAPA</button>
       <button id="btn-missions" class="mbtn">MGA MISYON</button>
       <button id="btn-phelp" class="mbtn">PAANO LARUIN</button>
@@ -246,6 +249,34 @@
   </div>
 </div>
 
+<div id="interior" class="screen hidden">
+  <div class="panel wide">
+    <div id="int-art" class="int-art"></div>
+    <h2 id="int-title"></h2>
+    <p id="int-desc" class="note"></p>
+    <div id="int-list" class="shoplist"></div>
+    <button class="mbtn primary" onclick="INTERIOR.close()">🚪 LUMABAS</button>
+  </div>
+</div>
+
+<div id="skills" class="screen hidden">
+  <div class="panel wide">
+    <h2>📈 SKILLS</h2>
+    <div id="skill-head" class="skill-head"></div>
+    <div id="skill-list" class="shoplist"></div>
+    <p class="note">Kumita ng XP sa misyon, side job, pagtulong sa kalye, hamon at koleksyon.</p>
+    <button class="mbtn primary" onclick="UI.hide('skills')">ISARA</button>
+  </div>
+</div>
+
+<div id="daily" class="screen hidden">
+  <div class="panel wide">
+    <h2>📅 HAMON NGAYONG ARAW</h2>
+    <div id="daily-list" class="shoplist"></div>
+    <button class="mbtn primary" onclick="UI.hide('daily')">ISARA</button>
+  </div>
+</div>
+
 <div id="achievements" class="screen hidden">
   <div class="panel wide">
     <h2>MGA TAGUMPAY</h2>
@@ -301,6 +332,8 @@
       <div class="setrow"><span>💪 Hirap</span><div class="seg" data-key="diff"><button data-v="madali">MADALI</button><button data-v="normal">NORMAL</button><button data-v="mahirap">MAHIRAP</button></div></div>
       <div class="setrow"><span>🚗 Pagmamaneho</span><div class="seg" data-key="drive"><button data-v="madali">MADALI</button><button data-v="classic">CLASSIC</button></div></div>
       <div class="setrow"><span>🖼 Graphics</span><div class="seg" data-key="quality"><button data-v="high">MAGANDA</button><button data-v="low">MABILIS</button></div></div>
+      <div class="setrow"><span>🔋 Dami ng tao at sasakyan</span><div class="seg" data-key="density"><button data-v="kaunti">KAUNTI (TIPID)</button><button data-v="normal">NORMAL</button><button data-v="marami">MARAMI</button></div></div>
+      <div class="setrow"><span>🎯 Pagtutok sa phone</span><div class="seg" data-key="aim"><button data-v="auto">AUTO-AIM</button><button data-v="manual">MANUAL</button></div></div>
       <div class="setrow"><span>📱 Kontrol sa phone</span><div class="seg" data-key="touchCtl"><button data-v="joystick">JOYSTICK</button><button data-v="dpad">ARROWS ▲▼◀▶</button></div></div>
       <div class="setrow"><span>🕹 Laki ng joystick / arrows</span><div class="seg" data-key="joy"><button data-v="0.8">MALIIT</button><button data-v="1">NORMAL</button><button data-v="1.25">MALAKI</button></div></div>
       <div class="setrow"><span>✋ Kaliwete (palit puwesto ng controls)</span><div class="seg" data-key="lefty"><button data-v="1">ON</button><button data-v="0">OFF</button></div></div>
@@ -364,6 +397,8 @@
 <script src="js/events.js"></script>
 <script src="js/minigames.js"></script>
 <script src="js/wardrobe.js"></script>
+<script src="js/life.js"></script>
+<script src="js/progression.js"></script>
 <script src="js/save.js"></script>
 <script src="js/tutorial.js"></script>
 <script src="js/portraits.js"></script>

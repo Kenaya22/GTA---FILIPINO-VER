@@ -33,6 +33,7 @@ const GUNS = {
   aimAngle(range) {
     const P = G.player;
     if (G.time - this.mouse.t < 2.5 && !INPUT.touch) return Math.atan2(this.mouse.wy - P.y, this.mouse.wx - P.x);
+    if (INPUT.touch && SETTINGS.aim === 'manual') return P.a;
     const t = this.bestTarget(P.x, P.y, P.a, range, P.vehicle ? Math.PI : 0.7);
     return t ? Math.atan2(t.y + (t.vy || 0) * 0.12 - P.y, t.x + (t.vx || 0) * 0.12 - P.x) : P.a;
   },
@@ -63,7 +64,8 @@ const GUNS = {
     const a = this.aimAngle(w.range);
     if (!P.vehicle) P.a = a;
     const sx = P.x + Math.cos(a) * 16, sy = P.y + Math.sin(a) * 16;
-    for (let k = 0; k < w.pellets; k++) this.bullet(sx, sy, a + U.rand(-w.spread, w.spread) * (P.vehicle ? 1.6 : 1), w, 'player');
+    const sw = PROG.aimDmg() === 1 ? w : Object.assign({}, w, { dmg: w.dmg * PROG.aimDmg() });
+    for (let k = 0; k < w.pellets; k++) this.bullet(sx, sy, a + U.rand(-w.spread, w.spread) * PROG.aimSpread() * (P.vehicle ? 1.6 : 1), sw, 'player');
     P.punchT = 0.12;
     this.flash(sx, sy, a);
     AUD.gun(id, 1);
@@ -157,7 +159,7 @@ const GUNS = {
       if (owner === 'player') {
         if (p.kind === 'cop') WANTED.crime(4, p.x, p.y, true);
         else if (p.kind === 'goon') { p.hostile = true; }
-        else if (!p.npc) WANTED.crime(3, P.x, P.y);
+        else if (!p.npc && !p.snatcher && p.kind !== 'dog') WANTED.crime(3, P.x, P.y);
       }
       return;
     }
@@ -287,7 +289,7 @@ const KUTA = {
         k.left = left;
         if (left === 0) {
           G.flags.kuta = G.flags.kuta || {}; G.flags.kuta[k.key] = true;
-          G.addMoney(3000, true); if (GUNS.owned('pistola')) P.weapons.pistola += 24;
+          G.addMoney(3000, true); PROG.xp(120, 'Kuta'); if (GUNS.owned('pistola')) P.weapons.pistola += 24;
           UI.big('KUTA NALINIS!', `${k.name} · +₱3,000`, 2.5, 'good'); AUD.success(); ACH.check(); SAVE.auto();
         }
       }

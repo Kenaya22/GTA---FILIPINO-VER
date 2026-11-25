@@ -73,7 +73,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); SUGBO.reset(); DABAW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null;
+    PROV.reset(); SUGBO.reset(); DABAW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; REPLAY.on = false;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -94,6 +94,7 @@ const G = {
   newGame(dev) {
     this.resetWorld();
     WARDROBE.load({ o: ['floral_orange'] });
+    Object.assign(this.player, { level: 1, xp: 0, sp: 0, skills: {}, buffT: 0 }); this.coll = new Set(); this.grades = {}; this.daily = null;
     this.tsinelas = new Set(); this.stats = { sold: 0, pasada: 0, escapes: 0, earned: 0, taxi: 0, rider: 0, tow: 0, races: 0, vigil: 0 }; this.unlock = { sports: false, gold: false };
     const b = MAP.pois.busterm;
     this.player.x = b.x; this.player.y = b.y - 40; this.player.a = -Math.PI / 2; this.player.money = 200;
@@ -158,6 +159,7 @@ const G = {
     if (!this.started || this.paused || this.cutscene || this.player.downed) return;
     if (UI.talking) { UI.nextLine(); return; }
     if (MS.canRetry()) { MS.retry(); return; }
+    if (STREET.near()) { STREET.use(); return; }
     const vend = WORLD.nearVendor(); if (vend) { WORLD.buy(vend); return; }
     if (MS.canStart()) { MS.start(MS.idx); return; }
     const shop = SHOP.near();
@@ -245,8 +247,9 @@ const G = {
   promptText() {
     if (UI.talking || this.cutscene) return '';
     if (MS.canRetry()) return `Ulitin ang misyon mula checkpoint: ${MS.retryInfo.m.title} (${Math.ceil(MS.retryT)}s)`;
+    const sn = STREET.near(); if (sn) return sn;
     const vend = WORLD.nearVendor();
-    if (vend) return vend.vendor === 'taho' ? 'Bumili ng taho kay Manong (₱20)' : 'Bumili ng balut kay Manong (₱20)';
+    if (vend) return `Bumili ng ${{ taho: 'taho', balut: 'balut', sorbetes: 'sorbetes', puso: 'puso at lechon', durian: 'durian' }[vend.vendor] || 'pagkain'} kay Manong (₱20)`;
     const m = MS.canStart();
     if (m) return `Kausapin si ${CHARS[m.giver].name} — Misyon ${MS.idx + 1}: ${m.title}`;
     const shop = SHOP.near(); const lab = shop && SHOP.label(shop);
@@ -313,7 +316,7 @@ const G = {
     this.cutscene = true;
     AUD.fail();
     if (MS.active) MS.fail('Nahimatay ka');
-    const fee = Math.min(this.player.money, 300);
+    const fee = Math.min(this.player.money, Math.round(300 + Math.min(2700, this.player.money * 0.02)));
     setTimeout(() => UI.big('NAHIMATAY!', `Dinala ka sa ospital (−${U.money(fee)})`, 3), 300);
     this.respawn('hospital', fee);
   },
@@ -322,7 +325,7 @@ const G = {
     this.cutscene = true; this.player.arrest = 0;
     AUD.fail();
     if (MS.active) MS.fail('Nahuli ka ng pulis');
-    const fee = Math.min(this.player.money, 500);
+    const fee = Math.min(this.player.money, Math.round(500 + Math.min(4500, this.player.money * 0.03)));
     setTimeout(() => UI.big('HULI KA!', `Nakulong ka sa presinto. Piyansa: −${U.money(fee)}`, 3), 300);
     this.respawn('presinto', fee);
   },
@@ -335,7 +338,9 @@ const G = {
       WANTED.clear(false);
       for (const v of this.vehicles) if (v.unit) { v.remove = true; }
       for (const p of this.peds) if (p.fromCar) p.remove = true;
-      const pt = MAP.pois[where];
+      const types = where === 'hospital' ? 'hospital' : 'police';
+      let pt = MAP.pois[where], bd = 1e18;
+      for (const k in MAP.pois) { const q = MAP.pois[k]; if (q.type !== types) continue; const d = U.d2(q.x, q.y, P.x, P.y); if (d < bd) { bd = d; pt = q; } }
       P.x = pt.x; P.y = pt.y + 6; P.hp = 100; P.downed = false; P.arrest = 0; P.vx = P.vy = 0;
       this.addMoney(-fee);
       this.cam.x = P.x; this.cam.y = P.y;
@@ -427,6 +432,10 @@ const G = {
     PASADA.update(dt);
     JOBS.update(dt);
     JOBS.depotTick(dt);
+    STREET.update(dt);
+    COLL.update();
+    DAILY.update(dt);
+    REPLAY.update(dt);
     TUT.update(dt);
     PROV.update(dt);
     SUGBO.update(dt);
@@ -538,7 +547,7 @@ const G = {
             P.vx = v.vx * 0.8; P.vy = v.vy * 0.8;
           } else {
             p.knock(v.x - v.vx, v.y - v.vy, Math.min(500, sp * 0.9));
-            if (v.driver === 'player' && p.kind !== 'goon') { WANTED.crime(p.kind === 'cop' ? 3 : 1, p.x, p.y); this.panic(p.x, p.y, 260); }
+            if (v.driver === 'player' && p.kind !== 'goon' && !p.snatcher) { WANTED.crime(p.kind === 'cop' ? 3 : 1, p.x, p.y); this.panic(p.x, p.y, 260); }
           }
           v.vx *= 0.9; v.vy *= 0.9;
           AUD.punch();
@@ -576,6 +585,7 @@ const G = {
     let t = MS.target();
     if (!t && JOBS.active) t = JOBS.target();
     if (!t && PASADA.mode && PASADA.pt) t = Object.assign({ stop: true }, PASADA.pt);
+    if (!t && STREET.ev) t = STREET.target();
     if (!t && this.waypoint) {
       const P = this.player, me = P.vehicle || P;
       if (U.dist(me.x, me.y, this.waypoint.x, this.waypoint.y) < 90) { UI.toast('📍 Nandito ka na!'); AUD.checkpoint(); this.waypoint = null; }
@@ -708,6 +718,7 @@ const G = {
     ARMS.draw(g, inV);
     GUNS.draw(g, inV);
     JOBS.drawExtra(g, inV, now);
+    COLL.draw(g, inV, now);
     TYPHOON.draw(g, inV);
     FIESTA.draw(g, inV, now);
     // particles

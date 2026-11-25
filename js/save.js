@@ -39,7 +39,7 @@ const SAVE = {
       clock: WORLD.clock, day: WORLD.day, rain: WORLD.rainTarget,
       ts: [...G.tsinelas], stats: G.stats, unlock: G.unlock,
       weapons: P.weapons, weapon: P.weapon, mags: P.mags, armor: Math.round(P.armor || 0),
-      ward: WARDROBE.save(), flags: G.flags, props: [...ECON.owned], garage: ECON.garage, ach: [...ACH.got], visited: [...ACH.visited], drove: [...ACH.drove],
+      ward: WARDROBE.save(), flags: G.flags, coll: [...(G.coll || [])], level: P.level || 1, xp: P.xp || 0, sp: P.sp || 0, skills: P.skills || {}, daily: G.daily || null, grades: G.grades || {}, props: [...ECON.owned], garage: ECON.garage, ach: [...ACH.got], visited: [...ACH.visited], drove: [...ACH.drove],
     };
   },
   write(slot, silent) {
@@ -70,6 +70,7 @@ const SAVE = {
     P.mags = Object.assign({}, s.mags || {}); P.armor = s.armor || 0;
     G.flags = Object.assign({}, s.flags || {});
     WARDROBE.load(s.ward || { o: [P.look.outfit] });
+    G.coll = new Set(s.coll || []); P.level = s.level || 1; P.xp = s.xp || 0; P.sp = s.sp || 0; P.skills = Object.assign({}, s.skills || {}); G.daily = s.daily || null; G.grades = s.grades || {};
     ECON.owned = new Set(s.props || []); ECON.garage = s.garage || []; ECON.refreshIcons();
     ACH.got = new Set(s.ach || []); ACH.visited = new Set(s.visited || []); ACH.drove = new Set(s.drove || []);
     const pos = s.pos || MAP.pois.home;

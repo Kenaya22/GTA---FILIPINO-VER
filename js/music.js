@@ -304,7 +304,7 @@ const MUSIC = {
         if (this.djT <= 0) {
           this.djT = U.rand(35, 60);
           let lines = st.lines.slice();
-          if (MS.idx >= MISSIONS.length) lines.push('BALITA: Mayor Kurakot, nananatiling nakakulong. Ang ayuda, naibigay na sa mga tao!');
+          const news = NEWS.lines(); if (news.length && Math.random() < 0.55) lines = news;
           UI.radio(`📻 ${st.name}: "${U.choice(lines)}"`, 6);
         }
       }
@@ -312,5 +312,25 @@ const MUSIC = {
     const duck = G.paused ? 0.35 : UI.talking ? 0.45 : G.cutscene ? 0.5 : 1;
     if (duck !== this.duck || fx !== this.radioFx) { this.duck = duck; this.radioFx = fx; this.applyGain(); }
     this.play(want);
+  },
+};
+
+// ===== Radio news that follows what the player has done =====
+const NEWS = {
+  lines() {
+    const f = G.flags || {}, st = G.stats || {}, out = [];
+    if (MS.idx >= 8) out.push('BALITA: Mayor Kurakot, nananatiling nakakulong. Ang ayuda, naibigay na sa mga tao!');
+    if (f.ending2 === 'A') out.push('BALITA: Nabawi ng mga magsasaka ng San Isidro ang kanilang lupa! Si Don Severo, nasa kulungan.');
+    if (f.ending2 === 'B') out.push('BALITA: Mga magsasaka ng San Isidro, nagpoprotesta — nabakuran ang kanilang mga bukid.');
+    if (f.ch3 === 'ilantad') out.push('BALITA: Ledger ni Kapitan Tiburon, inilabas! Mga pulitiko at hepe, iniimbestigahan.');
+    if (f.ch3 === 'itago') out.push('BALITA: Kapitan Tiburon, nakalaya dahil "kulang sa ebidensya". Saan napunta ang ledger?');
+    if (f.ch4) out.push('BALITA: Ninong, arestado sa Dabaw! Ilegal na pagtotroso sa Bundok Apo, itinigil na.');
+    if (f.kuta && Object.keys(f.kuta).length) out.push(`BALITA: ${Object.keys(f.kuta).length} kuta ng sindikato, nilinis ng isang misteryosong bayani!`);
+    if ((st.rescued || 0) >= 5) out.push(`BALITA: ${st.rescued} katao, nailigtas ng isang driver habang may bagyo. Saludo kami sa iyo!`);
+    if ((st.escapes || 0) >= 5) out.push(`BALITA: Isang driver, ${st.escapes} beses nang nakatakas sa pulis. "Hari ng Kalsada" daw ang tawag sa kanya.`);
+    if (WANTED.stars >= 3) out.push(`BALITA: Habulan ngayon sa kalye! ${WANTED.stars} bituin ang hinahabol ng pulis. Mag-ingat ang mga motorista!`);
+    if (TYPHOON.s) out.push(`BALITA: ${TYPHOON.s.name}, Signal No. ${TYPHOON.s.signal}. Manatili sa bahay at lumayo sa baha!`);
+    if ((G.player && G.player.level || 1) >= 5) out.push(`BALITA: Si Nonoy, Level ${G.player.level} na raw! Sikat na sikat!`);
+    return out;
   },
 };
