@@ -140,3 +140,14 @@ EXTRA21.update({
  'LOAD': 'LOAD', 'NG+': 'NG+',
 })
 EXTRA_T21 += [("☁️ {0} — malapit na! Darating sa susunod na update.", "☁️ {0} — coming soon! Arriving in a future update.")]
+EXTRA21.update({
+ 'v2.5 — Busina at Trabaho': 'v2.5 — Horn & Jobs', 'Busina at Trabaho': 'Horn & Jobs',
+ '💼 <b>Asul na arrow para sa trabaho</b> — habang nasa side job (bumbero, ambulansya, taxi...), asul ang arrow at bilog ng trabaho; mas maliit muna ang dilaw na arrow ng misyon': '💼 <b>Blue arrow for jobs</b> — during a side job (firefighter, ambulance, taxi...) the job\'s arrow and circle are blue; the yellow mission arrow shrinks until you finish',
+ "📯 <b>Bagong busina</b>: pindot = maikling beep, pindutin nang matagal = tuloy-tuloy hangga't hindi binibitawan": '📯 <b>New horn</b>: tap = short beep, hold = keeps honking until you let go',
+ '🌐 Mas malinaw na pagpili ng wika: <b>TAGALOG | ENGLISH</b>': '🌐 Clearer language switch: <b>TAGALOG | ENGLISH</b>',
+ '🎁 Bagong <b>code box</b> sa Settings — subukan ang <b>MABUHAY</b>!': '🎁 New <b>code box</b> in Settings — try <b>MABUHAY</b>!',
+ '🛠 Mga pagpapahusay para sa mga tester': '🛠 Improvements for testers',
+ '🎁 May code ka?': '🎁 Got a code?', 'GAMITIN': 'USE', '❌ Hindi gumana ang code.': "❌ That code didn't work.", '▶ Simulan muna ang laro, tapos ilagay ang code.': '▶ Start the game first, then enter the code.',
+ '🚗 Sumakay muna sa sasakyan.': '🚗 Get in a vehicle first.', '✅ Nagamit mo na ang code na ito.': "✅ You've already used this code.", '🎁 Mabuhay! +₱2,000': '🎁 Mabuhay! +₱2,000',
+ '🎁 Bagong busina: Jeepney! (sa sasakyan mo ngayon)': '🎁 New horn: Jeepney! (on your current vehicle)',
+})

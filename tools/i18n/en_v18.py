@@ -127,7 +127,7 @@ EXTRA18.update({
  '👑 ANG TUNAY NA HARI NG KALSADA': '👑 THE TRUE KING OF THE STREETS',
  'Ibinigay mo ang lupa sa bayan at inilantad mo ang mga kurakot. Ito ang TUNAY NA WAKAS — ang Hari ng Kalsada ay naglilingkod sa bayan. Salamat sa paglalaro!': 'You gave the land to the people and exposed the corrupt. This is the TRUE ENDING — the King of the Streets serves the people. Thanks for playing!',
  '🦈 ANG BAGONG TIBURON': '🦈 THE NEW TIBURON',
- 'Bayani ka ng San Isidro, pero pinili mo ang pera ng sindikato. Maglaro ulit (Developer Mode o ibang Slot) para makita ang ibang wakas.': "You're the hero of San Isidro, but you chose the syndicate's money. Play again (Developer Mode or another Slot) to see the other endings.",
+ 'Bayani ka ng San Isidro, pero pinili mo ang pera ng sindikato. Maglaro ulit (🔁 Replay o ibang Slot) para makita ang ibang wakas.': "You're the hero of San Isidro, but you chose the syndicate's money. Play again (🔁 Replay or another Slot) to see the other endings.",
  '🙏 PAGBABALIK-LOOB': '🙏 REDEMPTION',
  'Nagkamali ka sa probinsya, pero itinuwid mo sa Cebu. Hindi pa huli ang lahat para maging tama. Subukan din ang ibang mga pagpili!': "You went wrong in the province, but you made it right in Cebu. It's never too late to do the right thing. Try the other choices too!",
  '💰 HARI NG WALA': '💰 KING OF NOTHING',

@@ -140,6 +140,24 @@ const AUD = {
     if (big) { this.tone(330, 0.35, 'square', 0.08); this.tone(415, 0.35, 'square', 0.08); }
     else { this.tone(440, 0.25, 'square', 0.07); this.tone(554, 0.25, 'square', 0.06); }
   },
+  // held horn: sounds for as long as the button / key is held (a quick tap = a short beep)
+  hornStart(big, type) {
+    if (!this.ctx || this.held) return;
+    if (type && type !== 'none') { this.horn(big, type); return; }   // novelty horns play their tune once
+    const c = this.ctx, t = c.currentTime, g = c.createGain(), lp = c.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 2600;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(big ? 0.11 : 0.09, t + 0.02);
+    const os = (big ? [330, 415] : [440, 554]).map(f => { const o = c.createOscillator(); o.type = 'square'; o.frequency.value = f; o.connect(lp); o.start(t); return o; });
+    lp.connect(g); g.connect(this.master);
+    this.held = { os, g, t0: t };
+    clearTimeout(this.heldCap); this.heldCap = setTimeout(() => this.hornStop(), 8000);   // safety: never stuck on
+  },
+  hornStop() {
+    const h = this.held; if (!h) return; this.held = null; clearTimeout(this.heldCap);
+    const c = this.ctx, t = Math.max(c.currentTime, h.t0 + 0.14);
+    h.g.gain.setValueAtTime(h.g.gain.value || 0.09, t); h.g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+    for (const o of h.os) o.stop(t + 0.08);
+  },
   crash(i) { this.noise(0.25 + i * 0.3, Math.min(0.6, 0.15 + i * 0.5), 900 + i * 1200); this.tone(90, 0.2, 'sine', 0.2 * i, 40); },
   punch() { this.noise(0.08, 0.35, 1800); this.tone(120, 0.12, 'sine', 0.3, 60); },
   gun(id, vol = 1) {

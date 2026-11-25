@@ -17,6 +17,12 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.5', title: 'Busina at Trabaho', date: 'Nobyembre 2026', items: [
+    '💼 <b>Asul na arrow para sa trabaho</b> — habang nasa side job (bumbero, ambulansya, taxi...), asul ang arrow at bilog ng trabaho; mas maliit muna ang dilaw na arrow ng misyon',
+    '📯 <b>Bagong busina</b>: pindot = maikling beep, pindutin nang matagal = tuloy-tuloy hangga\'t hindi binibitawan',
+    '🌐 Mas malinaw na pagpili ng wika: <b>TAGALOG | ENGLISH</b>',
+    '🎁 Bagong <b>code box</b> sa Settings — subukan ang <b>MABUHAY</b>!',
+  ] },
   { v: '2.4', title: 'Mapa ng Pilipinas', date: 'Nobyembre 2026', items: [
     '🇵🇭 <b>Mapa ng buong Pilipinas</b> — pindutin ang 🇵🇭 sa mapa: makikita ang Manila, San Isidro, Baguio, Cebu at Davao; natatakpan pa ng ulap ang mga lugar na darating pa (Vigan, Boracay, Palawan, Bohol, Siargao at iba pa)',
     '🎬 Bagong loading screen at pahina ng <b>K&A Studios</b>',
@@ -104,7 +110,7 @@ const CHANGES = [
     '🚜 Bagong sasakyan: <b>Kuliglig</b> · 🕵️ <b>stealth</b> — iwasan ang dilaw na tingin ng mga bantay',
     '🎓 <b>Tutorial</b> para sa bagong laro (pwedeng ulitin sa ❓ Paano)',
     '⬆️ <b>Arrow buttons</b> ▲▼◀▶ — pumili ng Joystick o Arrows sa Settings',
-    '🛠 <b>Developer Mode</b> (may password) — simulan ang kahit anong misyon',
+    '🛠 Mga pagpapahusay para sa mga tester',
     '🧹 Mas malinis na home page',
   ] },
   { v: '1.4', title: 'Bagong Home Page at Madaling Laro', date: 'Nobyembre 2026', items: [
@@ -193,9 +199,10 @@ const UI = {
     $('btn-shopclose').onclick = () => { this.hide('shop'); if ($('pause').classList.contains('hidden')) G.paused = false; };
     $('btn-continue').onclick = () => { AUD.init(); AUD.resume(); G.continueGame(); };
     $('btn-howto').onclick = () => this.show('help');
-    $('t-lang').textContent = SETTINGS.lang === 'en' ? '🌐 Filipino' : '🌐 English';
-    $('t-lang').onclick = () => I18N.set(SETTINGS.lang === 'en' ? 'fil' : 'en');
-    $('set-dev').onclick = () => DEV.open();
+    this.langLabel();
+    $('t-lang').onclick = () => { AUD.click(); I18N.set(SETTINGS.lang === 'en' ? 'fil' : 'en'); this.langLabel(); };
+    const useCode = () => { const i = $('set-code'), v = i.value; i.value = ''; i.blur(); CODES.use(v); };
+    $('set-code-go').onclick = useCode; $('set-code').onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') useCode(); };
     $('set-install').onclick = () => PWA.install();
     $('tut-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.next(); });
     $('tut-skip').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.end(true); });
@@ -215,7 +222,7 @@ const UI = {
     document.querySelectorAll('#settings .seg').forEach(seg => {
       seg.querySelectorAll('button').forEach(b => b.onclick = () => {
         const key = seg.dataset.key; let v = b.dataset.v;
-        if (key === 'lang') { I18N.set(v); this.syncSettings(); return; }
+        if (key === 'lang') { I18N.set(v); this.syncSettings(); this.langLabel(); return; }
         if (key === 'walkMusic' || key === 'lefty' || key === 'tipsOn') v = v === '1';
         else if (key === 'joy') v = parseFloat(v);
         SETTINGS[key] = v; SETTINGS.apply(); SETTINGS.save(); AUD.click(); this.syncSettings();
@@ -235,6 +242,11 @@ const UI = {
     $('btn-endclose').onclick = () => { this.hide('ending'); G.paused = false; };
     this.refreshTitle();
     INPUT.init();
+  },
+  // two-part language switch: the current language is highlighted
+  langLabel() {
+    const en = SETTINGS.lang === 'en';
+    $('t-lang').innerHTML = `<span class="${en ? '' : 'on'}">🇵🇭 TAGALOG</span><span class="${en ? 'on' : ''}">🇺🇸 ENGLISH</span>`;
   },
   openWhatsNew(v) {
     v = v || CHANGES[0].v;
@@ -430,7 +442,7 @@ const UI = {
       const gp = MS.giverPOI(MISSIONS[MS.idx]);
       if (gp && regionName(gp.x) !== regionName(P.x) && (SUGBO.in(gp.x) || DABAW.in(gp.x) || BAGIW.in(gp.x))) side += ' · ✈️ Sumakay ng eroplano sa Paliparan';
     }
-    this.el.sidejob.classList.toggle('hidden', !side);
+    this.el.sidejob.classList.toggle('hidden', !side); this.el.sidejob.classList.toggle('job', !!JOBS.active);
     this.set('side', this.el.sidejob, 'textContent', side);
     // arrest meter
     this.el.arrest.classList.toggle('hidden', P.arrest < 0.05);
@@ -506,13 +518,13 @@ const UI = {
     }
     for (const h of W.helis) { const x = (h.x - P.x) * k, y = (h.y - P.y) * k; g.fillStyle = blink ? '#ff4040' : '#4080ff'; g.fillRect(x - 4, y - 4, 8, 8); }
     // target
-    const t = G.target;
-    if (t) {
+    for (const [t, col, r] of [[G.target2, '#ffd23f', 4.5], [G.target, G.tcol || '#ffd23f', 7]]) {
+      if (!t) continue;
       let x = (t.x - P.x) * k, y = (t.y - P.y) * k;
       const d = Math.hypot(x, y);
       if (d > R - 10) { x = x / d * (R - 10); y = y / d * (R - 10); }
-      g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2;
-      g.beginPath(); g.arc(x, y, 7, 0, TAU); g.fill(); g.stroke();
+      g.fillStyle = col; g.strokeStyle = '#000'; g.lineWidth = 2;
+      g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); g.stroke();
       if (t.letter) { g.fillStyle = '#000'; g.font = 'bold 10px sans-serif'; g.fillText(t.letter, x, y + 0.5); }
     }
     // north + player
@@ -653,7 +665,7 @@ const INPUT = {
       AUD.resume();
       G.onKey(e.code);
     });
-    addEventListener('keyup', (e) => { this.keys[e.code] = false; });
+    addEventListener('keyup', (e) => { this.keys[e.code] = false; if (e.code === 'KeyH') G.hornUp(); });
     addEventListener('blur', () => { this.keys = {}; });
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouch && matchMedia('(pointer: coarse)').matches) this.setTouch(true);
@@ -705,7 +717,7 @@ const INPUT = {
     };
     btn('tb-act', () => G.action());
     btn('tb-b', () => { this.bHeld = true; if (!G.player.vehicle) ARMS.attack(); }, () => { this.bHeld = false; });
-    btn('tb-horn', () => G.horn());
+    btn('tb-horn', () => G.horn(), () => G.hornUp());
     btn('tb-fire', () => { this.fireHeld = true; GUNS.trigger(false); }, () => { this.fireHeld = false; });
     btn('tb-radio', () => MUSIC.nextStation());
     btn('tb-weap', () => ARMS.cycle());

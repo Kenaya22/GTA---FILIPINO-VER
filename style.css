@@ -530,3 +530,10 @@ body.touch #topleft { top: calc(max(10px, env(safe-area-inset-top)) + 186px); }
 #phmap { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; touch-action: none; }
 #mapscreen .map-top, #mapscreen .map-zoom { z-index: 2; }
 #mapscreen.ph .map-bottom { display: none; }
+#sidejob.job { border-left-color: #3ad1ff !important; box-shadow: 0 0 0 1px rgba(58,209,255,0.35), 0 4px 12px rgba(0,0,0,0.4); }
+.t-lang { display: flex; gap: 0; padding: 3px !important; border-radius: 999px; }
+.t-lang span { padding: 7px 11px; border-radius: 999px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; opacity: 0.55; transition: background .2s, opacity .2s; }
+.t-lang span.on { background: #f39c2b; color: #1a1205; opacity: 1; }
+.coderow { display: flex; gap: 8px; width: 100%; }
+.coderow input { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #fff; font: 800 14px Nunito, sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+.coderow input::placeholder { text-transform: none; letter-spacing: 0; opacity: 0.6; }

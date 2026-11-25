@@ -169,10 +169,11 @@ const G = {
     if (this.player.vehicle) { this.exitVehicle(false); return; }
     if (this.nearVeh) this.enterVehicle(this.nearVeh);
   },
+  hornUp() { AUD.hornStop(); },
   horn() {
     const v = this.player.vehicle; if (!v) return;
-    if (v.t.emerg) { v.siren = !v.siren; UI.toast(v.siren ? '🚨 Sirena: ON' : 'Sirena: OFF'); AUD.click(); if (!v.siren) return; }
-    AUD.horn(v.isBig(), v.upg && v.upg.horn);
+    if (v.t.emerg) { v.siren = !v.siren; UI.toast(v.siren ? '🚨 Sirena: ON' : 'Sirena: OFF'); AUD.click(); return; }
+    AUD.hornStart(v.isBig(), v.upg && v.upg.horn);
     const ca = Math.cos(v.a), sa = Math.sin(v.a);
     for (const p of this.peds) {
       if (p.npc || p.kind === 'cop' || p.state === 'down') continue;
@@ -587,8 +588,10 @@ const G = {
     UI.toast(`🧭 GPS: ${name}`); UI.hide('mapscreen'); this.paused = false;
   },
   updateGPS(dt) {
-    let t = MS.target();
-    if (!t && JOBS.active) t = JOBS.target();
+    let t = MS.target(); this.target2 = null; this.tcol = '#ffd23f';
+    // on a side job the job's goal gets the main (blue) arrow; the next mission stays as a small yellow one
+    if (JOBS.active && !MS.active) { const jt = JOBS.target(); if (jt) { this.target2 = t; t = jt; this.tcol = '#3ad1ff'; } }
+    else if (!t && JOBS.active) { t = JOBS.target(); this.tcol = '#3ad1ff'; }
     if (!t && PASADA.mode && PASADA.pt) t = Object.assign({ stop: true }, PASADA.pt);
     if (!t && STREET.ev) t = STREET.target();
     if (!t && this.waypoint) {
@@ -761,7 +764,7 @@ const G = {
       g.globalAlpha = 0.35 * this.lightMul; g.save(); g.translate(lh.x, lh.y); g.rotate(a); g.drawImage(S.cone, 0, -75, 360, 150); g.restore();
     }
     for (const h of Wd.helis) { g.globalAlpha = 0.38; g.drawImage(S.white, h.sx - 120, h.sy - 120, 240, 240); }
-    if (this.target) { g.globalAlpha = 0.35 + Math.sin(now * 5) * 0.1; g.drawImage(S.gold, this.target.x - 60, this.target.y - 60, 120, 120); }
+    if (this.target && !this.target2) { g.globalAlpha = 0.35 + Math.sin(now * 5) * 0.1; g.drawImage(S.gold, this.target.x - 60, this.target.y - 60, 120, 120); }
     g.globalAlpha = 1;
     g.globalCompositeOperation = 'source-over';
     // lamp posts
@@ -789,44 +792,53 @@ const G = {
     WORLD.drawRain(g, W, H, this.dpr);
   },
   drawTarget(g, now) {
+    if (this.target2) { const t2 = this.target, c2 = this.tcol; this.target = this.target2; this.tcol = '#ffd23f'; g.save(); g.globalAlpha = 0.55; this.drawTarget1(g, now, 0.6); g.restore(); this.target = t2; this.tcol = c2; }
+    this.drawTarget1(g, now, 1);
+  },
+  drawTarget1(g, now, sc) {
     const t = this.target; if (!t) return;
-    const pulse = 1 + Math.sin(now * 5) * 0.08;
+    const pulse = (1 + Math.sin(now * 5) * 0.08) * sc, C = this.tcol || '#ffd23f';
     g.save(); g.translate(t.x, t.y);
     if (t instanceof Vehicle || t instanceof Person) {
       const b = Math.sin(now * 6) * 5;
-      g.fillStyle = '#ffd23f'; g.strokeStyle = '#3a2a00'; g.lineWidth = 2;
+      g.fillStyle = C; g.strokeStyle = '#1a1a1a'; g.lineWidth = 2; g.scale(sc, sc);
       const off = (t.L || 20) / 2 + 26;
       g.beginPath(); g.moveTo(-10, -off - 16 + b); g.lineTo(10, -off - 16 + b); g.lineTo(0, -off + b); g.closePath(); g.fill(); g.stroke();
     } else {
       const r = (t.cp ? 70 : t.giver ? 30 : 50) * pulse;
-      g.fillStyle = t.giver ? 'rgba(255,210,63,0.16)' : 'rgba(255,210,63,0.12)';
-      g.strokeStyle = '#ffd23f'; g.lineWidth = 4;
+      g.fillStyle = C === '#ffd23f' ? (t.giver ? 'rgba(255,210,63,0.16)' : 'rgba(255,210,63,0.12)') : 'rgba(58,209,255,0.14)';
+      g.strokeStyle = C; g.lineWidth = 4;
       g.beginPath(); g.arc(0, 0, r, 0, TAU); g.fill(); g.stroke();
       g.lineWidth = 2; g.globalAlpha = 0.5; g.beginPath(); g.arc(0, 0, r * 0.7, 0, TAU); g.stroke(); g.globalAlpha = 1;
-      if (t.cp) { g.fillStyle = '#ffd23f'; g.font = 'bold 34px Lilita One, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(t.n), 0, 2); }
+      if (t.cp) { g.fillStyle = C; g.font = 'bold 34px Lilita One, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(t.n), 0, 2); }
       if (t.giver) {
-        g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(0, -52, 15, 0, TAU); g.fill();
-        g.fillStyle = '#1a1205'; g.font = 'bold 18px Lilita One, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t.letter, 0, -51);
+        g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(0, -52 * sc, 15 * sc, 0, TAU); g.fill();
+        g.fillStyle = '#1a1205'; g.font = 'bold 18px Lilita One, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t.letter, 0, -51 * sc);
       }
-      if (t.stop) { g.fillStyle = '#ffd23f'; g.font = 'bold 13px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText(I18N.t('PARA'), 0, 0); }
+      if (t.stop) { g.fillStyle = C; g.font = 'bold 13px Nunito, sans-serif'; g.textAlign = 'center'; g.fillText(I18N.t('PARA'), 0, 0); }
     }
     g.restore();
   },
   drawEdgeArrow(g, W, H, z, ox, oy) {
-    const t = this.target; if (!t || PHOTO.on) return;
+    if (PHOTO.on) return;
+    if (this.target2) this.edgeArrow1(g, W, H, z, ox, oy, this.target2, '#ffd23f', 0.62, 0.6);
+    this.edgeArrow1(g, W, H, z, ox, oy, this.target, this.tcol || '#ffd23f', 1, 1);
+  },
+  edgeArrow1(g, W, H, z, ox, oy, t, C, sc, al) {
+    if (!t) return;
     const sx = W / 2 + (t.x - ox) * z, sy = H / 2 + (t.y - oy) * z;
     const m = 50 * this.dpr;
     if (sx > m && sx < W - m && sy > m && sy < H - m) return;
     const a = Math.atan2(sy - H / 2, sx - W / 2);
     const rx = W / 2 - 70 * this.dpr, ry = H / 2 - 90 * this.dpr;
     const ex = W / 2 + Math.cos(a) * rx, ey = H / 2 + Math.sin(a) * ry;
-    g.save(); g.translate(ex, ey); g.rotate(a); g.scale(this.dpr, this.dpr);
-    g.fillStyle = '#ffd23f'; g.strokeStyle = '#000'; g.lineWidth = 2;
+    g.save(); g.globalAlpha = al; g.translate(ex, ey); g.rotate(a); g.scale(this.dpr * sc, this.dpr * sc);
+    g.fillStyle = C; g.strokeStyle = '#000'; g.lineWidth = 2;
     g.beginPath(); g.moveTo(16, 0); g.lineTo(-8, -12); g.lineTo(-3, 0); g.lineTo(-8, 12); g.closePath(); g.fill(); g.stroke();
     g.restore();
     const d = U.dist(this.player.x, this.player.y, t.x, t.y);
-    g.fillStyle = '#ffd23f'; g.font = `bold ${12 * this.dpr}px Nunito, sans-serif`; g.textAlign = 'center';
-    g.fillText(Math.round(d / 14) + 'm', ex - Math.cos(a) * 30 * this.dpr, ey - Math.sin(a) * 30 * this.dpr);
+    g.save(); g.globalAlpha = al; g.fillStyle = C; g.font = `bold ${12 * this.dpr * sc}px Nunito, sans-serif`; g.textAlign = 'center';
+    g.fillText(Math.round(d / 14) + 'm', ex - Math.cos(a) * 30 * this.dpr, ey - Math.sin(a) * 30 * this.dpr); g.restore();
   },
   // animated chase scene behind the home page
   titleScene() {

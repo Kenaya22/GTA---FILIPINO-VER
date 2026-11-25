@@ -418,7 +418,7 @@ const FINAL = {
   ending() {
     return {
       AC: ['👑 ANG TUNAY NA HARI NG KALSADA', 'Ibinigay mo ang lupa sa bayan at inilantad mo ang mga kurakot. Ito ang TUNAY NA WAKAS — ang Hari ng Kalsada ay naglilingkod sa bayan. Pero may isa pang pangalan sa ledger... BUKAS NA ANG KABANATA 4 — puntahan si Inday Bebing sa Cebu!'],
-      AD: ['🦈 ANG BAGONG TIBURON', 'Bayani ka ng San Isidro, pero pinili mo ang pera ng sindikato. Maglaro ulit (Developer Mode o ibang Slot) para makita ang ibang wakas.'],
+      AD: ['🦈 ANG BAGONG TIBURON', 'Bayani ka ng San Isidro, pero pinili mo ang pera ng sindikato. Maglaro ulit (🔁 Replay o ibang Slot) para makita ang ibang wakas.'],
       BC: ['🙏 PAGBABALIK-LOOB', 'Nagkamali ka sa probinsya, pero itinuwid mo sa Cebu. Hindi pa huli ang lahat para maging tama. Subukan din ang ibang mga pagpili!'],
       BD: ['💰 HARI NG WALA', 'Ikaw na ang pinakamayaman sa tatlong lungsod — pero nawala ang lahat ng nagmamahal sa iyo. Maglaro ulit para makita ang ibang wakas.'],
     }[this.key()];

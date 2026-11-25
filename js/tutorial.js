@@ -85,6 +85,12 @@ const DEV = {
     this.render();
     UI.show('devpanel');
   },
+  // opened only by typing the developer code in Settings → 🎁 code box
+  unlockWith(code) {
+    if (this.hash(code) !== this.HASH) return false;
+    try { sessionStorage.setItem('hnk_dev', '1'); } catch (e) { this._u = true; }
+    AUD.success(); this.render(); UI.show('devpanel'); return true;
+  },
   lock() { try { sessionStorage.removeItem('hnk_dev'); } catch (e) { } this._u = false; this.god = false; UI.hide('devpanel'); UI.toast('🔒 Naka-lock ang Developer Mode'); },
   render() {
     const list = document.getElementById('dev-missions');
@@ -131,5 +137,26 @@ const DEV = {
     P.x = p.x; P.y = p.y + (P.vehicle ? 60 : 20); G.cam.x = P.x; G.cam.y = P.y;
     UI.hide('devpanel'); UI.hide('settings'); UI.hide('pause'); G.paused = false;
     UI.toast('🛠 Teleport: ' + p.label);
+  },
+};
+
+// ===== Codes (Settings → 🎁): a few public gift codes; the developer code opens the hidden dev panel =====
+const CODES = {
+  gifts: {
+    MABUHAY: { msg: '🎁 Mabuhay! +₱2,000', give() { G.addMoney(2000, true); } },
+    BUSINA: { msg: '🎁 Bagong busina: Jeepney! (sa sasakyan mo ngayon)', game: 1, give() { const v = G.player.vehicle; if (v) { v.upg = v.upg || {}; v.upg.horn = 'jeep'; } } },
+  },
+  use(raw) {
+    const code = String(raw || '').trim().toUpperCase().replace(/\s+/g, '');
+    if (!code) return;
+    if (DEV.unlockWith(code) || DEV.unlockWith(String(raw).trim())) return;
+    const g = this.gifts[code];
+    if (!g) { AUD.fail(); UI.toast('❌ Hindi gumana ang code.'); return; }
+    if (!G.started) { UI.toast('▶ Simulan muna ang laro, tapos ilagay ang code.'); return; }
+    if (g.game && !G.player.vehicle) { UI.toast('🚗 Sumakay muna sa sasakyan.'); return; }
+    const used = G.flags.codes = G.flags.codes || [];
+    if (!g.game && used.includes(code)) { UI.toast('✅ Nagamit mo na ang code na ito.'); return; }
+    if (!g.game) used.push(code);
+    g.give(); AUD.success(); UI.toast(g.msg);
   },
 };

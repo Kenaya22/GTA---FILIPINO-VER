@@ -1,5 +1,11 @@
 # Changelog — Hari ng Kalsada
 
+## v2.5: Busina at Trabaho / Horn & Jobs (2026-11-25)
+- 💼 **Separate job arrow**: during a side job the job's goal gets a **blue** arrow, circle and minimap dot, and the job line in the HUD is outlined in blue; the next story mission stays visible as a smaller, faded yellow arrow and returns to full size when the job ends
+- 📯 **Horn**: a tap gives a short beep, holding the button (or H) honks continuously until you let go; novelty horns still play their tune
+- 🌐 **Language switch** on the home screen is now a two-part TAGALOG | ENGLISH pill with the current language highlighted (it used to keep saying "English" after switching)
+- 🔒 **Developer Mode is hidden**: the settings button is gone; Settings now has a 🎁 code box. Public gift codes: **MABUHAY** (+₱2,000 once), **BUSINA** (jeepney horn on your current vehicle). The developer code opens the dev panel
+
 ## v2.4: Mapa ng Pilipinas / Map of the Philippines (2026-11-25)
 - 🇵🇭 **Philippines overview map**: tap 🇵🇭 on the map screen (or zoom all the way out) to see the whole country. The playable places — Manila, San Isidro, Baguio, Cebu and Davao — are marked (tap one to jump there on the map); places still to be built (Vigan, Tuguegarao, Batanes, Legazpi, Puerto Galera, Palawan, Boracay, Iloilo, Bacolod, Bohol, Tacloban, Samar, Cagayan de Oro, Zamboanga, Siargao, Sulu) sit under drifting clouds marked "coming soon"
 - 🎬 **Startup**: a loading page, then a **K&A Studios** page with game info (tap to skip), then the home menu
