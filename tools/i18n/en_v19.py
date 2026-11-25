@@ -96,3 +96,4 @@ EXTRA19.update({ 'Kabanata 4: Dabaw': 'Chapter 4: Dabaw', 'v1.9 — Kabanata 4: 
  '📸 <b>10 pasyalan</b> sa mapa (Luneta, Intramuros, Quiapo, Baywalk, Tops, Bundok Apo...) at bagong tagumpay': '📸 <b>10 landmarks</b> on the map (Luneta, Intramuros, Quiapo, Baywalk, Tops, Bundok Apo...) and a new achievement',
  '📲 <b>I-install</b> sa ⚙️ Settings · ⚡ Wala nang lag pagdating sa Sugbo · Naayos ang pagbalik sa Maynila sakay ng eroplano': '📲 <b>Install</b> in ⚙️ Settings · ⚡ No more lag when arriving in Sugbo · Fixed landing back in Manila by plane',
 })
+EXTRA_T19.append(("{0} · ✈️ Sumakay ng eroplano sa Paliparan", "{0} · ✈️ Take a plane from the Airport"))
