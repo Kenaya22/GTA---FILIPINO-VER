@@ -385,13 +385,13 @@ const PROV = {
 };
 
 // ===== Sugbo (Chapter 3 city): traffic loops & people =====
-const SUGBO = {
+function cityLife(region, x0, x1, carTypes) { return {
   t: 0, folk: [], cars: [],
-  in(x) { return x > (SX0 - 12) * T; },
-  near() { return MAP.sugbo && this.in(G.player.x); },
+  in(x) { return x > x0() * T && x < x1() * T; },
+  near() { return region() && this.in(G.player.x); },
   update(dt) {
     this.t -= dt; if (this.t > 0) return; this.t = 1;
-    const P = G.player, sg = MAP.sugbo; if (!sg) return;
+    const P = G.player, sg = region(); if (!sg) return;
     const near = this.near();
     this.folk = this.folk.filter(p => { if (p.remove) return false; if (!near || U.dist(p.x, p.y, P.x, P.y) > 1700) { p.remove = true; return false; } return true; });
     let tries = 0;
@@ -412,7 +412,7 @@ const SUGBO = {
       const x = U.lerp(a.x, b.x, f), y = U.lerp(a.y, b.y, f);
       const d = U.dist(x, y, P.x, P.y);
       if (d < 500 || d > 1900 || TRAFFIC.inView(x, y, 120) || G.vehicles.some(o => U.d2(o.x, o.y, x, y) < 150 * 150)) continue;
-      const type = U.choice(['multicab', 'multicab', 'multicab', 'jeepney', 'taxi', 'taxi', 'motor', 'motor', 'sedan', 'suv', 'pickup', 'van', 'bus']);
+      const type = U.choice(carTypes);
       const v = new Vehicle(type, x, y, Math.atan2(b.y - a.y, b.x - a.x), type === 'taxi' ? { color: '#f4f4f0' } : {}); v.driver = 'ai';
       v.ai = new PathDriver(v, loop, { cruise: type === 'bus' ? 170 : 215, loop: true, start: (i + 1) % loop.length });
       v.vx = Math.cos(v.a) * 120; v.vy = Math.sin(v.a) * 120;
@@ -420,7 +420,12 @@ const SUGBO = {
     }
   },
   reset() { this.folk = []; this.cars = []; },
-};
+}; }
+const SUGBO = cityLife(() => MAP.sugbo, () => SX0 - 12, () => SUGBO_END + 4, ['multicab', 'multicab', 'multicab', 'jeepney', 'taxi', 'taxi', 'motor', 'motor', 'sedan', 'suv', 'pickup', 'van', 'bus']);
+const DABAW = cityLife(() => MAP.dabaw, () => DX0 - 12, () => MW + 1, ['jeepney', 'jeepney', 'taxi', 'taxi', 'motor', 'tricycle', 'sedan', 'suv', 'pickup', 'pickup', 'van', 'multicab']);
+// road points used by police in the outer regions
+function regionPts(x) { return DABAW.in(x) ? MAP.dabaw.pts : SUGBO.in(x) ? MAP.sugbo.pts : MAP.prov.pts; }
+function regionName(x) { return DABAW.in(x) ? 'DABAW' : SUGBO.in(x) ? 'SUGBO' : MAP.inProvince(x) ? 'SAN ISIDRO' : 'MAYNILA'; }
 
 // ===== Flights between Manila and Sugbo (short animated transition) =====
 const FLY = {
@@ -428,8 +433,8 @@ const FLY = {
     const P = G.player, el = document.getElementById('flight');
     if (P.vehicle) G.exitVehicle(true);
     G.cutscene = true; AUD.whoosh(); AUD.tone(180, 2.4, 'sawtooth', 0.04, 120);
-    const toSugbo = dest.key === 'airport_s';
-    document.getElementById('fl-to').textContent = toSugbo ? 'MAYNILA ✈️ SUGBO' : 'SUGBO ✈️ MAYNILA';
+    const toSugbo = dest.key === 'airport_s', nm = { airport_m: 'MAYNILA', airport_s: 'SUGBO', airport_d: 'DABAW' }, from = regionName(P.x);
+    document.getElementById('fl-to').textContent = `${from} ✈️ ${nm[dest.key]}`;
     el.classList.remove('hidden'); el.classList.add('on');
     const arr = MAP.safeNear(dest.x, dest.y + (dest.key === 'airport_m' ? -50 : 30));
     setTimeout(() => MAP.prewarm(arr.x, arr.y, 1300), 300);
@@ -439,8 +444,8 @@ const FLY = {
     }, 1600);
     setTimeout(() => {
       el.classList.remove('on'); el.classList.add('hidden'); G.cutscene = false;
-      UI.big(toSugbo ? 'SUGBO' : 'MAYNILA', toSugbo ? 'Maayong pag-abot! (Maligayang pagdating!)' : 'Balik sa Maynila', 2.2);
-      if (toSugbo) TIP.show('sugbo');
+      UI.big(nm[dest.key], dest.key === 'airport_m' ? 'Balik sa Maynila' : dest.key === 'airport_d' ? 'Madayaw nga pag-abot! (Maligayang pagdating!)' : 'Maayong pag-abot! (Maligayang pagdating!)', 2.2);
+      if (toSugbo) TIP.show('sugbo'); if (dest.key === 'airport_d') TIP.show('dabaw');
       G.stats.flights = (G.stats.flights || 0) + 1; ACH.check();
       if (done) done();
     }, 3200);

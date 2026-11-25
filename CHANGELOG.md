@@ -1,5 +1,15 @@
 # Changelog — Hari ng Kalsada
 
+## v1.9: Kabanata 4 — Dabaw (2026-11-25)
+- 🦅 **Chapter 4: Dabaw**, a Davao-inspired city east of Sugbo across a second strait: the forested **Bundok Apo** with a winding trail, a loggers' camp and a summit lookout; the **Eagle Center**; a **banana plantation**; the Durian Market; a city grid with its own traffic; and an airport
+- 📖 **6 new missions** (28 total) against **Ninong**, the last name in Tiburon's ledger: Lipad sa Dabaw, Durian Express (careful driving), Bantay Gubat (stop 3 log trucks on the mountain), Agila (stop the poachers' van and save an eagle chick), Saging ng Bayan (banana convoy) and Ang Ninong (camp assault, a boss, then a truck chase down the mountain). Your Chapter 3 choice changes the dialogue and how many enemies you face. The epilogue has 4 variants
+- 🗺 **Brand-new map**: full screen, drag to move, pinch / wheel / ± to zoom. Region names show when zoomed out, district names in the middle, and places and their names when zoomed in. Category chips (Shops, Services, Jobs, Fun, Travel, Slippers) replace the long list, with "nearest" buttons. Tap any place for info and a GPS button, or tap anywhere to drop a pin
+- ✈️ Airports now let you pick a destination (Manila, Sugbo, Dabaw); new ferry from Sugbo's east pier to Dabaw
+- 📸 **10 landmarks** (Luneta, Fort Santiago, Quiapo Church, Baywalk, San Isidro plaza, Plaza Krus, Tops, the Eagle Center, Bundok Apo summit, the plantation) and the "Turista ng Pilipinas" achievement
+- 📲 **Install button in Settings**
+- ⚡ **Smoother arrivals**: map chunks are pre-built during the flight and ferry animations, a smaller chunk cache, and pedestrians spawn gradually — no more lag arriving in Sugbo
+- 🐛 Flying back to Manila no longer drops you off the edge of the map
+
 ## v1.8: Kabanata 3 — Sugbo (2026-11-25)
 - 🏝 **Chapter 3: Sugbo**, a new Cebu-inspired Visayan city across a sea strait east of San Isidro: the port with containers and Tiburon's warehouse, Kolon (old downtown), Plaza Krus, IT Park towers, markets, a hospital and a police station, the Busay hills with a winding road up to the Tops lookout, and an airport with a runway. It has its own traffic (multicabs, taxis, habal-habal), pedestrians and police
 - ✈️ **Travel**: fly from the Manila Airport (south of Pasay) for ₱500, or take the ferry from the new San Isidro pier for ₱150. You can also cross the strait in any boat

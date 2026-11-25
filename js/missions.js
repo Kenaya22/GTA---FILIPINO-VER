@@ -871,8 +871,8 @@ const SHOP = {
       case 'hospital': return P.vehicle ? null : `Ospital — Full heal (${c(100)})`;
       case 'chop': return P.vehicle && MS.idx >= 2 && !(MS.active && MS.active.giver === 'ben') ? `Ibenta kay Mang Ben (~${U.money(this.value(P.vehicle))})` : null;
       case 'home': return P.vehicle ? null : 'I-save ang laro at magpahinga';
-      case 'ferry': return P.vehicle ? null : `${p.label} (${c(p.key === 'ferry_si' || p.key === 'ferry_sg' ? 150 : 50)})`;
-      case 'airport': return P.vehicle ? null : `✈️ ${p.key === 'airport_m' ? 'Lumipad papuntang Sugbo' : 'Lumipad pabalik sa Maynila'} (${c(500)})`;
+      case 'ferry': return P.vehicle ? null : `${p.label} (${c(['ferry1', 'ferry2'].includes(p.key) ? 50 : 150)})`;
+      case 'airport': return P.vehicle ? null : `✈️ ${p.label} — pumili ng lilipadan (${c(500)})`;
     }
     return null;
   },
@@ -938,22 +938,27 @@ const SHOP = {
       }
       case 'airport': {
         if (WANTED.stars > 0) { UI.toast('✈️ "Hindi ka makakalusot sa security habang hinahabol ka ng pulis!"'); return; }
-        if (!this.pay(500)) return;
-        FLY.go(p.key === 'airport_m' ? MAP.pois.airport_s : MAP.pois.airport_m);
+        G.paused = true;
+        document.getElementById('shop-title').textContent = '✈️ ' + p.label.toUpperCase();
+        const el = document.getElementById('shop-list');
+        const dests = [['airport_m', '🏙', 'Maynila'], ['airport_s', '🏝', 'Sugbo'], ['airport_d', '🦅', 'Dabaw']].filter(d => d[0] !== p.key && MAP.pois[d[0]]);
+        el.innerHTML = dests.map(([k, ic, n]) => `<div class="shoprow"><span class="ic">${ic}</span><div><b>${n}</b><small>${MAP.pois[k].label}</small></div><button data-to="${k}">LIPAD · ${MS.freeShops ? 'LIBRE' : U.money(500)}</button></div>`).join('');
+        el.querySelectorAll('button[data-to]').forEach(b => b.onclick = () => { if (!this.pay(500)) return; UI.hide('shop'); G.paused = false; FLY.go(MAP.pois[b.dataset.to]); });
+        UI.show('shop');
         break;
       }
       case 'ferry': {
         if (WANTED.stars > 0) { UI.toast('⛴ "Bawal sumakay ng ferry ang may humahabol na pulis!"'); return; }
-        const far = p.key === 'ferry_si' || p.key === 'ferry_sg';
+        const far = !['ferry1', 'ferry2'].includes(p.key);
         if (!this.pay(far ? 150 : 50)) return;
-        const dest = MAP.pois[{ ferry1: 'ferry2', ferry2: 'ferry1', ferry_si: 'ferry_sg', ferry_sg: 'ferry_si' }[p.key]];
+        const dest = MAP.pois[{ ferry1: 'ferry2', ferry2: 'ferry1', ferry_si: 'ferry_sg', ferry_sg: 'ferry_si', ferry_sg2: 'ferry_dw', ferry_dw: 'ferry_sg2' }[p.key]];
         MAP.prewarm(dest.x, dest.y, 800);
         const f = document.getElementById('fade'); f.classList.add('on'); G.cutscene = true; AUD.horn(true);
         setTimeout(() => {
           P.x = dest.x; P.y = dest.y + (p.key === 'ferry1' ? 0 : 8); P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
           WORLD.clock = (WORLD.clock + (far ? 90 : 40)) % 1440;
           f.classList.remove('on'); G.cutscene = false;
-          const nm = { ferry1: ['ISLA MALIGAYA', 'Maligayang pagdating sa isla!'], ferry2: ['MAYNILA', 'Balik sa lungsod'], ferry_si: ['SUGBO', 'Maayong pag-abot! (Maligayang pagdating!)'], ferry_sg: ['SAN ISIDRO', 'Balik sa probinsya'] }[p.key];
+          const nm = { ferry1: ['ISLA MALIGAYA', 'Maligayang pagdating sa isla!'], ferry2: ['MAYNILA', 'Balik sa lungsod'], ferry_si: ['SUGBO', 'Maayong pag-abot! (Maligayang pagdating!)'], ferry_sg: ['SAN ISIDRO', 'Balik sa probinsya'], ferry_sg2: ['DABAW', 'Madayaw nga pag-abot! (Maligayang pagdating!)'], ferry_dw: ['SUGBO', 'Balik sa Sugbo'] }[p.key];
           UI.big(nm[0], nm[1], 2);
           if (!far) TIP.show('island'); else TIP.show('sugbo');
         }, 900);

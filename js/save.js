@@ -85,7 +85,7 @@ const SAVE = {
       const m = MISSIONS[s.active];
       MS.active = m; MS.stage = m.cp ? m.cp.stage : 0; MS.c = {}; MS.entered = false;
       UI.big(m.title.toUpperCase(), 'Itinuloy mula checkpoint', 2);
-    } else UI.big(SUGBO.in(G.player.x) ? 'SUGBO' : MAP.inProvince(G.player.x) ? 'SAN ISIDRO' : 'MAYNILA', MS.idx >= MISSIONS.length ? 'Free roam' : `Susunod: ${MISSIONS[MS.idx].title}`, 2);
+    } else UI.big(regionName(G.player.x), MS.idx >= MISSIONS.length ? 'Free roam' : `Susunod: ${MISSIONS[MS.idx].title}`, 2);
   },
   describe(d) {
     if (!d) return null;

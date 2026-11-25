@@ -73,7 +73,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); SUGBO.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null;
+    PROV.reset(); SUGBO.reset(); DABAW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -430,6 +430,7 @@ const G = {
     TUT.update(dt);
     PROV.update(dt);
     SUGBO.update(dt);
+    DABAW.update(dt);
     ARMS.update(dt);
     GUNS.update(dt);
     ACH.update(dt);

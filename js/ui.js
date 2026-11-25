@@ -17,6 +17,14 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '1.9', title: 'Kabanata 4: Dabaw', date: 'Nobyembre 2026', items: [
+    '🦅 <b>KABANATA 4: DABAW</b> — bagong lungsod sa Mindanao: Bundok Apo, Sentro ng Agila, saging na plantasyon, Durian Market at paliparan',
+    '📖 <b>6 bagong misyon</b> (28 lahat) laban kay <b>Ninong</b> — durian delivery, trak ng troso, pagligtas sa sisiw ng agila, convoy ng saging at huling laban sa bundok',
+    '🗺 <b>Bagong mapa</b> — i-drag, i-pinch at i-zoom; lumalabas ang mga pangalan habang nag-zo-zoom; pumili ng kategorya; i-tap ang lugar para sa GPS',
+    '✈️ Pumili kung saan lilipad (Maynila, Sugbo, Dabaw) · ⛴ ferry mula Sugbo papuntang Dabaw',
+    '📸 <b>10 pasyalan</b> sa mapa (Luneta, Intramuros, Quiapo, Baywalk, Tops, Bundok Apo...) at bagong tagumpay',
+    '📲 <b>I-install</b> sa ⚙️ Settings · ⚡ Wala nang lag pagdating sa Sugbo · Naayos ang pagbalik sa Maynila sakay ng eroplano',
+  ] },
   { v: '1.8', title: 'Kabanata 3: Sugbo', date: 'Nobyembre 2026', items: [
     '🏝 <b>KABANATA 3: SUGBO</b> — isang bagong lungsod sa Kabisayaan, sa kabila ng kipot: pantalan, Kolon, Plaza Krus, IT Park, ang burol ng Busay at isang paliparan',
     '✈️ <b>Sumakay ng eroplano</b> mula sa Paliparan ng Maynila (Pasay), o ⛴ ferry mula sa San Isidro — pwede ring tawirin ang kipot gamit ang bangka',
@@ -371,7 +379,7 @@ const UI = {
     if (!MS.active && !side && MS.idx < MISSIONS.length) {
       side = `Susunod na misyon: ${MISSIONS[MS.idx].title} — puntahan si ${CHARS[MISSIONS[MS.idx].giver].name} (${CHARS[MISSIONS[MS.idx].giver].name[0]} sa mapa)`;
       const gp = MS.giverPOI(MISSIONS[MS.idx]);
-      if (gp && SUGBO.in(gp.x) && !SUGBO.in(P.x)) side += ' · ✈️ Sumakay ng eroplano sa Paliparan (Pasay)';
+      if (gp && regionName(gp.x) !== regionName(P.x) && (SUGBO.in(gp.x) || DABAW.in(gp.x))) side += ' · ✈️ Sumakay ng eroplano sa Paliparan';
     }
     this.el.sidejob.classList.toggle('hidden', !side);
     this.set('side', this.el.sidejob, 'textContent', side);
@@ -557,7 +565,7 @@ const UI = {
     let ch = 0;
     $('mission-list').innerHTML = MISSIONS.map((m, i) => {
       let head = '';
-      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : 'SUGBO'}</div>`; }
+      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MAYNILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'SUGBO' : 'DABAW'}</div>`; }
       const st = i < MS.idx ? 'done' : i === MS.idx ? 'next' : 'locked';
       const label = st === 'done' ? '✓ TAPOS' : st === 'next' ? (MS.active === m ? 'GINAGAWA' : 'SUSUNOD') : '🔒';
       return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}</div></div>`;
@@ -570,9 +578,10 @@ const UI = {
       ch2a: ['🌾 BAYANI NG SAN ISIDRO!', 'Nakulong si Don Severo at nabawi ng mga magsasaka ang kanilang lupa (Ending A). Pero may tawag mula sa Sugbo... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
       ch2b: ['💰 ANG PRESYO', 'Mayaman ka na, pero nawalan ng lupa ang San Isidro (Ending B). May pagkakataon ka pang ituwid ito... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
       final: FINAL.ending(),
+      epilogue: ['🦅 TAPOS ANG KABANATA 4!', EPILOGUE.text()],
     }[kind] || [];
     $('end-title').textContent = E[0]; $('end-text').textContent = E[1];
-    $('end-choices').innerHTML = kind === 'final' ? FINAL.summary() : '';
+    $('end-choices').innerHTML = kind === 'final' || kind === 'epilogue' ? FINAL.summary() : '';
     $('end-stats').innerHTML = [
       ['PERA', U.money(G.player.money)], ['TSINELAS', `${G.tsinelas.size}/${MAP.tsinelas.length}`], ['NAKATAKAS', G.stats.escapes], ['NABENTA', G.stats.sold],
     ].map(([a, b]) => `<div><span>${a}</span>${b}</div>`).join('');

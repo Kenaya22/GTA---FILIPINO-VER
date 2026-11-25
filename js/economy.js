@@ -159,6 +159,7 @@ const ACH_LIST = [
   ['chapter2', '🌾', 'Anak ng Bukid', 'Tapusin ang Kabanata 2 (San Isidro)', () => MS.idx >= 14],
   ['endingA', '⚖️', 'Lupa ng Bayan', 'Makuha ang Ending A', () => G.flags && G.flags.ending2 === 'A'],
   ['chapter3', '🏝', 'Bayani ng Sugbo', 'Tapusin ang Kabanata 3 (Sugbo)', () => !!(G.flags && G.flags.final)],
+  ['chapter4', '🦅', 'Tagapagtanggol ng Agila', 'Tapusin ang Kabanata 4 (Dabaw)', () => !!(G.flags && G.flags.ch4)],
   ['trueEnding', '👑', 'Tunay na Hari', 'Makuha ang Tunay na Wakas (bayan + ilantad)', () => !!(G.flags && G.flags.final === 'AC')],
   ['flight1', '✈️', 'Frequent Flyer', 'Sumakay ng eroplano papuntang Sugbo', () => (G.stats.flights || 0) >= 1],
   ['endingB', '💰', 'Ang Presyo', 'Makuha ang Ending B', () => G.flags && G.flags.ending2 === 'B'],
@@ -182,6 +183,7 @@ const ACH_LIST = [
   ['medic3', '🚑', 'Sagip-Buhay', 'Maihatid ang 3 pasyente sa ospital', () => (G.stats.medic || 0) >= 3],
   ['fire3', '🚒', 'Bumbero ng Taon', 'Patayin ang 3 sunog', () => (G.stats.fire || 0) >= 3],
   ['garbage1', '♻️', 'Malinis na Maynila', 'Tapusin ang isang ruta ng basura', () => (G.stats.garbage || 0) >= 1],
+  ['pasyalan', '📸', 'Turista ng Pilipinas', 'Bisitahin ang 8 pasyalan (tingnan ang 🎉 sa mapa)', () => ((G.stats.lm || []).length) >= 8],
   ['rescue10', '🛟', 'Bayani ng Bagyo', 'Magligtas ng 10 tao sa bagyo', () => (G.stats.rescued || 0) >= 10],
   ['fiesta1', '🎉', 'Pistahan!', 'Sumayaw sa parada ng Pista sa Tondo', () => (G.stats.parade || 0) >= 1],
   ['videoke90', '🎤', 'Tawag ng Tanghalan', 'Makakuha ng 90+ sa Videoke', () => (G.stats.vkTop || 0) >= 90],
@@ -209,6 +211,7 @@ const ACH = {
   update(dt) {
     this.t -= dt; if (this.t > 0) return; this.t = 1;
     const P = G.player;
+    for (const k in MAP.pois) { const p = MAP.pois[k]; if (!p.landmark) continue; const lm = G.stats.lm = G.stats.lm || []; if (!lm.includes(k) && U.d2(p.x, p.y, P.x, P.y) < 160 * 160) { lm.push(k); UI.toast(`📸 Pasyalan: ${p.label} (${lm.length})`); this.check(); } }
     for (const l of MAP.labels) if (!l.vert && !this.visited.has(l.name) && U.d2(l.x, l.y, P.x, P.y) < 650 * 650) { this.visited.add(l.name); UI.toast(`🗺 Napuntahan: ${l.name} (${this.visited.size}/${this.districtCount()})`); }
     if (P.vehicle) this.drove.add(P.vehicle.type);
     this.check();

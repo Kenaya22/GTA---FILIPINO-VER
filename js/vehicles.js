@@ -201,6 +201,7 @@ function drawVehicle(g, v, now) {
     case 'pickup': drawPickup(g, v, col, hl, hw); break;
     case 'float': drawFloat(g, v, col, hl, hw, now); break;
     case 'lancha': drawLancha(g, v, col, hl, hw); break;
+    case 'logs': drawLogs(g, v, col, hl, hw); break;
   }
   if (v.upg) drawSticker(g, v, hl, hw);
   if (v.burnt) { g.fillStyle = 'rgba(0,0,0,0.45)'; U.rr(g, -hl, -hw, L, W, 6); g.fill(); }
@@ -437,6 +438,13 @@ function drawPickup(g, v, col, hl, hw) {
   if (v.cargo) { g.fillStyle = '#a0522d'; U.rr(g, -hl + 7, -8, 18, 16, 2); g.fill(); g.fillStyle = '#7fb800'; g.beginPath(); g.arc(-hl * 0.45, 0, 7, 0, TAU); g.fill(); }
   // roll bar
   g.fillStyle = '#333'; g.fillRect(-hl * 0.2, -hw + 2, 3, hw * 2 - 4);
+  lightsFrontBack(g, v, hl, hw);
+}
+function drawLogs(g, v, col, hl, hw) {
+  g.fillStyle = v.burnt ? '#2a2826' : '#7a2e1e'; U.rr(g, hl * 0.45, -hw + 2, hl * 0.55, hw * 2 - 4, 5); g.fill();
+  g.fillStyle = '#18202d'; g.fillRect(hl * 0.52, -hw + 5, 6, hw * 2 - 10);
+  g.fillStyle = '#3a3f48'; g.fillRect(-hl, -hw, hl * 1.42, hw * 2);
+  if (!v.burnt && !v.caught) for (let r = 0; r < 4; r++) { g.fillStyle = r % 2 ? '#8a5a2b' : '#a0703a'; U.rr(g, -hl + 2, -hw + 3 + r * (hw * 2 - 6) / 4, hl * 1.36, (hw * 2 - 6) / 4 - 1, 4); g.fill(); g.fillStyle = '#d9b48a'; g.beginPath(); g.arc(-hl + 6, -hw + 3 + (r + 0.5) * (hw * 2 - 6) / 4, 3, 0, TAU); g.fill(); }
   lightsFrontBack(g, v, hl, hw);
 }
 function drawLancha(g, v, col, hl, hw) {

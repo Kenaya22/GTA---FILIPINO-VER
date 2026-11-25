@@ -221,7 +221,7 @@ const WANTED = {
     const cx = this.mode === 'search' ? this.lastX : G.player.x, cy = this.mode === 'search' ? this.lastY : G.player.y;
     if (MAP.prov && cx > (CITY_W - 20) * T) {
       // province / Sugbo: spawn on known road points
-      const pts = SUGBO.in(cx) ? MAP.sugbo.pts : MAP.prov.pts;
+      const pts = regionPts(cx);
       for (let tries = 0; tries < 16; tries++) {
         const p = U.choice(pts), d = U.dist(p.x, p.y, cx, cy);
         if (d < 800 || d > 1700 || TRAFFIC.inView(p.x, p.y, 100) || G.vehicles.some(v => U.d2(v.x, v.y, p.x, p.y) < 120 * 120)) continue;
@@ -336,7 +336,7 @@ class CopDriver {
       tx = WANTED.lastX; ty = WANTED.lastY; field = G.copField;
       if (MAP.prov && v.x > (CITY_W - 4) * T && (U.dist(v.x, v.y, tx, ty) < 320 || this.ptgt)) {
         // province search: wander between nearby farm/highway points
-        const pts = SUGBO.in(v.x) ? MAP.sugbo.pts : MAP.prov.pts;
+        const pts = regionPts(v.x);
         if (!this.ptgt || U.dist(v.x, v.y, this.ptgt.x, this.ptgt.y) < 80) this.ptgt = U.choice(pts.filter(p => U.dist(p.x, p.y, tx, ty) < 1400)) || pts[0];
         tx = this.ptgt.x; ty = this.ptgt.y; field = null;
       } else if (U.dist(v.x, v.y, tx, ty) < 320 || this.road) {
