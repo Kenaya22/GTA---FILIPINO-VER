@@ -140,7 +140,6 @@ const UI = {
     $('btn-pload').onclick = () => SAVE.open('load');
     $('btn-slotclose').onclick = () => this.hide('slots');
     $('btn-pach').onclick = () => ACH.open();
-    $('btn-mapall').onclick = () => { this.mapAll = !this.mapAll; AUD.click(); this.openMap(); };
     $('btn-photo').onclick = () => PHOTO.open();
     $('ph-close').onclick = () => PHOTO.close();
     $('ph-snap').onclick = () => PHOTO.snap();
@@ -153,6 +152,7 @@ const UI = {
     $('t-lang').textContent = SETTINGS.lang === 'en' ? '🌐 Filipino' : '🌐 English';
     $('t-lang').onclick = () => I18N.set(SETTINGS.lang === 'en' ? 'fil' : 'en');
     $('set-dev').onclick = () => DEV.open();
+    $('set-install').onclick = () => PWA.install();
     $('tut-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.next(); });
     $('tut-skip').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.end(true); });
     $('btn-tut').onclick = () => { this.hide('help'); if (G.started) { this.hide('pause'); G.paused = false; TUT.start(); } else { this.hide('help'); this.openNewGame(); } };
@@ -186,7 +186,7 @@ const UI = {
     $('btn-phelp').onclick = () => this.show('help');
     $('btn-sound').onclick = () => { AUD.setOn(!AUD.on); $('btn-sound').textContent = 'TUNOG: ' + (AUD.on ? 'ON' : 'OFF'); };
     $('btn-quit').onclick = () => { G.save(); location.reload(); };
-    $('btn-mapclose').onclick = () => { this.hide('mapscreen'); if (!$('pause').classList.contains('hidden')) return; G.paused = false; };
+
     $('btn-mclose').onclick = () => this.hide('missions');
     $('btn-endclose').onclick = () => { this.hide('ending'); G.paused = false; };
     this.refreshTitle();
@@ -465,7 +465,8 @@ const UI = {
     g.restore();
     g.fillStyle = '#fff'; g.font = 'bold 13px sans-serif'; g.textAlign = 'center'; g.fillText('N', R, 12);
   },
-  openMap() {
+  openMap() { MAPVIEW.open(); },
+  openMapOld() {
     G.paused = true;
     this.show('mapscreen');
     const c = $('bigmap'), g = c.getContext('2d');

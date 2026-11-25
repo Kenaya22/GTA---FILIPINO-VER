@@ -20,12 +20,15 @@ const PWA = {
     // always offer the button (except when already installed); explain the steps when the browser can't prompt
     if (!this.standalone() && location.protocol.startsWith('http')) btn.classList.remove('hidden');
     if (this.inApp()) document.getElementById('t-inapp').classList.remove('hidden');
-    btn.onclick = async () => {
-      AUD.click();
-      if (this.deferred) { this.deferred.prompt(); const r = await this.deferred.userChoice.catch(() => null); this.deferred = null; if (r && r.outcome === 'accepted') btn.classList.add('hidden'); return; }
-      this.help();
-    };
+    btn.onclick = () => this.install();
+    if (this.standalone()) { const si = document.getElementById('set-install'); if (si) si.textContent = '✅ Naka-install na ang app'; }
     document.getElementById('t-inapp').onclick = () => this.help();
+  },
+  async install() {
+    AUD.click();
+    if (this.standalone()) { UI.toast('✅ Naka-install na ang app — buksan mula sa home screen.'); return; }
+    if (this.deferred) { this.deferred.prompt(); const r = await this.deferred.userChoice.catch(() => null); this.deferred = null; if (r && r.outcome === 'accepted') document.getElementById('btn-install').classList.add('hidden'); return; }
+    this.help();
   },
   inApp() { return /FBAN|FBAV|FB_IAB|FBIOS|Messenger|Instagram|Line\/|MicroMessenger|TikTok|musical_ly|Snapchat/i.test(navigator.userAgent); },
   help() {

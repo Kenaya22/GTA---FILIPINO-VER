@@ -396,17 +396,18 @@ const SUGBO = {
     this.folk = this.folk.filter(p => { if (p.remove) return false; if (!near || U.dist(p.x, p.y, P.x, P.y) > 1700) { p.remove = true; return false; } return true; });
     let tries = 0;
     const want = SETTINGS.quality === 'low' ? 12 : 22;
-    while (near && this.folk.length < want && tries++ < 25) {
+    let added = 0;
+    while (near && this.folk.length < want && tries++ < 25 && added < 4) {
       const a = Math.random() * TAU, r = U.rand(500, 1100), x = P.x + Math.cos(a) * r, y = P.y + Math.sin(a) * r;
       const t = MAP.tileAt(x, y);
       if (!(t === TL.SIDE || t === TL.PLAZA) || TRAFFIC.inView(x, y, 30)) continue;
       const p = new Person(x, y, 'ped'); p.state = 'wander'; p.home = { x, y }; p.keep = true; p.wtiles = [TL.SIDE, TL.PLAZA, TL.PROM]; p.speed = U.rand(45, 70);
       if (Math.random() < 0.35) p.look.hair = U.choice(['cap_blue', 'bucket', 'curly', 'short']);
-      this.folk.push(p); G.peds.push(p);
+      this.folk.push(p); G.peds.push(p); added++;
     }
     this.cars = this.cars.filter(v => { if (v.remove) return false; if (!near || U.dist(v.x, v.y, P.x, P.y) > 2300) { if (!TRAFFIC.inView(v.x, v.y, 60)) v.remove = true; return !v.remove; } return true; });
     const cw = SETTINGS.quality === 'low' ? 7 : 12;
-    for (let k = 0; near && this.cars.length < cw && k < 8; k++) {
+    for (let k = 0, made = 0; near && this.cars.length < cw && k < 8 && made < 3; k++) {
       const loop = U.choice(sg.loops), i = U.randi(0, loop.length - 1), a = loop[i], b = loop[(i + 1) % loop.length], f = U.rand(0.15, 0.85);
       const x = U.lerp(a.x, b.x, f), y = U.lerp(a.y, b.y, f);
       const d = U.dist(x, y, P.x, P.y);
@@ -415,7 +416,7 @@ const SUGBO = {
       const v = new Vehicle(type, x, y, Math.atan2(b.y - a.y, b.x - a.x), type === 'taxi' ? { color: '#f4f4f0' } : {}); v.driver = 'ai';
       v.ai = new PathDriver(v, loop, { cruise: type === 'bus' ? 170 : 215, loop: true, start: (i + 1) % loop.length });
       v.vx = Math.cos(v.a) * 120; v.vy = Math.sin(v.a) * 120;
-      this.cars.push(v); G.vehicles.push(v);
+      this.cars.push(v); G.vehicles.push(v); made++;
     }
   },
   reset() { this.folk = []; this.cars = []; },
@@ -430,8 +431,10 @@ const FLY = {
     const toSugbo = dest.key === 'airport_s';
     document.getElementById('fl-to').textContent = toSugbo ? 'MAYNILA ✈️ SUGBO' : 'SUGBO ✈️ MAYNILA';
     el.classList.remove('hidden'); el.classList.add('on');
+    const arr = MAP.safeNear(dest.x, dest.y + (dest.key === 'airport_m' ? -50 : 30));
+    setTimeout(() => MAP.prewarm(arr.x, arr.y, 1300), 300);
     setTimeout(() => {
-      P.x = dest.x; P.y = dest.y + 30; P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
+      P.x = arr.x; P.y = arr.y; P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
       WORLD.clock = (WORLD.clock + 60) % 1440;
     }, 1600);
     setTimeout(() => {

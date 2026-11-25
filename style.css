@@ -468,3 +468,22 @@ body.touch #speedo { top: auto !important; right: auto !important; left: 50%; tr
 /* portrait phones: keep the objective card below the minimap, bars and weapon label */
 body.touch #topleft { top: calc(max(10px, env(safe-area-inset-top)) + 186px); }
 @media (orientation: landscape) and (max-height: 500px) { body.touch #topleft { top: max(10px, env(safe-area-inset-top)); } }
+/* ===== v1.9 interactive map ===== */
+#mapscreen { padding: 0; background: #0a1422; display: block; overflow: hidden; z-index: 11; }
+#mapscreen #bigmap { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; border-radius: 0; box-shadow: none; touch-action: none; cursor: grab; }
+.map-top { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.map-top > * { pointer-events: auto; }
+.map-title { font-family: var(--font-display); color: var(--accent); font-size: 20px; text-shadow: 0 2px 6px #000; }
+.map-zoom { position: absolute; right: 12px; top: 50%; transform: translateY(-60%); display: flex; flex-direction: column; gap: 8px; }
+.map-zoom button { width: 44px; height: 44px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.25); background: rgba(14,20,34,0.85); color: #fff; font-size: 20px; font-weight: 900; }
+.map-bottom { position: absolute; left: 0; right: 0; bottom: max(10px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 8px; padding: 0 10px; align-items: center; pointer-events: none; }
+.map-bottom > * { pointer-events: auto; }
+.mapchips, .mapsub { display: flex; gap: 6px; overflow-x: auto; max-width: 100%; padding: 2px; scrollbar-width: none; }
+.mapchips::-webkit-scrollbar, .mapsub::-webkit-scrollbar { display: none; }
+.mapchips button, .mapsub button { flex: none; border: 1px solid rgba(255,255,255,0.18); border-radius: 18px; padding: 8px 12px; background: rgba(14,20,34,0.9); color: #fff; font-weight: 800; font-size: 13px; white-space: nowrap; }
+.mapchips button.on { background: var(--accent); color: #1a1205; }
+.mapsub { align-items: center; } .mapsub small { color: #ffd28a; font-weight: 800; white-space: nowrap; }
+.mapsub.hidden, .mappop.hidden { display: none; }
+.mappop { display: flex; gap: 10px; align-items: center; background: rgba(14,20,34,0.95); border: 1px solid var(--accent); border-radius: 14px; padding: 10px 12px; width: min(460px, 100%); box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
+.mappop .mp-ic { font-size: 28px; } .mappop div { flex: 1; min-width: 0; } .mappop b { display: block; font-size: 14px; } .mappop small { color: var(--muted); font-weight: 700; font-size: 11px; }
+#install { z-index: 13; }

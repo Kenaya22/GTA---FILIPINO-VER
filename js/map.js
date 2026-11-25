@@ -705,6 +705,8 @@ const MAP = {
       this.labels.push({ name: n, x: (x0 + w / 2) * T + fx * PER * T, y: (y0 + h / 2) * T + fy * PER * T });
     }
     if (this.prov) { this.labels.push({ name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 20) * T }, { name: 'HACIENDA SEVERO', x: (this.prov.tcx + 0.5) * T, y: 10 * T }, { name: 'PALAYAN', x: (this.prov.tcx + 0.5) * T, y: 150 * T }); }
+    this.regions = [{ name: 'MAYNILA', x: this.cx(4), y: this.cy(4) }, { name: 'SAN ISIDRO', x: (this.prov.tcx + 0.5) * T, y: (this.prov.tcy + 6) * T }, { name: 'ISLA MALIGAYA', x: this.island.cx * T, y: this.island.cy * T }];
+    if (this.sugbo) this.regions.push({ name: 'SUGBO', x: (SX0 + 56) * T, y: 90 * T });
     this.labels.push({ name: 'MANILA BAY', x: (OX - 8) * T, y: this.cy(5), vert: true });
     if (this.sugbo) {
       const sg = this.sugbo, bc = (i, j) => ({ x: (sg.VX[i] + RW + 9) * T, y: (sg.HY[j] + RW + 9) * T });
@@ -744,8 +746,22 @@ const MAP = {
     if (!allowNew) return null;
     c = this.renderChunk(cx, cy);
     this.chunks.set(key, c);
-    if (this.chunks.size > (SETTINGS.quality === 'low' ? 36 : 70)) { const first = this.chunks.keys().next().value; this.chunks.delete(first); }
+    if (this.chunks.size > (SETTINGS.quality === 'low' ? 30 : 44)) { const first = this.chunks.keys().next().value; this.chunks.delete(first); }
     return c;
+  },
+  // build chunks around a point ahead of time (during the flight / ferry fade), a couple per tick
+  prewarm(x, y, ms = 1500) {
+    const CS = this.CH, r = 2, todo = [];
+    const cx0 = Math.floor(x / CS), cy0 = Math.floor(y / CS);
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) { const cx = cx0 + dx, cy = cy0 + dy; if (cx >= 0 && cy >= 0 && cx * CS < WORLD_W && cy * CS < WORLD_H && !this.chunks.has(cx + ',' + cy)) todo.push([cx, cy, dx * dx + dy * dy]); }
+    todo.sort((a, b) => a[2] - b[2]);
+    const step = Math.max(1, Math.ceil(todo.length / (ms / 60)));
+    const iv = setInterval(() => { for (let k = 0; k < step && todo.length; k++) { const [cx, cy] = todo.shift(); this.getChunk(cx, cy, true); } if (!todo.length) clearInterval(iv); }, 60);
+  },
+  // nearest walkable point (used when arriving by plane / ferry)
+  safeNear(x, y) {
+    for (const [dx, dy] of [[0, 0], [0, -40], [0, 40], [40, 0], [-40, 0], [0, -90], [60, -60], [-60, -60]]) { const px = x + dx, py = y + dy; if (py > T && py < WORLD_H - T && !this.solidAt(px, py)) return { x: px, y: py }; }
+    return { x, y: Math.min(y, WORLD_H - 2 * T) };
   },
   renderChunk(cx, cy) {
     const S = this.CH, c = document.createElement('canvas'); c.width = S; c.height = S;

@@ -947,6 +947,7 @@ const SHOP = {
         const far = p.key === 'ferry_si' || p.key === 'ferry_sg';
         if (!this.pay(far ? 150 : 50)) return;
         const dest = MAP.pois[{ ferry1: 'ferry2', ferry2: 'ferry1', ferry_si: 'ferry_sg', ferry_sg: 'ferry_si' }[p.key]];
+        MAP.prewarm(dest.x, dest.y, 800);
         const f = document.getElementById('fade'); f.classList.add('on'); G.cutscene = true; AUD.horn(true);
         setTimeout(() => {
           P.x = dest.x; P.y = dest.y + (p.key === 'ferry1' ? 0 : 8); P.vx = P.vy = 0; G.cam.x = P.x; G.cam.y = P.y;
