@@ -73,7 +73,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); G.flags = {}; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null;
+    PROV.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -566,10 +566,19 @@ const G = {
     else P.arrest = Math.max(0, P.arrest - dt * 0.6);
     if (P.arrest >= 1) this.busted();
   },
+  setWaypoint(pt, name) {
+    this.waypoint = { x: pt.x, y: pt.y, name };
+    UI.toast(`🧭 GPS: ${name}`); UI.hide('mapscreen'); this.paused = false;
+  },
   updateGPS(dt) {
     let t = MS.target();
     if (!t && JOBS.active) t = JOBS.target();
     if (!t && PASADA.mode && PASADA.pt) t = Object.assign({ stop: true }, PASADA.pt);
+    if (!t && this.waypoint) {
+      const P = this.player, me = P.vehicle || P;
+      if (U.dist(me.x, me.y, this.waypoint.x, this.waypoint.y) < 90) { UI.toast('📍 Nandito ka na!'); AUD.checkpoint(); this.waypoint = null; }
+      else t = { x: this.waypoint.x, y: this.waypoint.y };
+    }
     this.target = t;
     this.gpsT -= dt;
     if (!t) { this.gpsPath = null; return; }

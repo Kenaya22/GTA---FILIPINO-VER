@@ -416,3 +416,6 @@ EXTRA_T = [
 from en_v17 import EXTRA17, EXTRA_T17
 EXTRA.update(EXTRA17)
 EXTRA_T += EXTRA_T17
+from en_v18 import EXTRA18, EXTRA_T18
+EXTRA.update(EXTRA18)
+EXTRA_T += EXTRA_T18

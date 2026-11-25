@@ -437,3 +437,14 @@ body.photo #hud, body.photo #touch { display: none !important; }
 .ph-row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .ph-row label { color: #fff; font-weight: 900; display: flex; align-items: center; gap: 6px; flex: 1; min-width: 140px; }
 .ph-row input[type=range] { flex: 1; accent-color: var(--accent); }
+/* ===== v1.8 install help ===== */
+.t-inapp { border: 1px solid #f39c2b; background: rgba(243,156,43,0.14); color: #ffd28a; font-weight: 800; font-size: 12px; border-radius: 12px; padding: 9px 12px; text-align: left; line-height: 1.35; cursor: pointer; }
+.inst-steps p { margin: 6px 0; font-weight: 700; font-size: 14px; line-height: 1.45; }
+.inst-url { flex: 1; min-width: 0; background: var(--panel2); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px; font-size: 12px; }
+.places { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; max-width: 96vw; align-items: center; }
+.places b { color: var(--accent); font-size: 12px; margin-right: 4px; }
+.places button { border: 0; border-radius: 16px; padding: 6px 10px; background: var(--panel2); color: #fff; font-weight: 800; font-size: 12px; }
+.places button.clr { background: #5a1f1f; }
+#bigmap { cursor: crosshair; }
+/* speedometer no longer covers the touch buttons: bottom centre between joystick and buttons */
+body.touch #speedo { top: auto !important; right: auto !important; left: 50%; transform: translateX(-50%); bottom: max(8px, env(safe-area-inset-bottom)) !important; font-size: 24px; opacity: .9; }

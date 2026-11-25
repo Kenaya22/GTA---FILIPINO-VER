@@ -109,7 +109,7 @@ const TIP = {
       if (JOBS.avail()) this.show('jobs');
       if (sh && sh.type === 'weapon') this.show('weapons');
       if (sh && sh.type === 'gunshop' && GUNS.unlocked()) this.show('guns');
-      if (GUNS.unlocked() && KUTA.near()) this.show('kuta');
+      if (KUTA.on() && KUTA.near()) this.show('kuta');
       if (sh && sh.type === 'property') this.show('property');
       if (sh && (sh.type === 'videoke' || sh.type === 'court')) this.show('minigames');
       if (WORLD.nearVendor() || WORLD.vendors.some(v => U.d2(v.x, v.y, P.x, P.y) < 250 * 250)) this.show('vendor');

@@ -10,7 +10,20 @@ const ICONS = {
 };
 
 // what's new in each version (newest first)
+const PLACES = [
+  ['gunshop', '🔫', 'Baril (Armas)'], ['weapon', '🔨', 'Hardware'], ['ukay', '👕', 'Ukay-Ukay'], ['barber', '💈', 'Barberya'], ['paint', '🎨', 'Pintura'],
+  ['chop', '🔧', 'Talyer'], ['sari', '🏪', 'Sari-sari'], ['hospital', '🏥', 'Ospital'], ['home', '🏠', 'Bahay / Save'], ['garage', '🅿️', 'Garahe'],
+  ['property', '🔑', 'Ibinebenta'], ['videoke', '🎤', 'Videoke'], ['court', '🏀', 'Basketball'], ['rider', '🛵', 'Rider Hub'], ['tow', '🛻', 'Impound'],
+  ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
+];
 const CHANGES = [
+  { v: '1.7.1', title: 'Mga Ayos', date: 'Nobyembre 2026', items: [
+    '🔊 <b>May tunog na sa iPhone</b> — kahit naka-silent at kahit sa loob ng Messenger',
+    '📲 Laging may <b>I-INSTALL</b> na button — may sunod-sunod na gabay para sa iPhone, Android at Messenger',
+    '🔫 <b>Bukas na agad ang Armas ni Kabo</b> — makakabili ng baril kahit sa simula ng laro',
+    '📍 <b>HANAPIN</b> sa mapa — piliin ang lugar (baril, ukay, ospital...) at gagabayan ka ng GPS. Pwede ring i-tap ang mapa',
+    '📱 Hindi na natatakpan ng speedometer ang mga button sa phone',
+  ] },
   { v: '1.7', title: 'Baril, Bagyo at Pista', date: 'Nobyembre 2026', items: [
     '🔫 <b>Mga baril</b>: Pistola, Shotgun, SMG, Riple at Granada — may bala, reload, tracer at <b>drive-by</b>. Sa PC: tumutok gamit ang mouse',
     '🦺 <b>Bulletproof vest</b> (asul na bar) at <b>🔫 Armas ni Kabo</b> — 2 tindahan ng baril na may stats ng bawat armas',
@@ -398,7 +411,7 @@ const UI = {
       if (MS.freeShops && !['ukay', 'barber', 'paint'].includes(p.type)) continue;
       g.fillText(p.icon, x, y);
     }
-    if (GUNS.unlocked()) for (const kt of KUTA.defs()) {
+    if (KUTA.on()) for (const kt of KUTA.defs()) {
       if (KUTA.cleared(kt.key)) continue;
       const x = (kt.x - P.x) * k, y = (kt.y - P.y) * k;
       if (x * x + y * y < (R - 8) * (R - 8)) g.fillText('☠️', x, y);
@@ -455,7 +468,7 @@ const UI = {
     }
     g.font = `${Math.round(sz / 36)}px sans-serif`;
     for (const key in MAP.pois) { const p = MAP.pois[key]; if (p.type === 'npc' || p.type === 'spot') continue; g.fillText(p.icon, p.x * k, p.y * k); }
-    if (GUNS.unlocked()) for (const kt of KUTA.defs()) if (!KUTA.cleared(kt.key)) g.fillText('☠️', kt.x * k, kt.y * k);
+    if (KUTA.on()) for (const kt of KUTA.defs()) if (!KUTA.cleared(kt.key)) g.fillText('☠️', kt.x * k, kt.y * k);
     for (const s of MAP.tsinelas) if (!G.tsinelas.has(s.id)) {
       g.fillStyle = '#ffd23f'; g.strokeStyle = '#5a4300'; g.lineWidth = 1.5;
       g.beginPath(); g.ellipse(s.x * k, s.y * k, sz / 260, sz / 150, 0.4, 0, TAU); g.fill(); g.stroke();
@@ -472,6 +485,26 @@ const UI = {
     g.save(); g.translate(P.x * k, P.y * k); g.rotate(P.a); const s = sz / 60;
     g.fillStyle = '#fff'; g.strokeStyle = '#000'; g.lineWidth = 2; g.beginPath(); g.moveTo(s, 0); g.lineTo(-s * 0.7, -s * 0.7); g.lineTo(-s * 0.3, 0); g.lineTo(-s * 0.7, s * 0.7); g.closePath(); g.fill(); g.stroke();
     g.restore();
+    // tap the map to set a GPS waypoint
+    c.onclick = (e) => {
+      const r = c.getBoundingClientRect(), wx = (e.clientX - r.left) / r.width * MW * T, wy = (e.clientY - r.top) / r.height * MH * T;
+      G.setWaypoint({ x: wx, y: wy }, '📍 Napiling lugar');
+    };
+    this.renderPlaces();
+  },
+  // place finder under the big map: tap → GPS to the nearest one
+  renderPlaces() {
+    const P = G.player, el = $('places');
+    const have = new Set(Object.values(MAP.pois).map(p => p.type));
+    const rows = PLACES.filter(([t]) => have.has(t)).map(([t, ic, name]) => `<button data-t="${t}">${ic} ${name}</button>`);
+    el.innerHTML = `<b>📍 HANAPIN:</b>` + rows.join('') + (G.waypoint ? `<button data-t="clear" class="clr">✕ Alisin ang GPS</button>` : '');
+    el.querySelectorAll('button').forEach(b => b.onclick = () => {
+      AUD.click();
+      if (b.dataset.t === 'clear') { G.waypoint = null; UI.toast('📍 Inalis ang GPS'); this.hide('mapscreen'); G.paused = false; return; }
+      let best = null, bd = 1e18;
+      for (const k in MAP.pois) { const p = MAP.pois[k]; if (p.type !== b.dataset.t) continue; const d = U.d2(p.x, p.y, P.x, P.y); if (d < bd) { bd = d; best = p; } }
+      if (best) G.setWaypoint(best, `${best.icon} ${best.label}`);
+    });
   },
   openPause() {
     this.show('pause');
@@ -590,6 +623,8 @@ const INPUT = {
     btn('tb-job', () => JOBS.toggle());
     // desktop click on canvas resumes audio
     addEventListener('pointerdown', () => { AUD.init(); AUD.resume(); });
+    for (const ev of ['touchend', 'click', 'keydown']) addEventListener(ev, () => AUD.unlock(), { passive: true });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') AUD.resume(); });
   },
   releaseDpad() {
     this.dpId = null;

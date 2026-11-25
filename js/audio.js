@@ -55,7 +55,30 @@ const AUD = {
       wn.connect(wf); wf.connect(this.windG); this.windG.connect(this.master); wn.start();
     } catch (e) { this.ctx = null; }
   },
-  resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+  resume() { if (this.ctx && this.ctx.state !== 'running' && this.ctx.state !== 'closed') { const r = this.ctx.resume(); if (r && r.catch) r.catch(() => { }); } },
+  // iPhone/iPad: audio must be unlocked inside a real tap, and Web Audio is muted by the
+  // silent switch unless an <audio> element is playing — so we loop a silent one.
+  unlock() {
+    this.init(); this.resume();
+    if (!this.ctx || this.unlocked) return;
+    try {
+      const b = this.ctx.createBuffer(1, 1, 22050), s = this.ctx.createBufferSource();
+      s.buffer = b; s.connect(this.ctx.destination); s.start(0);
+      if (navigator.audioSession) navigator.audioSession.type = 'playback';
+      if (!this.silentEl) {
+        const n = 4000, bytes = new Uint8Array(44 + n), dv = new DataView(bytes.buffer);
+        const w = (o, s2) => { for (let i = 0; i < s2.length; i++) bytes[o + i] = s2.charCodeAt(i); };
+        w(0, 'RIFF'); dv.setUint32(4, 36 + n, true); w(8, 'WAVEfmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+        dv.setUint32(24, 8000, true); dv.setUint32(28, 8000, true); dv.setUint16(32, 1, true); dv.setUint16(34, 8, true); w(36, 'data'); dv.setUint32(40, n, true);
+        bytes.fill(128, 44);
+        let bin = ''; for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+        const el = this.silentEl = document.createElement('audio');
+        el.src = 'data:audio/wav;base64,' + btoa(bin); el.loop = true; el.setAttribute('playsinline', ''); el.preload = 'auto';
+      }
+      const pr = this.silentEl.play(); if (pr && pr.catch) pr.catch(() => { });
+      if (this.ctx.state === 'running') this.unlocked = true;
+    } catch (e) { }
+  },
   setOn(v) { this.on = v; if (this.out) this.out.gain.value = v ? 1 : 0; },
   setVolumes() { if (this.master) this.master.gain.value = 0.7 * SETTINGS.sfx; },
   t() { return this.ctx ? this.ctx.currentTime : 0; },

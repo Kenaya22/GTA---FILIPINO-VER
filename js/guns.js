@@ -224,7 +224,7 @@ const GUNS = {
     }
   },
   // ---------- shop ----------
-  unlocked() { return MS.idx >= 2; },
+  unlocked() { return true; },
   openShop() {
     const P = G.player;
     if (!this.unlocked()) { UI.toast('🔒 Sarado pa ang Armas — bumalik pagkatapos ng Misyon 2.'); AUD.fail(); return; }
@@ -270,10 +270,11 @@ const KUTA = {
     this.list = [mk('tondo', 1, -1, 'Kuta sa Tondo'), mk('pantalan', 0, 0, 'Kuta sa Pantalan'), mk('pasay', 2, 8, 'Kuta sa Pasay')];
     return this.list;
   },
+  on() { return MS.idx >= 2; },
   cleared(k) { return !!(G.flags.kuta && G.flags.kuta[k]); },
   update(dt) {
     this.t -= dt; if (this.t > 0) return; this.t = 0.5;
-    if (!GUNS.unlocked()) return;
+    if (!KUTA.on()) return;
     const P = G.player;
     for (const k of this.defs()) {
       const d = U.dist(P.x, P.y, k.x, k.y);

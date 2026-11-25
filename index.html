@@ -99,6 +99,7 @@
       <button id="btn-new" class="mbtn t-new">✚&nbsp; BAGONG LARO</button>
       <button id="btn-load" class="mbtn hidden">📂&nbsp; I-LOAD ANG SAVE</button>
       <button id="btn-install" class="mbtn t-install hidden">📲&nbsp; I-INSTALL ANG APP</button>
+      <button id="t-inapp" class="t-inapp hidden">⚠️ Nasa Messenger/Facebook ka — buksan sa Chrome/Safari para may tunog at ma-install ›</button>
       <div class="t-row">
         <button id="btn-settings" class="mbtn t-sm">⚙️<small>SETTING</small></button>
         <button id="btn-howto" class="mbtn t-sm">❓<small>PAANO</small></button>
@@ -145,9 +146,7 @@
 
 <div id="mapscreen" class="screen hidden">
   <canvas id="bigmap"></canvas>
-  <div class="maplegend">
-    <span>🟡 Misyon</span><span>🏠 Bahay</span><span>👕 Ukay</span><span>💈 Barberya</span><span>🎨 Pintura</span><span>🔧 Talyer</span><span>🏪 Sari-sari</span><span>🏥 Ospital</span><span>🚓 Presinto</span><span>🔨 Hardware</span><span>🔑 Ibinebenta</span><span>🅿️ Garahe</span><span>🛵 Rider</span><span>🛻 Impound</span><span>🏁 Karera</span><span>⛴ Ferry</span><span style="color:#ffd23f">● Gintong Tsinelas</span>
-  </div>
+  <div id="places" class="places"></div>
   <button id="btn-mapclose" class="mbtn closebtn">ISARA ✕</button>
 </div>
 
@@ -212,6 +211,15 @@
     <div class="menurow" id="bk-exp" style="width:100%"><button id="bk-copy" class="mbtn small">Kopyahin</button><button id="bk-dl" class="mbtn small">I-download bilang file</button></div>
     <div class="menurow hidden" id="bk-imp" style="width:100%"><label class="mbtn small bk-file">Pumili ng file<input type="file" id="bk-file" accept=".txt,.json,text/plain" hidden></label><button id="bk-go" class="mbtn small primary">📥 I-IMPORT</button></div>
     <button id="bk-close" class="mbtn primary">BUMALIK</button>
+  </div>
+</div>
+
+<div id="install" class="screen hidden">
+  <div class="panel">
+    <h2>📲 I-INSTALL ANG APP</h2>
+    <div id="inst-steps" class="inst-steps"></div>
+    <div id="inst-link" class="menurow hidden" style="width:100%"><input id="inst-url" class="inst-url" readonly><button class="mbtn small" onclick="PWA.copyLink()">📋 Kopyahin</button></div>
+    <button class="mbtn primary" onclick="UI.hide('install')">SIGE</button>
   </div>
 </div>
 
