@@ -124,3 +124,8 @@ EXTRA21.update({
  '🗺 Bagong pangalan: <b>Manila, Cebu, Davao at Baguio</b>': '🗺 New names: <b>Manila, Cebu, Davao and Baguio</b>',
  '🌊 Dagat na ang paligid ng mapa — at magkahiwalay na isla ang Davao at Baguio': '🌊 The sea now surrounds the map — and Davao and Baguio are separate islands',
 })
+EXTRA21.update({
+ 'v2.3 — Mas Madaling Magmaneho': 'v2.3 — Easier Driving', 'Mas Madaling Magmaneho': 'Easier Driving',
+ '🚗 <b>Mas madaling magmaneho</b> (Madali mode): kusang pumupunta sa tamang linya ng kalsada, mas makapit ang gulong at dumudulas na lang sa pader imbes na tumalbog': '🚗 <b>Easier driving</b> (Easy mode): the car eases into the right lane by itself, tires grip harder, and you slide along walls instead of bouncing off',
+ '💬 Hindi na natatakpan ng mga button ang usapan — nasa itaas na ito ng mga button sa phone': '💬 Dialogue is no longer hidden behind the buttons — on phones it now sits above them',
+})

@@ -1,5 +1,9 @@
 # Changelog — Hari ng Kalsada
 
+## v2.3: Mas Madaling Magmaneho / Easier Driving (2026-11-25)
+- 🚗 **Easier driving** (Madali driving setting, the default): lane-keeping eases the car into the right-hand lane when you point along a road, stronger grip and quicker steering response, and the car slides along walls instead of bouncing off them
+- 💬 **Dialogue no longer covered by the touch buttons**: in portrait it sits just above the highest button (or mid-screen), in landscape at the bottom centre between the arrows and the buttons
+
 ## v2.2: Bagong Hugis ng Mapa / A New Map Shape (2026-11-25)
 - 🗺 Places renamed to their real names: **Manila, Cebu, Davao and Baguio** (was Maynila, Sugbo, Dabaw, Bagiw), in Filipino and English
 - 🏝 **Irregular coastlines**: the world is no longer a row of rectangles. Noisy bays, inlets and beaches are carved into open land along the map edges and straits (roads, places and mission areas are never touched); the sea now surrounds the whole map, and Davao and Baguio are separate islands

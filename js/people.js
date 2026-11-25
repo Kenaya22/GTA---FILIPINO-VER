@@ -227,6 +227,18 @@ class Player extends Person {
     this.downed = true; this.hp = 0;
     G.onWasted(reason);
   }
+  // signed sideways distance (px, + = right of heading) from the right-hand lane of the road under the car
+  laneErr(v, ax) {
+    const ca = Math.cos(ax), sa = Math.sin(ax), rx = -sa, ry = ca;   // right-hand normal
+    if (MAP.tileAt(v.x, v.y) !== TL.ROAD) return null;
+    let l = 0, r = 0;
+    while (l < 200 && MAP.tileAt(v.x - rx * (l + 8), v.y - ry * (l + 8)) === TL.ROAD) l += 8;
+    while (r < 200 && MAP.tileAt(v.x + rx * (r + 8), v.y + ry * (r + 8)) === TL.ROAD) r += 8;
+    if (l >= 200 || r >= 200) return null;
+    const w = l + r; if (w < 60 || w > 220) return null;
+    const lane = w >= 110 ? (r - l) / 2 + w / 4 : (r - l) / 2;     // offset to the target lane centre
+    return -lane;
+  }
   update(dt, inp) {
     if (this.downed) return;
     this.punchCd -= dt; if (this.punchT > 0) this.punchT -= dt; if (this.hurtT > 0) this.hurtT -= dt; if (this.buffT > 0) this.buffT -= dt;
@@ -252,6 +264,14 @@ class Player extends Person {
                 const ax = v.x + Math.cos(cur) * 150, ay = v.y + Math.sin(cur) * 150;
                 if (MAP.tileAt(ax + Math.cos(des) * 90, ay + Math.sin(des) * 90) === TL.ROAD) this.turnQueued = 'soon';
               } else desired = des;
+            }
+          }
+          // easy mode lane keeping: when heading along a road, drift toward the right-hand lane
+          if (SETTINGS.drive === 'madali' && !v.t.boat && !v.t.fly && v.speed > 60) {
+            const Q = Math.PI / 2, ax = Math.round(desired / Q) * Q;
+            if (Math.abs(U.angDiff(v.a, ax)) < 0.45 && Math.abs(U.angDiff(desired, ax)) < 0.45) {
+              const lerr = this.laneErr(v, ax);
+              if (lerr !== null) desired = ax + U.clamp(-lerr / 260, -0.3, 0.3);
             }
           }
           const diff = U.angDiff(v.a, desired);

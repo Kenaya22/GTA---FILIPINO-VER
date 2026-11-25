@@ -89,13 +89,13 @@ class Vehicle {
     if (vf > maxS) vf = U.lerp(vf, maxS, dt * 2);
     vf -= vf * 0.12 * dt;
     if (this.hand) { const b = Math.min(Math.abs(vf), 260 * dt); vf -= Math.sign(vf) * b; this.braking = true; }
-    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1) * (t.boat ? 1 : 1 - WORLD.rain * 0.18) * (this.assist && this.driver === 'player' ? 1.35 : 1) * (this.driver === 'player' ? PROG.driveMul() : 1);
+    const grip = this.hand ? 1.4 : t.grip * (this.popped ? 0.55 : 1) * (t.boat ? 1 : 1 - WORLD.rain * 0.18) * (this.assist && this.driver === 'player' ? 1.7 : 1) * (this.driver === 'player' ? PROG.driveMul() : 1);
     vr *= Math.exp(-grip * dt);
     // steering
     const sf = U.clamp(vf / 150, -1, 1);
     const hiSpeed = 1 - Math.min(Math.abs(vf) / (t.max * 2.4), 0.32);
     const targetAv = this.steer * t.steer * sf * hiSpeed * (this.hand ? 1.45 : 1);
-    this.av = U.lerp(this.av, targetAv, Math.min(1, dt * 9));
+    this.av = U.lerp(this.av, targetAv, Math.min(1, dt * (this.assist && this.driver === 'player' ? 13 : 9)));
     this.a = U.wrap(this.a + this.av * dt);
     ca = Math.cos(this.a); sa = Math.sin(this.a);
     this.vx = ca * vf - sa * vr; this.vy = sa * vf + ca * vr;
@@ -132,8 +132,11 @@ class Vehicle {
         this.x += dx * pen; this.y += dy * pen; cx += dx * pen; cy += dy * pen;
         const vn = this.vx * dx + this.vy * dy;
         if (vn < 0) {
-          this.vx -= dx * vn * 1.25; this.vy -= dy * vn * 1.25;
-          this.vx *= 0.96; this.vy *= 0.96;
+          const easy = this.assist && this.driver === 'player';
+          // easy mode: slide along walls instead of bouncing off them
+          this.vx -= dx * vn * (easy ? 1.02 : 1.25); this.vy -= dy * vn * (easy ? 1.02 : 1.25);
+          this.vx *= easy ? 0.985 : 0.96; this.vy *= easy ? 0.985 : 0.96;
+          if (easy) { const wa = Math.atan2(-dx, dy), d1 = U.angDiff(this.a, wa), d2 = U.angDiff(this.a, wa + Math.PI), d = Math.abs(d1) < Math.abs(d2) ? d1 : d2; if (Math.abs(d) < 0.8) this.a = U.wrap(this.a + d * 0.25); }
           hit = Math.max(hit, -vn);
           // rotate a bit away from wall
           const cross = off * (dx * sa - dy * ca);

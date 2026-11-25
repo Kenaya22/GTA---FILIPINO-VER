@@ -17,6 +17,10 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.3', title: 'Mas Madaling Magmaneho', date: 'Nobyembre 2026', items: [
+    '🚗 <b>Mas madaling magmaneho</b> (Madali mode): kusang pumupunta sa tamang linya ng kalsada, mas makapit ang gulong at dumudulas na lang sa pader imbes na tumalbog',
+    '💬 Hindi na natatakpan ng mga button ang usapan — nasa itaas na ito ng mga button sa phone',
+  ] },
   { v: '2.2', title: 'Bagong Hugis ng Mapa', date: 'Nobyembre 2026', items: [
     '🏝 <b>Hindi na parisukat ang mapa</b> — may mga look, baybayin at dalampasigan na ang Manila, probinsya, Cebu, Davao at Baguio',
     '🗺 Bagong pangalan: <b>Manila, Cebu, Davao at Baguio</b>',
@@ -316,7 +320,19 @@ const UI = {
     this.el['sub-name'].textContent = n; this.el['sub-text'].textContent = t;
     try { $('sub-face').src = PORTRAIT.get(n); $('sub-face').classList.remove('hidden'); } catch (e) { $('sub-face').classList.add('hidden'); }
     this.el.subtitle.classList.remove('hidden');
+    this.placeSub();
     this.lineT = 2.2 + t.length * 0.05;
+  },
+  // on phones keep the dialogue clear of the touch buttons: just above the highest one (or mid-screen if that's too high)
+  placeSub() {
+    if (!this.subIv) this.subIv = setInterval(() => { if (this.talking) this.placeSub(); }, 500);
+    const el = this.el.subtitle; el.style.bottom = ''; el.style.top = '';
+    if (!document.body.classList.contains('touch') || innerWidth > innerHeight) return;   // landscape: CSS keeps it bottom-centre between the controls
+    let top = innerHeight;
+    document.querySelectorAll('#tbtns .tbtn, #dpad').forEach(b => { if (b.offsetParent === null) return; const r = b.getBoundingClientRect(); if (r.height && r.top < top) top = r.top; });
+    const h = el.offsetHeight || 110, gap = 12;
+    if (top - h - gap > innerHeight * 0.22) { el.style.top = 'auto'; el.style.bottom = (innerHeight - top + gap) + 'px'; }
+    else { el.style.top = Math.round(innerHeight * 0.2) + 'px'; el.style.bottom = 'auto'; }
   },
   nextLine() { if (!this.talking) return; this.lines.shift(); AUD.click(); this.showLine(); },
   toast(t) {
