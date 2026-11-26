@@ -562,3 +562,4 @@ body.touch #topleft { top: calc(max(10px, env(safe-area-inset-top)) + 186px); }
 .ph-bank { background: linear-gradient(135deg, #1f6f4a, #134a33); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
 .ph-bank b { font-family: var(--font-display); font-size: 34px; } .ph-bank small { font-size: 11px; opacity: 0.8; }
 .phone-dev .shoprow { padding: 8px; }
+.set-privacy { display: block; text-align: center; font-size: 12px; font-weight: 800; color: var(--muted, #9aa3b5); margin: 4px 0; }

@@ -36,7 +36,7 @@ const ANIMALS = {
         const a = new Person(x + i * 14, y + (i % 2) * 10, 'animal');
         a.animal = kind; a.npc = true; a.keep = true; a.umb = null; a.r = A.r; a.speed = A.speed; a.state = 'wander';
         a.home = { x, y }; a.wtiles = A.tiles; a.col = U.choice(A.cols); a.name = null;
-        G.peds.push(a); this.list.push(a);
+        G.peds.push(a); this.list.push(a); TIP.show('animals');
       }
       return;
     }

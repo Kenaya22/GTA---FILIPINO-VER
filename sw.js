@@ -1,6 +1,6 @@
 // Service worker: makes the game work offline and installable.
 // Bump CACHE when releasing a new version so phones download the update.
-const CACHE = 'hnk-v2.7';
+const CACHE = 'hnk-v2.8';
 const SHELL = [
   './',
   './index.html',
@@ -26,6 +26,7 @@ const SHELL = [
   './js/jobs.js',
   './js/lang_en.js',
   './js/life.js',
+  './js/lively.js',
   './js/map.js',
   './js/mapview.js',
   './js/minigames.js',

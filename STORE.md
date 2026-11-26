@@ -25,7 +25,7 @@ The game is already an installable PWA, so it can go on Google Play as a **Trust
 | Content rating | Fill the questionnaire honestly: cartoon violence, guns, police chases → usually **Teen / PEGI 12–16** |
 | Ads / in-app purchases | None |
 | Data safety | The game collects **no data** (progress is saved only on the phone) |
-| Privacy policy | Required — a short page saying no personal data is collected is enough (can be a GitHub Pages file) |
+| Privacy policy | `https://kenaya22.github.io/GTA---FILIPINO-VER/privacy.html` (included in the repo as `privacy.html`) |
 
 **Full description:** use the store text in `ITCH.md`.
 

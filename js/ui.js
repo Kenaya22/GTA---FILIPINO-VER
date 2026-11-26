@@ -17,6 +17,13 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.8', title: 'Masiglang Lungsod', date: 'Nobyembre 2026', items: [
+    '📋 <b>Mga Pakiusap</b> — nagte-text ang mga kakilala mo (Tito Boy, Aling Nena, asawa mo...) para magpabili o magpahatid; sundan ang <b>berdeng arrow</b> para sa bayad at bonus sa bilis',
+    '💬 <b>Nagsasalita na ang mga tao</b> sa kalye — tungkol sa ulan, oras, sasakyan mo, kasikatan mo at sa sarili nilang lungsod',
+    '🎁 <b>Premyo araw-araw</b> — bumalik araw-araw para sa lumalaking premyo (hanggang ₱3,000 sa ika-7 araw)',
+    '📱 Mas maraming app sa phone: Pakiusap, Tagumpay at Kamera · 💡 Mga tip para sa pamilya, phone, GPS at mga hayop',
+    '🐞 <b>I-report ang bug</b> at 🔒 Privacy Policy sa Settings · ⚖️ Inayos ang baon ng pamilya at tubo sa bangko',
+  ] },
   { v: '2.7', title: 'Buhay na Kalye', date: 'Nobyembre 2026', items: [
     '😱 <b>Sigaw</b> kapag nang-agaw ka ng sasakyan o may nasaktan · 🩸 <b>Dugo</b> kapag may binaril (pwedeng i-OFF sa Settings)',
     '🎯 <b>Mas malakas na auto-aim</b> sa tao at sasakyan — may pulang marka sa target',
@@ -219,6 +226,8 @@ const UI = {
     const useCode = () => { const i = $('set-code'), v = i.value; i.value = ''; i.blur(); CODES.use(v); };
     $('set-code-go').onclick = useCode; $('set-code').onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') useCode(); };
     $('set-install').onclick = () => PWA.install();
+    $('set-bug').onclick = () => { AUD.click(); BUGREPORT.send(); };
+    if (SUPPORT_URL) { $('set-support').classList.remove('hidden'); $('set-support').onclick = () => window.open(SUPPORT_URL, '_blank'); }
     $('tut-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.next(); });
     $('tut-skip').addEventListener('pointerdown', (e) => { e.stopPropagation(); TUT.end(true); });
     $('btn-tut').onclick = () => { this.hide('help'); if (G.started) { this.hide('pause'); G.paused = false; TUT.start(); } else { this.hide('help'); this.openNewGame(); } };
@@ -452,7 +461,7 @@ const UI = {
     this.set('weap', this.el.weapon, 'textContent', v ? (GUNS.driveGun() ? ARMS.label() : '') : ARMS.label());
     this.el.armorwrap.classList.toggle('hidden', !(P.armor > 0));
     if (P.armor > 0) this.el.armorbar.style.width = P.armor + '%';
-    let side = FAMILY.dateText() || JOBS.objText() || PASADA.objText() || STREET.objText();
+    let side = FAMILY.dateText() || (!JOBS.active && ERRAND.text()) || JOBS.objText() || PASADA.objText() || STREET.objText();
     this.set('lvl', $('lvl'), 'textContent', `⭐ Lv ${P.level || 1}${P.sp ? ' · +' + P.sp + ' skill' : ''}${P.buffT > 0 ? ' · 💪 SIGLA' : ''}`);
     if (!side && JOBS.avail()) side = `💼 Pindutin ang ${INPUT.touch ? '💼' : 'J'} para sa side job: ${JOB_NAMES[JOBS.avail()]}`;
     if (!MS.active && !side && MS.idx < MISSIONS.length) {

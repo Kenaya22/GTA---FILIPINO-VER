@@ -1,5 +1,18 @@
 # Changelog — Hari ng Kalsada
 
+## v2.8: Masiglang Lungsod / A Lively City (2026-11-26)
+**More engaging**
+- 📋 **Favors (phone errands)**: every few minutes someone you know texts a request — Tito Boy wants pandesal, Mang Ben needs a hardware part, Aling Nena sends food to a friend, your date wants chocolate, your spouse needs medicine for the kids. Accept in 📱 → 📋, follow the **green** arrow to pick up and deliver before the timer runs out; pay + speed bonus, XP and ❤️
+- 💬 **Street chatter**: nearby people say lines that fit the moment — rain, morning/night, your wanted level, your fancy car, your fame (Level 5+), your wedding — plus Bisaya in Cebu, durian in Davao and the cold in Baguio
+- 🎁 **Daily return reward**: a streak for coming back on consecutive real days (₱300 → ₱3,000 on day 7)
+- 📱 Phone: new Favors, Achievements and Camera apps
+- 🏆 New achievement: Matulungin (10 favors)
+**Polish**
+- 💡 First-time tips for meeting someone, the phone, the GPS arrow, favors and animals
+- 🐞 **Report a bug** button in Settings (shares/copies version, device and progress info) and a 🔒 **Privacy Policy** page (`privacy.html`, needed for Google Play)
+- ☕ Optional support button (shows once a link is set in `SUPPORT_URL` in `js/lively.js`)
+- ⚖️ Balance: family allowance ₱200 / ₱600 (was ₱300 / ₱1,000), bank interest capped at ₱2,000 a day (was ₱5,000)
+
 ## v2.7: Buhay na Kalye / Lively Streets (2026-11-25)
 - 😱 **Screams** (synthesized) when you carjack someone, knock someone down, shoot them or cause a panic
 - 🩸 **Blood**: drops and a fading pool when people are shot or hit hard (Settings → 🩸 Dugo ON/OFF)

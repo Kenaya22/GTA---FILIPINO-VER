@@ -162,6 +162,7 @@ const ACH_LIST = [
   ['chapter4', '🦅', 'Tagapagtanggol ng Agila', 'Tapusin ang Kabanata 4 (Davao)', () => !!(G.flags && G.flags.ch4)],
   ['chapter5', '🌲', 'Ang Huling Ninong', 'Tapusin ang Kabanata 5 (Baguio) — ang buong serye!', () => !!(G.flags && G.flags.ch5)],
   ['presa10', '🍓', 'Strawberry Hunter', 'Makuha ang 10 gintong strawberry sa Baguio', () => COLL.count('presa') >= 10],
+  ['errand10', '📋', 'Matulungin', 'Tapusin ang 10 pakiusap sa phone', () => (G.stats.errands || 0) >= 10],
   ['date1', '💑', 'Unang Date', 'Mag-date kasama ang isang espesyal na tao', () => (G.stats.dates || 0) >= 1],
   ['kasal', '💒', 'Habambuhay', 'Magpakasal sa simbahan', () => !!(G.flags.fam && G.flags.fam.stage === 'married')],
   ['anak', '👶', 'Tatay/Nanay na!', 'Magkaroon ng anak', () => !!(G.flags.fam && G.flags.fam.kids.length)],

@@ -456,7 +456,9 @@ const G = {
     JOBS.update(dt);
     JOBS.depotTick(dt);
     STREET.update(dt);
-    FAMILY.update(dt); FAMILY.checkWedding(); PHONE.interest(); ANIMALS.update(dt);
+    FAMILY.update(dt); FAMILY.checkWedding(); PHONE.interest(); ANIMALS.update(dt); ERRAND.update(dt); CHATTER.update(dt);
+    if (!this.streakDone) { this.streakDone = true; STREAK.check(); }
+    if (this.time > 150) TIP.show('phone');
     COLL.update();
     DAILY.update(dt);
     REPLAY.update(dt);
@@ -613,13 +615,14 @@ const G = {
     // on a side job the job's goal gets the main (blue) arrow; the next mission stays as a small yellow one
     if (JOBS.active && !MS.active) { const jt = JOBS.target(); if (jt) { this.target2 = t; t = jt; this.tcol = '#3ad1ff'; } }
     else if (!t && JOBS.active) { t = JOBS.target(); this.tcol = '#3ad1ff'; }
+    if (ERRAND.on() && !MS.active && !JOBS.active) { const et = ERRAND.target(); if (t) this.target2 = t; t = et; this.tcol = '#2ecc71'; }
     if (!t && PASADA.mode && PASADA.pt) t = Object.assign({ stop: true }, PASADA.pt);
     if (!t && STREET.ev) t = STREET.target();
     // a place you picked on the map (shop, job, landmark...) gets its own purple arrow; anything else shrinks until you arrive
     if (this.waypoint) {
       const P = this.player, me = P.vehicle || P;
       if (U.dist(me.x, me.y, this.waypoint.x, this.waypoint.y) < 90) { UI.toast('📍 Nandito ka na!'); AUD.checkpoint(); this.waypoint = null; }
-      else { if (t) this.target2 = t; t = { x: this.waypoint.x, y: this.waypoint.y, wp: true }; this.tcol = '#c86bff'; }
+      else { if (t) this.target2 = t; t = { x: this.waypoint.x, y: this.waypoint.y, wp: true }; this.tcol = '#c86bff'; TIP.show('gps'); }
     }
     this.target = t;
     this.gpsT -= dt;
@@ -832,7 +835,7 @@ const G = {
       g.beginPath(); g.moveTo(-10, -off - 16 + b); g.lineTo(10, -off - 16 + b); g.lineTo(0, -off + b); g.closePath(); g.fill(); g.stroke();
     } else {
       const r = (t.cp ? 70 : t.giver ? 30 : 50) * pulse;
-      g.fillStyle = C === '#ffd23f' ? (t.giver ? 'rgba(255,210,63,0.16)' : 'rgba(255,210,63,0.12)') : C === '#c86bff' ? 'rgba(200,107,255,0.14)' : 'rgba(58,209,255,0.14)';
+      g.fillStyle = C === '#ffd23f' ? (t.giver ? 'rgba(255,210,63,0.16)' : 'rgba(255,210,63,0.12)') : C === '#c86bff' ? 'rgba(200,107,255,0.14)' : C === '#2ecc71' ? 'rgba(46,204,113,0.14)' : 'rgba(58,209,255,0.14)';
       g.strokeStyle = C; g.lineWidth = 4;
       g.beginPath(); g.arc(0, 0, r, 0, TAU); g.fill(); g.stroke();
       g.lineWidth = 2; g.globalAlpha = 0.5; g.beginPath(); g.arc(0, 0, r * 0.7, 0, TAU); g.stroke(); g.globalAlpha = 1;

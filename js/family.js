@@ -16,8 +16,8 @@ const KID_NAMES = ['Junjun', 'Bea', 'Pao', 'Mika', 'Toto', 'Ning', 'Jaja', 'Bimb
 const HOUSES = [
   { name: 'Wala pa', cost: 0 },
   { name: 'Bahay Kubo', cost: 15000, kids: 1, desc: 'Simpleng bahay — dito titira ang pamilya mo' },
-  { name: 'Bungalow', cost: 60000, kids: 2, desc: 'Mas malaki — 2 anak, at baon na ₱300 araw-araw' },
-  { name: 'Mansyon', cost: 250000, kids: 3, desc: 'Pang-mayaman — 3 anak, baon na ₱1,000 araw-araw' },
+  { name: 'Bungalow', cost: 60000, kids: 2, desc: 'Mas malaki — 2 anak, at baon na ₱200 araw-araw' },
+  { name: 'Mansyon', cost: 250000, kids: 3, desc: 'Pang-mayaman — 3 anak, baon na ₱600 araw-araw' },
 ];
 const FAMILY = {
   peds: {}, home: [],
@@ -56,7 +56,7 @@ const FAMILY = {
         let p = this.peds[id];
         if (want && !p) {
           p = new Person(sp.x, sp.y, 'ped'); p.npc = true; p.keep = true; p.state = 'idle'; p.umb = null; p.look.shirt = L.shirt; p.loverId = id;
-          p.name = (married ? '💍 ' : f.partner === id ? '💗 ' : '') + L.name; G.peds.push(p); this.peds[id] = p;
+          p.name = (married ? '💍 ' : f.partner === id ? '💗 ' : '') + L.name; G.peds.push(p); this.peds[id] = p; if (!married) TIP.show('love');
         } else if (p && !want && !(this.date && this.date.id === id)) { p.remove = true; delete this.peds[id]; }
         if (p && p.remove && !(this.date && this.date.id === id)) delete this.peds[id];
       }
@@ -68,7 +68,7 @@ const FAMILY = {
       } else if (!nearHome && this.home.length) { removePeds(this.home); this.home = []; }
       // morning message + allowance from the family
       if (f.stage === 'married' && WORLD.clock > 420 && WORLD.clock < 600 && !this.done('text')) {
-        this.mark('text'); const L = LOVERS[f.partner], baon = [0, 0, 300, 1000][f.house] || 0;
+        this.mark('text'); const L = LOVERS[f.partner], baon = [0, 0, 200, 600][f.house] || 0;
         PHONE.msg('💍 ' + L.name, U.choice(['Ingat ka sa biyahe, mahal! 🍱', 'Umuwi ka nang maaga ha, may sinigang ako 😘', 'Miss ka na ng mga bata! 👨‍👩‍👧', 'Huwag kang magpapahuli sa pulis ha 😅']) + (baon ? ` (+${U.money(baon)} baon)` : ''));
         if (baon) G.addMoney(baon, true);
       }
@@ -233,19 +233,23 @@ const PHONE = {
     document.querySelectorAll('#phone .ph-apps button').forEach(b => b.classList.toggle('on', b.dataset.app === (app || 'home')));
     if (!app || app === 'home') {
       el.innerHTML = `<div class="ph-time">${WORLD.timeStr()}</div><div class="ph-date">Araw ${WORLD.day || 1} · ${regionName(G.player.x)}</div>`
-        + `<div class="ph-grid">${[['msg', '💬', 'Mensahe'], ['gps', '🧭', 'GPS'], ['fam', '💗', 'Pamilya'], ['bank', '🏦', 'Bangko'], ['daily', '📅', 'Hamon'], ['skills', '📈', 'Skills']].map(([k, ic, n]) => `<button data-go="${k}"><span>${ic}</span>${n}${k === 'msg' && f.unread ? `<i>${f.unread}</i>` : ''}</button>`).join('')}</div>`;
+        + `<div class="ph-grid">${[['msg', '💬', 'Mensahe'], ['err', '📋', 'Pakiusap'], ['gps', '🧭', 'GPS'], ['fam', '💗', 'Pamilya'], ['bank', '🏦', 'Bangko'], ['daily', '📅', 'Hamon'], ['skills', '📈', 'Skills'], ['ach', '🏆', 'Tagumpay'], ['photo', '📷', 'Kamera']].map(([k, ic, n]) => `<button data-go="${k}"><span>${ic}</span>${n}${k === 'msg' && f.unread ? `<i>${f.unread}</i>` : ''}${k === 'err' && f.errand && f.errand.stage === 'offer' ? '<i>!</i>' : ''}</button>`).join('')}</div>`;
     } else if (app === 'msg') {
       f.unread = 0; this.badge();
       el.innerHTML = (f.msgs && f.msgs.length ? f.msgs.map(m => `<div class="ph-msg"><b>${m.from}</b><span>${m.text}</span><small>Araw ${m.day} · ${m.t}</small></div>`).join('') : '<p class="note">Wala pang mensahe.</p>');
     } else if (app === 'gps') {
       el.innerHTML = '<p class="note">Pinakamalapit na:</p><div class="ph-list">' + MAPCATS.filter(c => c.types.length).map(c => c.types.map(([t, ic, n]) => `<button data-poi="${t}">${ic} ${n}</button>`).join('')).join('') + (G.waypoint ? '<button data-poi="x">✕ Alisin ang GPS</button>' : '') + '</div>';
     } else if (app === 'fam') { el.innerHTML = FAMILY.panel(); }
+    else if (app === 'err') { el.innerHTML = ERRAND.panel(); }
+    else if (app === 'ach') { this.close(); ACH.open(); return; }
+    else if (app === 'photo') { this.close(); PHOTO.open(); return; }
     else if (app === 'bank') {
       const b = f.bank || 0;
-      el.innerHTML = `<div class="ph-bank"><small>Ipon sa bangko</small><b>${U.money(b)}</b><small>+1% tubo bawat araw · ligtas kahit mahuli o mahimatay</small></div><div class="ph-list">${[1000, 10000, 'all'].map(n => `<button data-dep="${n}">⬆ Ideposito ${n === 'all' ? 'LAHAT' : U.money(n)}</button>`).join('')}${[1000, 10000, 'all'].map(n => `<button data-wd="${n}">⬇ Kunin ${n === 'all' ? 'LAHAT' : U.money(n)}</button>`).join('')}</div>`;
+      el.innerHTML = `<div class="ph-bank"><small>Ipon sa bangko</small><b>${U.money(b)}</b><small>+1% tubo bawat araw (hanggang ₱2,000) · ligtas kahit mahuli o mahimatay</small></div><div class="ph-list">${[1000, 10000, 'all'].map(n => `<button data-dep="${n}">⬆ Ideposito ${n === 'all' ? 'LAHAT' : U.money(n)}</button>`).join('')}${[1000, 10000, 'all'].map(n => `<button data-wd="${n}">⬇ Kunin ${n === 'all' ? 'LAHAT' : U.money(n)}</button>`).join('')}</div>`;
     } else if (app === 'daily') { this.close(); DAILY.open(); return; }
     else if (app === 'skills') { this.close(); PROG.open(); return; }
     el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { AUD.click(); this.open(b.dataset.go); });
+    el.querySelectorAll('[data-err]').forEach(b => b.onclick = () => { AUD.click(); if (b.dataset.err === 'ok') { ERRAND.accept(); this.close(); } else { ERRAND.decline(); this.open('err'); } });
     el.querySelectorAll('[data-gps]').forEach(b => b.onclick = () => { AUD.click(); FAMILY.gps(b.dataset.gps); this.close(); });
     el.querySelectorAll('[data-poi]').forEach(b => b.onclick = () => {
       AUD.click(); if (b.dataset.poi === 'x') { G.waypoint = null; this.close(); return; }
@@ -260,5 +264,5 @@ const PHONE = {
   },
   close() { UI.hide('phone'); G.paused = false; },
   // daily bank interest
-  interest() { const f = G.flags; if (f.bank > 0 && f.bankDay !== WORLD.day) { f.bankDay = WORLD.day; const i = Math.min(5000, Math.round(f.bank * 0.01)); f.bank += i; if (i >= 10) UI.toast(`🏦 Tubo sa bangko: +${U.money(i)}`); } },
+  interest() { const f = G.flags; if (f.bank > 0 && f.bankDay !== WORLD.day) { f.bankDay = WORLD.day; const i = Math.min(2000, Math.round(f.bank * 0.01)); f.bank += i; if (i >= 10) UI.toast(`🏦 Tubo sa bangko: +${U.money(i)}`); } },
 };
