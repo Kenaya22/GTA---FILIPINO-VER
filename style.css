@@ -589,3 +589,16 @@ body.bigtext .ph-msg span, body.bigtext .ph-list button { font-size: 16px; }
 #title .t-tag { text-shadow: 0 2px 8px rgba(0,0,0,0.85); }
 .bt-img { width: min(420px, 82vw); height: auto; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.6)); animation: btpulse 2.4s ease-in-out infinite; }
 .st-icon { width: 96px; height: 96px; border-radius: 22px; margin: 0 auto 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+/* ===== portrait phones: tall cover art, logo up top in the sky, menu low on the dark ground ===== */
+@media (orientation: portrait) and (max-width: 820px) {
+  .t-cover { background-image: url('media/cover-portrait.jpg'); background-position: center 30%; animation-name: tcoverP; }
+  @keyframes tcoverP { from { transform: scale(1.02); } to { transform: scale(1.07); } }
+  #title .t-shade { background: linear-gradient(180deg, rgba(8,10,20,0.35) 0%, rgba(8,10,20,0) 22%, rgba(8,10,20,0) 55%, rgba(8,10,20,0.7) 75%, rgba(8,10,20,0.92) 100%) !important; }
+  .t-wrap { justify-content: space-between !important; padding-top: max(56px, calc(env(safe-area-inset-top) + 48px)) !important; padding-bottom: 6px !important; }
+  .t-logoimg img { width: min(440px, 84vw, calc(18vh * 1.85)); }
+  #title .t-hero { gap: 4px; }
+  .t-card { margin-bottom: 4px; }
+}
+/* the small home buttons: keep labels inside narrow buttons */
+.t-row .t-sm small { font-size: 9px; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: clip; max-width: 100%; }
+.t-row { gap: 6px; }

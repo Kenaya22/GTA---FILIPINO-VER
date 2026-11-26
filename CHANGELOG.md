@@ -3,6 +3,7 @@
 ## v3.3: Bagong Itsura / A New Look (2026-11-26)
 - 🎨 New K&A Studios artwork: **app icon** (all sizes + Android maskable), **logo** (background removed, on the home and loading screens, gently animated), **cover art** as the animated home-screen background, a new 1024×500 store feature graphic and a 1200×630 link-preview image for Messenger/Facebook
 - 📝 App name and share description updated (6 places, 7 chapters)
+- 📱 Portrait phones use a tall version of the cover art: the logo sits in the sky, the hero stays visible, and the menu sits lower on the dark ground; the logo scales with screen height; small home buttons no longer cut off their labels
 
 ## v3.2: Boracay at Palawan / Boracay and Palawan (2026-11-26)
 - 🏖 **Chapter 6: Boracay — "Paraiso"** (5 missions, from Ate Maya after Chapter 5): fly to Boracay and meet Mang Tomas; **Island Hopping** (circle the island by bangka through buoys against the clock); **Maruming Tubo** (photograph 3 hidden sewage pipes at night, then escape the guards); **Habulan sa Dagat** (speedboat chase of Señora Coral with her goon boats); **Paraiso ng Bayan** (storm her Station 3 resort and defeat her)

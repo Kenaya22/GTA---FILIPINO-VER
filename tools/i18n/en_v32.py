@@ -80,3 +80,8 @@ EXTRA32.update({
  'v3.3 — Bagong Itsura': 'v3.3 — A New Look', 'Bagong Itsura': 'A New Look',
  '🎨 <b>Bagong itsura!</b> Bagong app icon, logo at cover art ng K&A Studios sa home, loading at store': '🎨 <b>A new look!</b> New app icon, logo and cover art by K&A Studios on the home, loading and store screens',
 })
+EXTRA32.update({
+ '🎨 <b>Bagong itsura!</b> Bagong app icon, logo at cover art ng K&amp;A Studios sa home, loading at store': '🎨 <b>A new look!</b> New app icon, logo and cover art by K&amp;A Studios on the home, loading and store screens',
+ '🎨 <b>Bagong <b>K&amp;A Studios</b> page</b>': '🎨 <b>New <b>K&amp;A Studios</b> page</b>',
+ '🎬 Bagong loading screen at pahina ng <b>K&amp;A Studios</b>': '🎬 New loading screen and <b>K&amp;A Studios</b> page',
+})

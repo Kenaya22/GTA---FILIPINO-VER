@@ -13,6 +13,7 @@ const SHELL = [
   './icons/icon-maskable-512.png',
   './media/logo.png',
   './media/cover.jpg',
+  './media/cover-portrait.jpg',
   './js/angkas.js',
   './js/animals.js',
   './js/audio.js',
