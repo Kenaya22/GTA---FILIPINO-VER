@@ -1,5 +1,11 @@
 # Changelog — Hari ng Kalsada
 
+## v3.1: Boracay (2026-11-26)
+- 🏖 **Boracay**, a new island east of Baguio across a strait: a long, narrow island with **White Beach** (sand, palms and beach resorts on the west), Stations 1–3, D'Mall, Bulabog, **Puka Beach** at the north tip, **Mt. Luho** viewpoint, **Willy's Rock**, a chapel, clinic, police, beachwear shop, halo-halo stand and an airport in the south. Traffic is mostly tricycles, e-bikes, multicabs and bicycles
+- ✈️ Every airport can now fly to Boracay; the 🇵🇭 Philippines map shows Boracay as playable
+- 🦪 10 **pearls** to collect; 💗 a new person to meet (**Marisol**, a diving instructor); Boracay street chatter; island-hopping boats on the beach
+- 🏆 2 new achievements (visit Boracay, collect all pearls)
+
 ## v3.0: Ruta, Pista at Teritoryo / Routes, Festivals and Territory (2026-11-26)
 - 🚌 **Jeepney routes**: in a jeepney in Manila press 💼 / J for a named route (e.g. "Sta. Cruz – Pantalan") with 6 stops; passengers wait and call out, get off and pay at each stop, and sometimes hand you a bill — tap the right **change (sukli)** within 6 seconds for a tip and a better rating. Reach the ₱600 boundary for a bonus
 - 🎉 **City festivals**: on parade days the parade follows you to your city — Tondo fiesta (Manila), **Sinulog** (Cebu), **Kadayawan** (Davao) and **Panagbenga** (Baguio), each with its own colours and band

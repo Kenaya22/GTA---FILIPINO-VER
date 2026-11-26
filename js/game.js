@@ -75,7 +75,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = []; this.blood = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; FAMILY.reset(); ANIMALS.reset(); REPLAY.on = false;
+    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); BORA.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; FAMILY.reset(); ANIMALS.reset(); REPLAY.on = false;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -474,6 +474,7 @@ const G = {
     SUGBO.update(dt);
     DABAW.update(dt);
     BAGIW.update(dt);
+    BORA.update(dt);
     ARMS.update(dt);
     GUNS.update(dt);
     ACH.update(dt);

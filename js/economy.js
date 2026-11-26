@@ -164,6 +164,8 @@ const ACH_LIST = [
   ['chapter4', '🦅', 'Tagapagtanggol ng Agila', 'Tapusin ang Kabanata 4 (Davao)', () => !!(G.flags && G.flags.ch4)],
   ['chapter5', '🌲', 'Ang Huling Ninong', 'Tapusin ang Kabanata 5 (Baguio) — ang buong serye!', () => !!(G.flags && G.flags.ch5)],
   ['presa10', '🍓', 'Strawberry Hunter', 'Makuha ang 10 gintong strawberry sa Baguio', () => COLL.count('presa') >= 10],
+  ['boracay', '🏖', 'Bakasyonista', 'Pumunta sa Boracay', () => regionName(G.player.x) === 'BORACAY'],
+  ['perlas10', '🦪', 'Mangangalap ng Perlas', 'Makuha ang 10 perlas sa Boracay', () => COLL.count('perlas') >= 10],
   ['ruta3', '🚌', 'Hari ng Ruta', 'Tapusin ang 3 ruta ng jeep', () => (G.stats.rutas || 0) >= 3],
   ['carshow1', '🏆', 'Pinakaastig na Kotse', 'Manalo sa Car Show', () => (G.stats.carshowWins || 0) >= 1],
   ['turfall', '🏘', 'Tagapagtanggol ng Bayan', 'Palayain ang lahat ng teritoryo nang sabay', () => KUTA.list && KUTA.list.length > 3 && KUTA.list.every(k => KUTA.cleared(k.key))],

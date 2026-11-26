@@ -164,7 +164,7 @@ const FIESTA = {
     davao: { name: '🍈 KADAYAWAN sa Davao — pista ng ani!', cols: ['#8e44ad', '#f39c12', '#27ae60'] },
     baguio: { name: '🌸 PANAGBENGA sa Baguio — pista ng bulaklak!', cols: ['#ff6fa8', '#ffd1e6', '#e84393'] },
   },
-  region() { const x = G.player.x / T; return x >= BX0 ? 'baguio' : x >= DX0 - 12 ? 'davao' : x >= SX0 - 12 ? 'cebu' : x < CITY_W ? 'manila' : null; },
+  region() { const x = G.player.x / T; return x >= BRX0 - 6 ? null : x >= BX0 ? 'baguio' : x >= DX0 - 12 ? 'davao' : x >= SX0 - 12 ? 'cebu' : x < CITY_W ? 'manila' : null; },
   route() {
     const reg = this.region() || 'manila'; this._routes = this._routes || {};
     if (!this._routes[reg]) {

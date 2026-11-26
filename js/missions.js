@@ -957,7 +957,7 @@ const SHOP = {
         G.paused = true;
         document.getElementById('shop-title').textContent = '✈️ ' + p.label.toUpperCase();
         const el = document.getElementById('shop-list');
-        const dests = [['airport_m', '🏙', 'Manila'], ['airport_s', '🏝', 'Cebu'], ['airport_d', '🦅', 'Davao'], ['airport_b', '🌲', 'Baguio']].filter(d => d[0] !== p.key && MAP.pois[d[0]]);
+        const dests = [['airport_m', '🏙', 'Manila'], ['airport_s', '🏝', 'Cebu'], ['airport_d', '🦅', 'Davao'], ['airport_b', '🌲', 'Baguio'], ['airport_bo', '🏖', 'Boracay']].filter(d => d[0] !== p.key && MAP.pois[d[0]]);
         el.innerHTML = dests.map(([k, ic, n]) => `<div class="shoprow"><span class="ic">${ic}</span><div><b>${n}</b><small>${MAP.pois[k].label}</small></div><button data-to="${k}">LIPAD · ${MS.freeShops ? 'LIBRE' : U.money(500)}</button></div>`).join('');
         el.querySelectorAll('button[data-to]').forEach(b => b.onclick = () => { if (!this.pay(500)) return; UI.hide('shop'); G.paused = false; FLY.go(MAP.pois[b.dataset.to]); });
         UI.show('shop');

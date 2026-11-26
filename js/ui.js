@@ -17,6 +17,10 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '3.1', title: 'Boracay', date: 'Nobyembre 2026', items: [
+    '🏖 <b>BORACAY</b> — bagong isla! White Beach, D\'Mall, Puka Beach, Mt. Luho, Willy\'s Rock at mga e-trike · lumipad mula sa kahit anong paliparan',
+    '🦪 10 <b>perlas</b> na makokolekta · 💗 bagong makikilala: <b>Marisol</b>, diving instructor · 🇵🇭 Bukas na ang Boracay sa mapa ng Pilipinas',
+  ] },
   { v: '3.0', title: 'Ruta, Pista at Teritoryo', date: 'Nobyembre 2026', items: [
     '🚌 <b>Ruta ng Jeep</b> — sa jeepney sa Manila, pindutin ang 💼: may pangalang ruta, mga hintuan, "Para po!" at <b>sukli challenge</b>; abutin ang boundary!',
     '🎉 <b>Pista sa bawat lungsod</b>: Sinulog sa Cebu, Kadayawan sa Davao, Panagbenga sa Baguio (tuwing ikatlong araw, hapon)',

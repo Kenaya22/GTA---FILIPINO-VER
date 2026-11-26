@@ -207,20 +207,21 @@ function drawDog(g, p) {
 // ---------- regional collectibles: shells (Cebu) and eagle feathers (Davao) ----------
 const COLL = {
   list: null,
-  kinds: { kabibe: { icon: '🐚', name: 'Kabibe', region: 'Cebu' }, balahibo: { icon: '🪶', name: 'Balahibo ng Agila', region: 'Davao' }, presa: { icon: '🍓', name: 'Gintong Strawberry', region: 'Baguio' } },
+  kinds: { kabibe: { icon: '🐚', name: 'Kabibe', region: 'Cebu' }, balahibo: { icon: '🪶', name: 'Balahibo ng Agila', region: 'Davao' }, presa: { icon: '🍓', name: 'Gintong Strawberry', region: 'Baguio' }, perlas: { icon: '🦪', name: 'Perlas', region: 'Boracay' } },
   make() {
     const out = [], R = U.rng(9191);
-    const pick = (kind, x0, x1, n) => {
+    const pick = (kind, x0, x1, n, sp = 18) => {
       const c = [];
       for (let y = 2; y < MH - 2; y++) for (let x = x0; x < x1; x++) { const t = MAP.get(x, y); if ((t === TL.ALLEY || t === TL.GRASS || t === TL.PLAZA || t === TL.DIRT) && R() < 0.03) c.push([x, y]); }
       for (let k = c.length - 1; k > 0; k--) { const r = Math.floor(R() * (k + 1)); [c[k], c[r]] = [c[r], c[k]]; }
       const got = [];
-      for (const [x, y] of c) { if (got.length >= n) break; if (got.some(([a, b]) => Math.abs(a - x) + Math.abs(b - y) < 18)) continue; got.push([x, y]); }
+      for (const [x, y] of c) { if (got.length >= n) break; if (got.some(([a, b]) => Math.abs(a - x) + Math.abs(b - y) < sp)) continue; got.push([x, y]); }
       got.forEach(([x, y], i) => out.push({ id: kind + i, kind, x: (x + 0.5) * T, y: (y + 0.5) * T }));
     };
     pick('kabibe', SX0 + 1, SUGBO_END - 2, 10);
     pick('balahibo', DX0 + 1, DABAW_END - 2, 10);
-    pick('presa', BX0 + 1, MW - 2, 10);
+    pick('presa', BX0 + 1, BAGIW_END - 2, 10);
+    pick('perlas', BRX0 + 1, MW - 2, 10, 11);
     return (this.list = out);
   },
   all() { return this.list || this.make(); },

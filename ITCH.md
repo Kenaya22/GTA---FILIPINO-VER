@@ -23,7 +23,7 @@ Everything you need to publish the game on **itch.io** (free) or share it anywhe
 ## Store page text
 **Hari ng Kalsada: Manila** — King of the Road
 
-An original top-down open-world game across four Filipino-inspired cities. Drive jeepneys and tricycles, outsmart a **6-star wanted system** that recognizes you by your clothes, face and car, and take down a corrupt mayor — then follow the story through the province, **Cebu**, **Davao** and the pine-covered mountain city of **Baguio** across **5 chapters and 33 missions** with choices and multiple endings.
+An original top-down open-world game across five Filipino places — Manila, Cebu, Davao, Baguio and Boracay. Drive jeepneys and tricycles, outsmart a **6-star wanted system** that recognizes you by your clothes, face and car, and take down a corrupt mayor — then follow the story through the province, **Cebu**, **Davao** and the pine-covered mountain city of **Baguio** and the island of **Boracay** across **5 chapters and 33 missions** with choices and multiple endings.
 
 - 🚌 Jobs: jeepney pasada, taxi, ride-hailing, food rider, tow, ambulance, fire truck, fishing, tour guide, underground races
 - ⏱ Ghost Time Trial — share your run as a link and race a friend's ghost

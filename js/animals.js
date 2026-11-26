@@ -10,6 +10,7 @@ const ANIMALS = {
   list: [], t: 0,
   mix(x) {
     const tx = x / T;
+    if (tx >= BRX0 - 6) return ['manok', 'pusa', 'pusa', 'manok'];
     if (tx >= BX0) return ['kambing', 'pusa', 'manok', 'manok'];
     if (tx >= DX0 - 12) return ['manok', 'kambing', 'kalabaw', 'pusa'];
     if (tx >= SX0 - 12) return ['manok', 'pusa', 'kambing', 'manok'];

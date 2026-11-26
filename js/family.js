@@ -6,6 +6,7 @@ const LOVERS = {
   isabel: { name: 'Isabel', job: 'guro sa Cebu', at: 'kainan_s', shirt: '#8e44ad', likes: '🍫' },
   migo: { name: 'Migo', job: 'magsasaka ng durian', at: 'kainan_d', shirt: '#27ae60', likes: '🍫' },
   rosa: { name: 'Rosa', job: 'nagtitinda ng strawberry', at: 'bg_kainan', shirt: '#c0392b', likes: '🌹' },
+  marisol: { name: 'Marisol', job: 'instruktor ng diving', at: 'bo_kainan', shirt: '#1abc9c', likes: '🍫' },
 };
 const LOVE_LINES = [
   ['Uy, ikaw pala! Ingat ka sa kalsada, ha?', 'Mainit ngayon, \'no? Gusto mo ng tubig?', 'Ang dami mong kuwento, nakakatuwa ka!'],

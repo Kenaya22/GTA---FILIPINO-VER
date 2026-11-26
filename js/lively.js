@@ -8,6 +8,7 @@ Object.assign(TIPS, {
   phone: () => ['📱 Cellphone', 'Pindutin ang 📱 (o P) para sa mga mensahe, GPS, pamilya, bangko at 📋 mga pakiusap mula sa mga kakilala mo.'],
   gps: () => ['🧭 GPS', 'Sundan ang LILA na arrow papunta sa lugar na pinili mo. Alisin ito sa mapa (✕ GPS) o sa phone.'],
   errand: () => ['📋 Pakiusap', 'May nag-text na humihingi ng tulong! Tanggapin sa 📱 → 📋 Pakiusap. Sundan ang BERDENG arrow: kunin ang bagay, tapos ihatid bago maubos ang oras.'],
+  bora: () => ['🏖 Boracay', 'Mabuhay sa Boracay! Maglakad sa White Beach, sumakay ng e-trike, mangolekta ng 10 🦪 perlas, at panoorin ang paglubog ng araw sa Station 2. Sakay ng bangka para sa island hopping (💼)!'],
   animals: () => ['🐓 Mga Hayop', 'May mga manok, pusa, kambing at kalabaw sa paligid. Ingat sa pagmamaneho — kawawa naman sila!'],
 });
 
@@ -99,6 +100,7 @@ const CHATTER = {
     if (/CEBU/i.test(r)) out.push('Maayong adlaw!', 'Lami kaayo ang lechon diri!');
     if (/DAVAO/i.test(r)) out.push('Madayaw!', 'Durian, gusto mo?');
     if (/BAGUIO/i.test(r)) out.push('Ang lamig!', 'Strawberry taho, bili na!');
+    if (/BORACAY/i.test(r)) out.push('Ang ganda ng sunset!', 'Island hopping, sir? Mura lang!', 'Henna tattoo, ma\'am?', 'Ang puti ng buhangin!');
     return out;
   },
   update(dt) {
