@@ -17,6 +17,13 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '3.0', title: 'Ruta, Pista at Teritoryo', date: 'Nobyembre 2026', items: [
+    '🚌 <b>Ruta ng Jeep</b> — sa jeepney sa Manila, pindutin ang 💼: may pangalang ruta, mga hintuan, "Para po!" at <b>sukli challenge</b>; abutin ang boundary!',
+    '🎉 <b>Pista sa bawat lungsod</b>: Sinulog sa Cebu, Kadayawan sa Davao, Panagbenga sa Baguio (tuwing ikatlong araw, hapon)',
+    '💡 <b>Car mods</b> sa Pintura: neon, rims at body kit · 🏆 <b>Car Show</b> sa Baywalk tuwing gabi',
+    '🏚 <b>Teritoryo</b> — may kuta na rin sa Cebu, Davao at Baguio; may bayad araw-araw ang napalaya, pero baka bumalik ang sindikato!',
+    '🏅 <b>Lingguhang hamon</b> (₱5,000) at <b>shareable card</b> ng progreso mo · 📍 Hindi na natatakpan ng button ang mga prompt',
+  ] },
   { v: '2.9', title: 'Pulido', date: 'Nobyembre 2026', items: [
     '⚡ <b>Mas magaan</b> sa phone — mas madalang mag-update ang malalayong tao at hayop; kusang babawasan ang dami ng tao kung bumabagal',
     '🧹 <b>Mas malinis na screen</b> — hanggang 2 notification lang, pumipila ang malalaking mensahe, at naghihintay ang mga tip ng tahimik na sandali',
@@ -375,7 +382,7 @@ const UI = {
   },
   // on phones keep the dialogue clear of the touch buttons: just above the highest one (or mid-screen if that's too high)
   placeSub() {
-    if (!this.subIv) this.subIv = setInterval(() => { if (this.talking) this.placeSub(); }, 500);
+    if (!this.subIv) this.subIv = setInterval(() => { if (this.talking) this.placeSub(); this.placePrompt(); }, 500);
     const el = this.el.subtitle; el.style.bottom = ''; el.style.top = '';
     if (!document.body.classList.contains('touch') || innerWidth > innerHeight) return;   // landscape: CSS keeps it bottom-centre between the controls
     let top = innerHeight;
@@ -383,6 +390,14 @@ const UI = {
     const h = el.offsetHeight || 110, gap = 12;
     if (top - h - gap > innerHeight * 0.22) { el.style.top = 'auto'; el.style.bottom = (innerHeight - top + gap) + 'px'; }
     else { el.style.top = Math.round(innerHeight * 0.2) + 'px'; el.style.bottom = 'auto'; }
+  },
+  // the action prompt sits just above the highest touch button in portrait (it used to hide behind HORN)
+  placePrompt() {
+    const el = this.el.prompt; if (!el) return;
+    if (!document.body.classList.contains('touch') || innerWidth > innerHeight) { el.style.bottom = ''; return; }
+    let top = innerHeight;
+    document.querySelectorAll('#tbtns .tbtn, #dpad').forEach(b => { if (b.offsetParent === null) return; const r = b.getBoundingClientRect(); if (r.height && r.top < top) top = r.top; });
+    el.style.bottom = (innerHeight - top + 10) + 'px';
   },
   nextLine() { if (!this.talking) return; this.lines.shift(); AUD.click(); this.showLine(); },
   // at most 2 toasts on screen; the rest wait in a short line (duplicates are dropped)
@@ -490,7 +505,7 @@ const UI = {
     this.el.arrestbar.style.width = (P.arrest * 100) + '%';
     // prompt
     const pr = G.promptText();
-    this.el.prompt.classList.toggle('hidden', !pr);
+    this.el.prompt.classList.toggle('hidden', !pr); if (pr && G.frame % 20 === 0) this.placePrompt();
     if (pr) this.set('prompt', this.el.prompt, 'innerHTML', (INPUT.touch ? '' : '<kbd>E</kbd>') + pr);
     // touch button labels
     if (INPUT.touch) {

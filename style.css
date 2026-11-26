@@ -571,3 +571,10 @@ body.bigtext #prompt { font-size: 16px !important; }
 body.bigtext .shoprow b { font-size: 16px; } body.bigtext .shoprow small { font-size: 13px; }
 body.bigtext #tip-body { font-size: 16px; }
 body.bigtext .ph-msg span, body.bigtext .ph-list button { font-size: 16px; }
+/* ===== sukli (change) challenge ===== */
+#sukli { position: absolute; left: 50%; top: 32%; transform: translateX(-50%); background: rgba(14,18,30,0.94); border: 2px solid #f39c2b; border-radius: 16px; padding: 10px 14px; text-align: center; z-index: 5; pointer-events: auto; animation: tin .2s ease; }
+#sukli b { display: block; font-size: 14px; margin-bottom: 8px; }
+#sukli div { display: flex; gap: 8px; justify-content: center; }
+#sukli button { background: #1d2540; color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 8px 12px; font: 900 15px Nunito, sans-serif; cursor: pointer; }
+#sukli i { display: block; height: 3px; background: #f39c2b; margin-top: 8px; border-radius: 2px; animation: suk 6.5s linear forwards; }
+@keyframes suk { to { width: 0; } }

@@ -463,7 +463,7 @@ const G = {
     JOBS.update(dt);
     JOBS.depotTick(dt);
     STREET.update(dt);
-    FAMILY.update(dt); FAMILY.checkWedding(); PHONE.interest(); ANIMALS.update(dt); ERRAND.update(dt); CHATTER.update(dt);
+    FAMILY.update(dt); FAMILY.checkWedding(); PHONE.interest(); ANIMALS.update(dt); ERRAND.update(dt); CHATTER.update(dt); TURF.update(dt); WEEKLY.update(dt); CARMOD.ensurePoi();
     if (!this.streakDone) { this.streakDone = true; STREAK.check(); }
     if (this.time > 150) TIP.show('phone');
     COLL.update();

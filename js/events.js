@@ -157,12 +157,24 @@ const FIESTA = {
   pasko() { if (this.force.pasko !== undefined) return this.force.pasko; const m = this.date().getMonth(); return m >= 8; },            // "ber" months
   undas() { if (this.force.undas !== undefined) return this.force.undas; const d = this.date(), m = d.getMonth(), n = d.getDate(); return (m === 9 && n >= 28) || (m === 10 && n <= 2); },
   paradeTime() { if (this.force.parade !== undefined) return this.force.parade; const h = WORLD.hour(); return WORLD.day % 3 === 0 && h >= 16 && h < 19.5; },
+  // each city has its own festival: Tondo fiesta (Manila), Sinulog (Cebu), Kadayawan (Davao), Panagbenga (Baguio)
+  FESTS: {
+    manila: { name: '🎉 Pista sa Tondo — may parada!', cols: ['#e84393', '#f1c40f', '#16a085'] },
+    cebu: { name: '🥁 SINULOG sa Cebu — Pit Señor!', cols: ['#d4161b', '#f1c40f', '#d4161b'] },
+    davao: { name: '🍈 KADAYAWAN sa Davao — pista ng ani!', cols: ['#8e44ad', '#f39c12', '#27ae60'] },
+    baguio: { name: '🌸 PANAGBENGA sa Baguio — pista ng bulaklak!', cols: ['#ff6fa8', '#ffd1e6', '#e84393'] },
+  },
+  region() { const x = G.player.x / T; return x >= BX0 ? 'baguio' : x >= DX0 - 12 ? 'davao' : x >= SX0 - 12 ? 'cebu' : x < CITY_W ? 'manila' : null; },
   route() {
-    if (!this._route) this._route = [[1, 0], [2, 0], [2, 1], [1, 1]].map(([i, j]) => ({ x: MAP.cx(i), y: MAP.cy(j) }));
-    return this._route;
+    const reg = this.region() || 'manila'; this._routes = this._routes || {};
+    if (!this._routes[reg]) {
+      const R = { cebu: MAP.sugbo, davao: MAP.dabaw, baguio: MAP.bagiw }[reg];
+      this._routes[reg] = R ? [[0, 0], [1, 0], [1, 1], [0, 1]].map(([i, j]) => ({ x: R.cx(i), y: R.cy(j) })) : [[1, 0], [2, 0], [2, 1], [1, 1]].map(([i, j]) => ({ x: MAP.cx(i), y: MAP.cy(j) }));
+    }
+    return this._routes[reg];
   },
   banner() {
-    if (this.floats) return this.custom ? '🎉 Pista Señor sa Cebu!' : '🎉 Pista sa Tondo — may parada!';
+    if (this.floats) return this.custom ? '🎉 Pista Señor sa Cebu!' : (this.FESTS[this.festReg] || this.FESTS.manila).name;
     if (this.undas()) return '🕯 Undas — dalaw sa mga yumao';
     return '';
   },
@@ -182,14 +194,15 @@ const FIESTA = {
     const d = U.dist(P.x, P.y, cx, cy);
     if (this.paradeTime() && !this.floats && d < 2600 && d > 300) this.spawnParade();
     if (this.floats && this.custom && !MS.active) this.endParade();
-    if (this.floats && !this.custom && (!this.paradeTime() || d > 3200)) this.endParade();
+    if (this.floats && !this.custom && (!this.paradeTime() || d > 3200 || this.festReg !== (this.region() || 'manila'))) this.endParade();
     if (this.floats) this.updateParade(dt);
   },
   spawnParade(route, crowdAt) {
     const r = route || this.route();
-    this.custom = !!route;
+    this.custom = !!route; this.festReg = route ? null : (this.region() || 'manila');
     this.floats = []; this.marchers = []; this.crowd = []; this.earned = 0;
-    const cols = ['#e84393', '#f1c40f', '#16a085'];
+    const cols = (this.FESTS[this.festReg] || this.FESTS.manila).cols;
+    if (!route) { UI.toast(I18N.t((this.FESTS[this.festReg] || this.FESTS.manila).name)); G.stats.fests = Object.assign(G.stats.fests || {}, { [this.festReg]: 1 }); }
     for (let k = 0; k < 3; k++) {
       // spread floats along the first leg
       const t = k * 0.28, x = U.lerp(r[0].x, r[1].x, t), y = r[0].y;

@@ -1,0 +1,35 @@
+EXTRA30 = {
+ '+₱5,000 · ibahagi ang resulta sa 📱': '+₱5,000 · share your result from 📱', 'Bayad po!': 'Here\'s my fare!', 'Para po!': 'Stop here, please!', "Quiapo ba 'to?": 'Does this go to Quiapo?', 'Sakay!': 'Ride!',
+ 'Car Show sa Baywalk': 'Baywalk Car Show', 'Kaya mo bang lampasan? Laro na!': 'Can you beat this? Play now!', 'Kumita ng ₱25,000': 'Earn ₱25,000', 'Kumuha ng 5 litrato': 'Take 5 photos',
+ 'Kuta sa Bankerohan': 'Bankerohan Hideout', 'Kuta sa Kennon': 'Kennon Hideout', 'Kuta sa Kolon': 'Kolon Hideout', 'Kuta sa Pantalan ng Cebu': 'Cebu Port Hideout',
+ 'Mag-date ng 2 beses': 'Go on 2 dates', 'Sumali sa 2 car show': 'Join 2 car shows', 'Takasan ang pulis ng 5 beses': 'Escape the police 5 times', 'Tapusin ang 3 Time Trial': 'Finish 3 Time Trials',
+ 'Tapusin ang 3 ruta ng jeep': 'Finish 3 jeepney routes', 'Tapusin ang 8 pakiusap': 'Finish 8 favors', 'Wide body + spoiler': 'Wide body + spoiler',
+ '🌸 PANAGBENGA sa Baguio — pista ng bulaklak!': '🌸 PANAGBENGA in Baguio — the flower festival!', '🍈 KADAYAWAN sa Davao — pista ng ani!': '🍈 KADAYAWAN in Davao — the harvest festival!',
+ '🥁 SINULOG sa Cebu — Pit Señor!': '🥁 SINULOG in Cebu — Pit Señor!', '🎯 Naabot ang boundary!': '🎯 Boundary reached!', '🏅 Ang aking Hari ng Kalsada card!': '🏅 My Hari ng Kalsada card!',
+ '🏅 TAPOS ANG LINGGUHANG HAMON!': '🏅 WEEKLY CHALLENGE COMPLETE!', '🏆 Car Show — bumalik bukas ng gabi': '🏆 Car Show — come back tomorrow night', '🏆 Car Show — tuwing gabi (6 PM – 11 PM)': '🏆 Car Show — every night (6 PM – 11 PM)',
+ '🏆 KAMPEON NG CAR SHOW!': '🏆 CAR SHOW CHAMPION!', '📢 Barangay': '📢 Barangay', '📥 Na-save ang card — i-share mula sa Gallery mo.': '📥 Card saved — share it from your Gallery.',
+ '😊 Tamang sukli! Tip': '😊 Right change! Tip', '😠 Mali ang sukli!': '😠 Wrong change!', '🚌 Ruta ng Jeep': '🚌 Jeepney Route', '🚌 TAPOS ANG BIYAHE': '🚌 TRIP DONE', '🚌 TAPOS ANG BIYAHE!': '🚌 TRIP DONE!',
+ '💵 "Bayad po!"': '💵 "Here\'s my fare!"', 'sukli?': 'change?', 'Neon sa ilalim': 'Underglow neon', 'Rims': 'Rims', 'Body kit': 'Body kit', 'Wala': 'None', 'Stock': 'Stock', 'Spoiler': 'Spoiler',
+ 'Lingguhan': 'Weekly', 'Teritoryo': 'Territory', '📤 Ibahagi ang aking card': '📤 Share my card', 'Kumpletuhin ang tatlo para sa ₱5,000. Bagong hamon tuwing Lunes!': 'Complete all three for ₱5,000. New challenges every Monday!',
+ 'Bubukas pagkatapos ng Misyon 2.': 'Unlocks after Mission 2.', 'Malaya — +₱150 araw-araw': 'Free — +₱150 a day', 'Hawak ng sindikato — ₱3,000 kapag nalinis': 'Held by a gang — ₱3,000 when cleared',
+ 'Car Show tuwing gabi — ipakita ang kotse mo para sa premyo': 'Nightly car show — show off your car for prizes',
+ 'Hari ng Ruta': 'King of the Route', 'Tapusin ang 3 ruta ng jeep': 'Finish 3 jeepney routes', 'Pinakaastig na Kotse': 'Coolest Car', 'Manalo sa Car Show': 'Win a car show',
+ 'Tagapagtanggol ng Bayan': 'Defender of the People', 'Palayain ang lahat ng teritoryo nang sabay': 'Free every territory at the same time', 'Lingguhang Kampeon': 'Weekly Champion', 'Tapusin ang isang lingguhang hamon': 'Complete a weekly challenge',
+}
+EXTRA_T30 = [
+ ('"Para po!" {0} bumaba', '"Stop here!" {0} got off'), ("{0} · Hintuan {1}/{2} · 🧍 {3}/16 · ⭐ {4} · {5}", "{0} · Stop {1}/{2} · 🧍 {3}/16 · ⭐ {4} · {5}"),
+ ("{0} hintuan · Boundary: {1}", "{0} stops · Boundary: {1}"), ("Bumalik ang sindikato sa {0}! Tulungan mo ulit kami! ☠️", "The gang is back at {0}! Help us again! ☠️"),
+ ("Iskor {0} vs {1}", "Score {0} vs {1}"), ("⭐ Level {0} · 📖 {1}/{2} misyon", "⭐ Level {0} · 📖 {1}/{2} missions"), ("🏃 {0} beses nakatakas", "🏃 escaped {0} times"),
+ ("🏅 Lingguhang hamon: {0} ✅", "🏅 Weekly challenge: {0} ✅"), ("🏆 {0} tagumpay · 🏅 {1}/3 lingguhan", "🏆 {0} achievements · 🏅 {1}/3 weekly"), ("🏆 Ika-{0} na puwesto", "🏆 Place #{0}"),
+ ("🏆 Sumali sa Car Show ({0})", "🏆 Enter the Car Show ({0})"), ("🏘 Pasasalamat ng mga barangay na napalaya mo: +{0}", "🏘 Thanks from the barangays you freed: +{0}"),
+ ("💰 {0} kinita", "💰 {0} earned"), ("📋 {0} pakiusap · 🚌 {1} ruta", "📋 {0} favors · 🚌 {1} routes"), ("{0} · Malaya — +₱150 araw-araw", "{0} · Free — +₱150 a day"),
+ ("{0} · Hawak ng sindikato — ₱3,000 kapag nalinis", "{0} · Held by a gang — ₱3,000 when cleared"),
+]
+EXTRA30.update({
+ 'v3.0 — Ruta, Pista at Teritoryo': 'v3.0 — Routes, Festivals and Territory', 'Ruta, Pista at Teritoryo': 'Routes, Festivals and Territory',
+ '🚌 <b>Ruta ng Jeep</b> — sa jeepney sa Manila, pindutin ang 💼: may pangalang ruta, mga hintuan, "Para po!" at <b>sukli challenge</b>; abutin ang boundary!': '🚌 <b>Jeepney Routes</b> — in a jeepney in Manila, press 💼: named routes, stops, "Para po!" and a <b>change-giving challenge</b>; hit the boundary!',
+ '🎉 <b>Pista sa bawat lungsod</b>: Sinulog sa Cebu, Kadayawan sa Davao, Panagbenga sa Baguio (tuwing ikatlong araw, hapon)': '🎉 <b>A festival in every city</b>: Sinulog in Cebu, Kadayawan in Davao, Panagbenga in Baguio (every third day, afternoon)',
+ '💡 <b>Car mods</b> sa Pintura: neon, rims at body kit · 🏆 <b>Car Show</b> sa Baywalk tuwing gabi': '💡 <b>Car mods</b> at the Paint Shop: neon, rims and body kits · 🏆 A nightly <b>Car Show</b> at Baywalk',
+ '🏚 <b>Teritoryo</b> — may kuta na rin sa Cebu, Davao at Baguio; may bayad araw-araw ang napalaya, pero baka bumalik ang sindikato!': '🏚 <b>Territories</b> — hideouts now in Cebu, Davao and Baguio too; freed areas pay daily, but gangs may come back!',
+ '🏅 <b>Lingguhang hamon</b> (₱5,000) at <b>shareable card</b> ng progreso mo · 📍 Hindi na natatakpan ng button ang mga prompt': '🏅 <b>Weekly challenges</b> (₱5,000) and a <b>shareable card</b> of your progress · 📍 Prompts no longer hide behind buttons',
+})

@@ -233,7 +233,7 @@ const PHONE = {
     document.querySelectorAll('#phone .ph-apps button').forEach(b => b.classList.toggle('on', b.dataset.app === (app || 'home')));
     if (!app || app === 'home') {
       el.innerHTML = `<div class="ph-time">${WORLD.timeStr()}</div><div class="ph-date">Araw ${WORLD.day || 1} · ${regionName(G.player.x)}</div>`
-        + `<div class="ph-grid">${[['msg', '💬', 'Mensahe'], ['err', '📋', 'Pakiusap'], ['gps', '🧭', 'GPS'], ['fam', '💗', 'Pamilya'], ['bank', '🏦', 'Bangko'], ['daily', '📅', 'Hamon'], ['skills', '📈', 'Skills'], ['ach', '🏆', 'Tagumpay'], ['photo', '📷', 'Kamera']].map(([k, ic, n]) => `<button data-go="${k}"><span>${ic}</span>${n}${k === 'msg' && f.unread ? `<i>${f.unread}</i>` : ''}${k === 'err' && f.errand && f.errand.stage === 'offer' ? '<i>!</i>' : ''}</button>`).join('')}</div>`;
+        + `<div class="ph-grid">${[['msg', '💬', 'Mensahe'], ['err', '📋', 'Pakiusap'], ['gps', '🧭', 'GPS'], ['fam', '💗', 'Pamilya'], ['bank', '🏦', 'Bangko'], ['daily', '📅', 'Hamon'], ['skills', '📈', 'Skills'], ['week', '🏅', 'Lingguhan'], ['turf', '🏚', 'Teritoryo'], ['ach', '🏆', 'Tagumpay'], ['photo', '📷', 'Kamera']].map(([k, ic, n]) => `<button data-go="${k}"><span>${ic}</span>${n}${k === 'msg' && f.unread ? `<i>${f.unread}</i>` : ''}${k === 'err' && f.errand && f.errand.stage === 'offer' ? '<i>!</i>' : ''}</button>`).join('')}</div>`;
     } else if (app === 'msg') {
       f.unread = 0; this.badge();
       el.innerHTML = (f.msgs && f.msgs.length ? f.msgs.map(m => `<div class="ph-msg"><b>${m.from}</b><span>${m.text}</span><small>Araw ${m.day} · ${m.t}</small></div>`).join('') : '<p class="note">Wala pang mensahe.</p>');
@@ -241,6 +241,8 @@ const PHONE = {
       el.innerHTML = '<p class="note">Pinakamalapit na:</p><div class="ph-list">' + MAPCATS.filter(c => c.types.length).map(c => c.types.map(([t, ic, n]) => `<button data-poi="${t}">${ic} ${n}</button>`).join('')).join('') + (G.waypoint ? '<button data-poi="x">✕ Alisin ang GPS</button>' : '') + '</div>';
     } else if (app === 'fam') { el.innerHTML = FAMILY.panel(); }
     else if (app === 'err') { el.innerHTML = ERRAND.panel(); }
+    else if (app === 'week') { el.innerHTML = WEEKLY.panel(); }
+    else if (app === 'turf') { el.innerHTML = TURF.panel(); }
     else if (app === 'ach') { this.close(); ACH.open(); return; }
     else if (app === 'photo') { this.close(); PHOTO.open(); return; }
     else if (app === 'bank') {
@@ -249,6 +251,8 @@ const PHONE = {
     } else if (app === 'daily') { this.close(); DAILY.open(); return; }
     else if (app === 'skills') { this.close(); PROG.open(); return; }
     el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { AUD.click(); this.open(b.dataset.go); });
+    el.querySelectorAll('[data-turf]').forEach(b => b.onclick = () => { AUD.click(); TURF.gps(b.dataset.turf); this.close(); });
+    el.querySelectorAll('[data-card]').forEach(b => b.onclick = () => { AUD.click(); WEEKLY.card(); });
     el.querySelectorAll('[data-err]').forEach(b => b.onclick = () => { AUD.click(); if (b.dataset.err === 'ok') { ERRAND.accept(); this.close(); } else { ERRAND.decline(); this.open('err'); } });
     el.querySelectorAll('[data-gps]').forEach(b => b.onclick = () => { AUD.click(); FAMILY.gps(b.dataset.gps); this.close(); });
     el.querySelectorAll('[data-poi]').forEach(b => b.onclick = () => {

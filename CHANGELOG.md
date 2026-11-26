@@ -1,5 +1,14 @@
 # Changelog — Hari ng Kalsada
 
+## v3.0: Ruta, Pista at Teritoryo / Routes, Festivals and Territory (2026-11-26)
+- 🚌 **Jeepney routes**: in a jeepney in Manila press 💼 / J for a named route (e.g. "Sta. Cruz – Pantalan") with 6 stops; passengers wait and call out, get off and pay at each stop, and sometimes hand you a bill — tap the right **change (sukli)** within 6 seconds for a tip and a better rating. Reach the ₱600 boundary for a bonus
+- 🎉 **City festivals**: on parade days the parade follows you to your city — Tondo fiesta (Manila), **Sinulog** (Cebu), **Kadayawan** (Davao) and **Panagbenga** (Baguio), each with its own colours and band
+- 💡 **Car mods 2.0** at the Paint Shop: underglow neon (5 colours), rims, spoiler / wide body kit; 🏆 **Car Show** at Baywalk every night 6–11 PM (₱500 entry, prizes ₱5,000 / ₱2,000 / ₱800, scored on car value, upgrades, mods and condition)
+- 🏚 **Territories**: 4 new gang hideouts in Cebu, Davao and Baguio; freed areas pay ₱150 a day each, and gangs may retake an area freed 4+ days ago (you get a text). Phone app 🏚 Teritoryo lists them with GPS
+- 🏅 **Weekly challenges**: 3 goals per real week (₱5,000 for all three) and a **shareable 1080×1080 player card** (level, missions, money, escapes, favors, routes, achievements)
+- 📍 The action prompt on phones now sits above the touch buttons (it could hide behind HORN)
+- 🏆 4 new achievements
+
 ## v2.9: Pulido / Polish (2026-11-26)
 - ⚡ **Performance**: bystanders and animals far from the camera update every other frame; a second automatic step lowers crowd density if the game still runs below ~24 fps after switching to fast graphics
 - 🧹 **Tidy notifications**: at most 2 toasts at a time (the rest queue, duplicates dropped); big centre messages queue instead of overlapping (countdowns still replace instantly); tips wait until there's no dialogue or big message, and only essential tips show in the first ~75 seconds

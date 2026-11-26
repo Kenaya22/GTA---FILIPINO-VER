@@ -110,7 +110,8 @@ const ECON = {
       <div class="shoprow"><span class="ic">✨</span><div><b>Sticker</b><small>${U.money(cost(250))} bawat palit</small></div></div>
       <div class="chips">${STICKERS.map(([id, n]) => `<button class="chip ${u.sticker === id ? 'on' : ''}" data-st="${id}">${n}</button>`).join('')}</div>
       <div class="shoprow"><span class="ic">📯</span><div><b>Busina</b><small>${U.money(cost(150))} bawat palit · H para subukan</small></div></div>
-      <div class="chips">${HORNS.map(([id, n]) => `<button class="chip ${u.horn === id ? 'on' : ''}" data-horn="${id}">${n}</button>`).join('')}</div>`;
+      <div class="chips">${HORNS.map(([id, n]) => `<button class="chip ${u.horn === id ? 'on' : ''}" data-horn="${id}">${n}</button>`).join('')}</div>
+      ${CARMOD.rows(u, cost)}`;
     const pay = (n) => { n = cost(n); if (G.player.money < n) { UI.toast('Kulang ang pera mo!'); AUD.fail(); return false; } G.addMoney(-n); return true; };
     el.querySelectorAll('[data-paint]').forEach(b => b.onclick = () => {
       if (!pay(300)) return;
@@ -124,6 +125,7 @@ const ECON = {
     });
     el.querySelectorAll('[data-st]').forEach(b => b.onclick = () => { if (u.sticker === b.dataset.st || !pay(250)) return; u.sticker = b.dataset.st; AUD.spray(); this.openCustom(); });
     el.querySelectorAll('[data-horn]').forEach(b => b.onclick = () => { if (u.horn === b.dataset.horn || !pay(150)) return; u.horn = b.dataset.horn; AUD.horn(false, u.horn); this.openCustom(); });
+    CARMOD.bind(el, u, pay, () => this.openCustom());
     UI.show('shop');
   },
 };
@@ -162,6 +164,10 @@ const ACH_LIST = [
   ['chapter4', '🦅', 'Tagapagtanggol ng Agila', 'Tapusin ang Kabanata 4 (Davao)', () => !!(G.flags && G.flags.ch4)],
   ['chapter5', '🌲', 'Ang Huling Ninong', 'Tapusin ang Kabanata 5 (Baguio) — ang buong serye!', () => !!(G.flags && G.flags.ch5)],
   ['presa10', '🍓', 'Strawberry Hunter', 'Makuha ang 10 gintong strawberry sa Baguio', () => COLL.count('presa') >= 10],
+  ['ruta3', '🚌', 'Hari ng Ruta', 'Tapusin ang 3 ruta ng jeep', () => (G.stats.rutas || 0) >= 3],
+  ['carshow1', '🏆', 'Pinakaastig na Kotse', 'Manalo sa Car Show', () => (G.stats.carshowWins || 0) >= 1],
+  ['turfall', '🏘', 'Tagapagtanggol ng Bayan', 'Palayain ang lahat ng teritoryo nang sabay', () => KUTA.list && KUTA.list.length > 3 && KUTA.list.every(k => KUTA.cleared(k.key))],
+  ['weekly1', '🏅', 'Lingguhang Kampeon', 'Tapusin ang isang lingguhang hamon', () => (G.stats.weeklies || 0) >= 1],
   ['errand10', '📋', 'Matulungin', 'Tapusin ang 10 pakiusap sa phone', () => (G.stats.errands || 0) >= 10],
   ['date1', '💑', 'Unang Date', 'Mag-date kasama ang isang espesyal na tao', () => (G.stats.dates || 0) >= 1],
   ['kasal', '💒', 'Habambuhay', 'Magpakasal sa simbahan', () => !!(G.flags.fam && G.flags.fam.stage === 'married')],

@@ -186,6 +186,7 @@ function drawVehicle(g, v, now) {
   g.save(); g.translate(v.x, v.y); g.rotate(v.a);
   const L = v.L, W = v.W, hl = L / 2, hw = W / 2;
   g.fillStyle = 'rgba(0,0,0,0.38)'; U.rr(g, -hl + 4, -hw + 6, L, W, Math.min(W * 0.3, 10)); g.fill();
+  if (v.upg) drawCarMods(g, v, hl, hw, true);
   const col = v.burnt ? '#2a2826' : v.color;
   switch (v.t.draw) {
     case 'car': case 'police': case 'sports': drawCar(g, v, col, hl, hw, now); break;
@@ -213,7 +214,7 @@ function drawVehicle(g, v, now) {
     case 'bike': drawBike(g, v, col, hl, hw, now); break;
     case 'logs': drawLogs(g, v, col, hl, hw); break;
   }
-  if (v.upg) drawSticker(g, v, hl, hw);
+  if (v.upg) { drawSticker(g, v, hl, hw); drawCarMods(g, v, hl, hw, false); }
   if (v.burnt) { g.fillStyle = 'rgba(0,0,0,0.45)'; U.rr(g, -hl, -hw, L, W, 6); g.fill(); }
   g.restore();
 }

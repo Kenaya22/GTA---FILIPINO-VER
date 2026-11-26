@@ -846,7 +846,7 @@ const SHOP = {
     let best = null, bd = 1e9;
     for (const k in MAP.pois) {
       const p = MAP.pois[k];
-      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'heli', 'kainan', 'mall', 'church', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race', 'famhome'].includes(p.type)) continue;
+      if (!['ukay', 'barber', 'paint', 'sari', 'hospital', 'chop', 'home', 'ferry', 'airport', 'heli', 'kainan', 'mall', 'church', 'weapon', 'gunshop', 'videoke', 'court', 'property', 'garage', 'rider', 'tow', 'race', 'famhome', 'carshow'].includes(p.type)) continue;
       const r = (P.vehicle ? 110 : 60);
       const me = P.vehicle || P;
       const d = U.dist(me.x, me.y, p.x, p.y);
@@ -879,6 +879,7 @@ const SHOP = {
       case 'chop': return P.vehicle && MS.idx >= 2 && !(MS.active && MS.active.giver === 'ben') ? `Ibenta kay Mang Ben (~${U.money(this.value(P.vehicle))})` : null;
       case 'home': return P.vehicle ? null : 'I-save ang laro at magpahinga';
       case 'famhome': return P.vehicle ? null : FAMILY.homeLabel();
+      case 'carshow': return P.vehicle ? CARMOD.showLabel() : null;
       case 'ferry': return P.vehicle ? null : `${p.label} (${c(['ferry1', 'ferry2'].includes(p.key) ? 50 : 150)})`;
       case 'airport': return P.vehicle ? null : `✈️ ${p.label} — pumili ng lilipadan (${c(500)})`;
     }
@@ -980,6 +981,7 @@ const SHOP = {
         break;
       }
       case 'famhome': FAMILY.openHome(); break;
+      case 'carshow': CARMOD.enter(); break;
       case 'home': {
         P.hp = 100; G.save(); AUD.success(); UI.toast('💾 Na-save ang laro. Busog at pahinga!');
         G.spawnHomeCars(); break;
@@ -1004,7 +1006,7 @@ const PASADA = {
     }
     return null;
   },
-  active() { const v = G.player.vehicle; return v && v.type === 'jeepney' && !MS.active && !v.dead; },
+  active() { const v = G.player.vehicle; return v && v.type === 'jeepney' && !MS.active && !JOBS.active && !v.dead; },
   update(dt) {
     if (!this.active()) { if (this.mode) this.reset(); return; }
     const v = G.player.vehicle;
