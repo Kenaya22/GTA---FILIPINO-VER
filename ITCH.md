@@ -8,7 +8,8 @@ Everything you need to publish the game on **itch.io** (free) or share it anywhe
 | `media/trailer.gif` | 12-second gameplay loop for the store page / social posts |
 | `media/home.png`, `media/chase.png`, `media/province.png`, `media/island.png`, `media/phone-home.png` | Screenshots |
 | `media/feature-1024x500.png` | Google Play feature graphic / itch.io banner |
-| `media/preview.png` (1200×630) | Link preview image (already used for Facebook / Messenger previews) |
+| `media/preview.jpg` (1200×630) | Link preview image (used for Facebook / Messenger previews) |
+| `media/icon-1024.jpg`, `media/logo.png`, `media/cover.jpg` | App icon artwork, title logo and cover art (K&A Studios) |
 | `icons/icon-512.png` | Game icon / cover thumbnail |
 
 ## Publish on itch.io (about 10 minutes)

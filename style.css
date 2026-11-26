@@ -578,3 +578,14 @@ body.bigtext .ph-msg span, body.bigtext .ph-list button { font-size: 16px; }
 #sukli button { background: #1d2540; color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 8px 12px; font: 900 15px Nunito, sans-serif; cursor: pointer; }
 #sukli i { display: block; height: 3px; background: #f39c2b; margin-top: 8px; border-radius: 2px; animation: suk 6.5s linear forwards; }
 @keyframes suk { to { width: 0; } }
+/* ===== v3.3 artwork: cover background, logo image ===== */
+.t-cover { position: absolute; inset: 0; background: url('media/cover.jpg') center 35% / cover no-repeat; animation: tcover 30s ease-in-out infinite alternate; }
+@keyframes tcover { from { transform: scale(1.04); } to { transform: scale(1.12) translate(-1%, 1%); } }
+#title .t-shade { background: linear-gradient(180deg, rgba(8,10,20,0.25) 0%, rgba(8,10,20,0.15) 35%, rgba(8,10,20,0.78) 72%, rgba(8,10,20,0.95) 100%) !important; }
+.t-logoimg { margin: 0; line-height: 0; }
+.t-logoimg img { width: min(520px, 88vw); height: auto; display: block; margin: 0 auto;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.55)); animation: tlogo 3s ease-in-out infinite; }
+@keyframes tlogo { 50% { transform: scale(1.025) rotate(-0.6deg); } }
+#title .t-tag { text-shadow: 0 2px 8px rgba(0,0,0,0.85); }
+.bt-img { width: min(420px, 82vw); height: auto; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.6)); animation: btpulse 2.4s ease-in-out infinite; }
+.st-icon { width: 96px; height: 96px; border-radius: 22px; margin: 0 auto 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }

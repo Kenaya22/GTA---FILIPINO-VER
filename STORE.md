@@ -19,7 +19,7 @@ The game is already an installable PWA, so it can go on Google Play as a **Trust
 | App name | Hari ng Kalsada: Manila |
 | Short description (80) | Open-world na laro sa kalye ng Manila, Cebu, Davao at Baguio. Offline! |
 | Category | Game → Action (or Racing) |
-| Icon (512×512) | `icons/icon-512.png` |
+| Icon (512×512) | `icons/icon-512.png` (full art: `media/icon-1024.jpg`) |
 | Feature graphic (1024×500) | `media/feature-1024x500.png` |
 | Phone screenshots | `media/phone-home.png`, `media/chase.png`, `media/province.png`, `media/island.png`, `media/home.png` |
 | Content rating | Fill the questionnaire honestly: cartoon violence, guns, police chases → usually **Teen / PEGI 12–16** |

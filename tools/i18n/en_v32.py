@@ -76,3 +76,7 @@ EXTRA32.update({
  '🗺 <b>Bagong ayos ng mapa</b> — nakaayos na parang tunay na Pilipinas: Baguio sa hilaga, Boracay at Cebu sa gitna, Palawan sa timog-kanluran, Davao sa timog': '🗺 <b>New map layout</b> — arranged like the real Philippines: Baguio up north, Boracay and Cebu in the middle, Palawan south-west, Davao down south',
  '🛵 <b>Pa-angkas</b> sa phone — mag-book ng motor, darating ang rider at ihahatid ka!': '🛵 <b>Pa-angkas</b> on the phone — book a motorbike, a rider comes and takes you there!',
 })
+EXTRA32.update({
+ 'v3.3 — Bagong Itsura': 'v3.3 — A New Look', 'Bagong Itsura': 'A New Look',
+ '🎨 <b>Bagong itsura!</b> Bagong app icon, logo at cover art ng K&A Studios sa home, loading at store': '🎨 <b>A new look!</b> New app icon, logo and cover art by K&A Studios on the home, loading and store screens',
+})

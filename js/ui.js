@@ -17,6 +17,9 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '3.3', title: 'Bagong Itsura', date: 'Nobyembre 2026', items: [
+    '🎨 <b>Bagong itsura!</b> Bagong app icon, logo at cover art ng K&A Studios sa home, loading at store',
+  ] },
   { v: '3.2', title: 'Boracay at Palawan', date: 'Nobyembre 2026', items: [
     '🏖 <b>KABANATA 6: BORACAY</b> — 5 bagong misyon laban kay <b>Señora Coral</b>: island hopping, mga lihim na tubo ng dumi, habulan sa dagat at ang resort niya',
     '🌴 <b>KABANATA 7: PALAWAN</b> — bagong isla! Puerto Princesa, Underground River, El Nido at gubat; 5 misyon laban kay <b>Don Facundo</b> (43 misyon lahat)',

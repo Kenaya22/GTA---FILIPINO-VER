@@ -1,5 +1,9 @@
 # Changelog — Hari ng Kalsada
 
+## v3.3: Bagong Itsura / A New Look (2026-11-26)
+- 🎨 New K&A Studios artwork: **app icon** (all sizes + Android maskable), **logo** (background removed, on the home and loading screens, gently animated), **cover art** as the animated home-screen background, a new 1024×500 store feature graphic and a 1200×630 link-preview image for Messenger/Facebook
+- 📝 App name and share description updated (6 places, 7 chapters)
+
 ## v3.2: Boracay at Palawan / Boracay and Palawan (2026-11-26)
 - 🏖 **Chapter 6: Boracay — "Paraiso"** (5 missions, from Ate Maya after Chapter 5): fly to Boracay and meet Mang Tomas; **Island Hopping** (circle the island by bangka through buoys against the clock); **Maruming Tubo** (photograph 3 hidden sewage pipes at night, then escape the guards); **Habulan sa Dagat** (speedboat chase of Señora Coral with her goon boats); **Paraiso ng Bayan** (storm her Station 3 resort and defeat her)
 - 🌴 **Chapter 7: Palawan — "Ang Huling Paraiso"** (5 missions) on a **new island**: Puerto Princesa city, the **Underground River** (a winding channel into a limestone cave), **El Nido** lagoon and cliffs, Sabang pier, a southern forest with a poachers' camp and an offshore reef. Missions: fly in and meet Mang Kanor; ride through the Underground River; chase the poachers' van to save pangolins; stop 3 dynamite-fishing boats; storm Don Facundo's camp. New chapter endings; Chapter 5's ending now leads into Chapter 6. **43 missions in all**
