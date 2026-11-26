@@ -563,3 +563,11 @@ body.touch #topleft { top: calc(max(10px, env(safe-area-inset-top)) + 186px); }
 .ph-bank b { font-family: var(--font-display); font-size: 34px; } .ph-bank small { font-size: 11px; opacity: 0.8; }
 .phone-dev .shoprow { padding: 8px; }
 .set-privacy { display: block; text-align: center; font-size: 12px; font-weight: 800; color: var(--muted, #9aa3b5); margin: 4px 0; }
+/* ===== big text (accessibility) ===== */
+body.bigtext #objective, body.bigtext #sidejob { font-size: 17px !important; }
+body.bigtext .toast { font-size: 16px !important; }
+body.bigtext #subtitle { font-size: 18px !important; }
+body.bigtext #prompt { font-size: 16px !important; }
+body.bigtext .shoprow b { font-size: 16px; } body.bigtext .shoprow small { font-size: 13px; }
+body.bigtext #tip-body { font-size: 16px; }
+body.bigtext .ph-msg span, body.bigtext .ph-list button { font-size: 16px; }

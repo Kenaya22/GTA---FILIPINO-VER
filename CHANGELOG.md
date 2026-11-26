@@ -1,5 +1,12 @@
 # Changelog — Hari ng Kalsada
 
+## v2.9: Pulido / Polish (2026-11-26)
+- ⚡ **Performance**: bystanders and animals far from the camera update every other frame; a second automatic step lowers crowd density if the game still runs below ~24 fps after switching to fast graphics
+- 🧹 **Tidy notifications**: at most 2 toasts at a time (the rest queue, duplicates dropped); big centre messages queue instead of overlapping (countdowns still replace instantly); tips wait until there's no dialogue or big message, and only essential tips show in the first ~75 seconds
+- 🗣 **Voice volume** slider for the radio news voice and screams; 🔠 **Big text** option
+- 💾 **Save backup**: the auto-save keeps a second copy refreshed every 10 minutes; a damaged auto-save loads from the backup automatically
+- 📄 Docs now point to the new link `kenaya22.github.io/hari-ng-kalsada/` (rename the repo to `hari-ng-kalsada`)
+
 ## v2.8: Masiglang Lungsod / A Lively City (2026-11-26)
 **More engaging**
 - 📋 **Favors (phone errands)**: every few minutes someone you know texts a request — Tito Boy wants pandesal, Mang Ben needs a hardware part, Aling Nena sends food to a friend, your date wants chocolate, your spouse needs medicine for the kids. Accept in 📱 → 📋, follow the **green** arrow to pick up and deliver before the timer runs out; pay + speed bonus, XP and ❤️

@@ -4,7 +4,7 @@ The game is already an installable PWA, so it can go on Google Play as a **Trust
 
 ## What you need
 - A Google Play developer account (one-time US$25 fee).
-- The live site: `https://kenaya22.github.io/GTA---FILIPINO-VER/`
+- The live site: `https://kenaya22.github.io/hari-ng-kalsada/`
 
 ## Build the Android app (no coding, ~15 minutes)
 1. Open **https://www.pwabuilder.com**, paste the site link, and press **Start**.
@@ -25,7 +25,7 @@ The game is already an installable PWA, so it can go on Google Play as a **Trust
 | Content rating | Fill the questionnaire honestly: cartoon violence, guns, police chases → usually **Teen / PEGI 12–16** |
 | Ads / in-app purchases | None |
 | Data safety | The game collects **no data** (progress is saved only on the phone) |
-| Privacy policy | `https://kenaya22.github.io/GTA---FILIPINO-VER/privacy.html` (included in the repo as `privacy.html`) |
+| Privacy policy | `https://kenaya22.github.io/hari-ng-kalsada/privacy.html` (included in the repo as `privacy.html`) |
 
 **Full description:** use the store text in `ITCH.md`.
 

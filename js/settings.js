@@ -2,7 +2,7 @@
 // ===== Settings, difficulty & tutorial tips =====
 const SETTINGS_KEY = 'harinkalsada_settings_v1';
 const SETTINGS = {
-  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', touchCtl: 'joystick', lang: 'fil', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {}, density: 'normal', gore: 'on', newsVoice: 'on', aim: 'auto',
+  music: 0.6, sfx: 0.8, walkMusic: true, diff: 'madali', drive: 'madali', touchCtl: 'joystick', lang: 'fil', quality: 'high', joy: 1, lefty: false, tipsOn: true, seen: {}, density: 'normal', gore: 'on', newsVoice: 'on', voice: 0.8, bigText: false, aim: 'auto',
   dens() { return { kaunti: 0.55, normal: 1, marami: 1.3 }[this.density] || 1; },
   load() {
     try { Object.assign(this, JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}); } catch (e) { }
@@ -10,14 +10,15 @@ const SETTINGS = {
   },
   save() {
     try {
-      const { autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim, gore, newsVoice } = this;
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim, gore, newsVoice }));
+      const { autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim, gore, newsVoice, voice, bigText } = this;
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ autoLowDone, music, sfx, walkMusic, diff, drive, touchCtl, lang, quality, joy, lefty, tipsOn, seen, density, aim, gore, newsVoice, voice, bigText }));
     } catch (e) { }
   },
   apply() {
     AUD.setVolumes();
     MUSIC.applyGain();
     document.body.classList.toggle('lefty', !!this.lefty);
+    document.body.classList.toggle('bigtext', !!this.bigText);
     document.body.classList.toggle('dpadmode', this.touchCtl === 'dpad');
     if (typeof INPUT !== 'undefined' && INPUT.keys) INPUT.releaseDpad();
     document.documentElement.style.setProperty('--joy', this.joy);
@@ -87,7 +88,10 @@ const TIP = {
       if (this.t <= 0) this.close();
       return;
     }
-    if (this.queue.length && this.cd <= 0 && !UI.talking && !TUT.active && !TUT.pending) {
+    // tips wait for a quiet moment: no dialogue, no big message, and (in the first minute) only the essentials
+    if (this.queue.length && this.cd <= 0 && !UI.talking && !TUT.active && !TUT.pending && !(UI.bigT > 0) && !G.paused) {
+      const urgent = ['car', 'wanted', 'search', 'damage'];
+      if (G.time < 75 && !urgent.includes(this.queue[0])) return;
       const key = this.queue.shift();
       const [title, body] = TIPS[key]();
       SETTINGS.seen[key] = true; SETTINGS.save();

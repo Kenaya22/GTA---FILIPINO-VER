@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Manila — v2.8
+# 👑 HARI NG KALSADA: Manila — v2.9
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the

@@ -37,7 +37,7 @@ An original top-down open-world game across four Filipino-inspired cities. Drive
 **Tags:** open-world, driving, philippines, filipino, top-down, police, pixel-free, singleplayer, browser, mobile
 
 ## Share link
-`https://kenaya22.github.io/GTA---FILIPINO-VER/` (GitHub Pages). On a phone, open it and tap **📲 I-INSTALL ANG APP** on the home page, or **Share → Add to Home Screen** on iPhone.
+`https://kenaya22.github.io/hari-ng-kalsada/` (GitHub Pages). On a phone, open it and tap **📲 I-INSTALL ANG APP** on the home page, or **Share → Add to Home Screen** on iPhone.
 
 See **STORE.md** for publishing to Google Play.
 

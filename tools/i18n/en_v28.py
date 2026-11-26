@@ -39,3 +39,11 @@ EXTRA28.update({
  '📱 Mas maraming app sa phone: Pakiusap, Tagumpay at Kamera · 💡 Mga tip para sa pamilya, phone, GPS at mga hayop': '📱 More phone apps: Favors, Achievements and Camera · 💡 Tips for family, the phone, GPS and animals',
  '🐞 <b>I-report ang bug</b> at 🔒 Privacy Policy sa Settings · ⚖️ Inayos ang baon ng pamilya at tubo sa bangko': '🐞 <b>Report a bug</b> and 🔒 Privacy Policy in Settings · ⚖️ Rebalanced family allowance and bank interest',
 })
+EXTRA28.update({
+ 'v2.9 — Pulido': 'v2.9 — Polish', 'Pulido': 'Polish', '🗣 Boses (balita at sigaw)': '🗣 Voices (news and screams)', '🔠 Laki ng text': '🔠 Text size', 'MALAKI': 'BIG', 'NORMAL': 'NORMAL',
+ '🔋 Binawasan ang dami ng tao at sasakyan para gumaan ang laro.': '🔋 Reduced people and traffic to keep the game smooth.',
+ '⚡ <b>Mas magaan</b> sa phone — mas madalang mag-update ang malalayong tao at hayop; kusang babawasan ang dami ng tao kung bumabagal': '⚡ <b>Lighter</b> on phones — far-away people and animals update less often; crowds shrink automatically if the game slows down',
+ '🧹 <b>Mas malinis na screen</b> — hanggang 2 notification lang, pumipila ang malalaking mensahe, at naghihintay ang mga tip ng tahimik na sandali': '🧹 <b>A cleaner screen</b> — at most 2 notifications, big messages wait their turn, and tips wait for a quiet moment',
+ '🗣 Bagong volume para sa <b>boses</b> (balita at sigaw) · 🔠 Opsyon na <b>MALAKING TEXT</b>': '🗣 New volume for <b>voices</b> (news and screams) · 🔠 A <b>BIG TEXT</b> option',
+ '💾 <b>Backup ng save</b> — may pangalawang kopya ang auto-save kung sakaling masira': '💾 <b>Save backup</b> — the auto-save keeps a second copy in case it ever gets damaged',
+})

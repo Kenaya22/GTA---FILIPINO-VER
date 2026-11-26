@@ -376,15 +376,19 @@ const G = {
   // ---------- main loop ----------
   // switch to fast graphics automatically if the device struggles
   perfCheck(dt) {
-    if (!this.started || this.paused || SETTINGS.quality === 'low' || SETTINGS.autoLowDone) return;
+    if (!this.started || this.paused || (SETTINGS.autoLowDone && SETTINGS.density === 'low')) return;
+    if (SETTINGS.quality === 'low' && !SETTINGS.autoLowDone) return;
     this.pf = this.pf || { t: 0, n: 0, sum: 0 };
     this.pf.t += dt; this.pf.n++; this.pf.sum += dt;
     if (this.pf.t > 6) {
       const fps = this.pf.n / this.pf.sum;
       this.pf = { t: 0, n: 0, sum: 0 };
-      if (fps < 28) {
+      if (fps < 28 && SETTINGS.quality !== 'low') {
         SETTINGS.quality = 'low'; SETTINGS.autoLowDone = true; SETTINGS.apply(); SETTINGS.save();
         UI.toast('Mabagal ang laro sa device na ito — lilipat sa MABILIS na graphics para gumaan.');
+      } else if (fps < 24 && SETTINGS.autoLowDone && SETTINGS.density !== 'low') {
+        SETTINGS.density = 'low'; SETTINGS.save();
+        UI.toast('🔋 Binawasan ang dami ng tao at sasakyan para gumaan ang laro.');
       }
     }
   },
@@ -432,8 +436,11 @@ const G = {
       if (!v.driver && !v.dead && v.speed < 3) { v.vx = 0; v.vy = 0; }
     }
     this.collideVehicles();
-    for (const p of this.peds) {
-      if (Math.abs(p.x - cx) > 1900 || Math.abs(p.y - cy) > 1900) continue;
+    for (let i = 0; i < this.peds.length; i++) {
+      const p = this.peds[i], fx = Math.abs(p.x - cx), fy = Math.abs(p.y - cy);
+      if (fx > 1900 || fy > 1900) continue;
+      // far-away bystanders and animals think half as often (lighter on phones)
+      if ((fx > 900 || fy > 700) && (p.animal || (p.kind === 'ped' && !p.npc && !p.name))) { if ((i + this.frame) & 1) continue; p.updateAI(dt * 2); continue; }
       p.updateAI(dt);
     }
     this.collidePeople();

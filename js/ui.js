@@ -17,6 +17,12 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '2.9', title: 'Pulido', date: 'Nobyembre 2026', items: [
+    '⚡ <b>Mas magaan</b> sa phone — mas madalang mag-update ang malalayong tao at hayop; kusang babawasan ang dami ng tao kung bumabagal',
+    '🧹 <b>Mas malinis na screen</b> — hanggang 2 notification lang, pumipila ang malalaking mensahe, at naghihintay ang mga tip ng tahimik na sandali',
+    '🗣 Bagong volume para sa <b>boses</b> (balita at sigaw) · 🔠 Opsyon na <b>MALAKING TEXT</b>',
+    '💾 <b>Backup ng save</b> — may pangalawang kopya ang auto-save kung sakaling masira',
+  ] },
   { v: '2.8', title: 'Masiglang Lungsod', date: 'Nobyembre 2026', items: [
     '📋 <b>Mga Pakiusap</b> — nagte-text ang mga kakilala mo (Tito Boy, Aling Nena, asawa mo...) para magpabili o magpahatid; sundan ang <b>berdeng arrow</b> para sa bayad at bonus sa bilis',
     '💬 <b>Nagsasalita na ang mga tao</b> sa kalye — tungkol sa ulan, oras, sasakyan mo, kasikatan mo at sa sarili nilang lungsod',
@@ -242,12 +248,12 @@ const UI = {
     $('set-resettips').onclick = () => { SETTINGS.seen = {}; SETTINGS.save(); AUD.click(); this.toast('Ipapakita ulit ang mga tip'); };
     $('tip-ok').addEventListener('pointerdown', (e) => { e.stopPropagation(); TIP.close(); });
     const bindRange = (id, key) => { const el = $(id); el.oninput = () => { SETTINGS[key] = el.value / 100; SETTINGS.apply(); }; };
-    bindRange('set-music', 'music'); bindRange('set-sfx', 'sfx');
+    bindRange('set-music', 'music'); bindRange('set-sfx', 'sfx'); bindRange('set-voice', 'voice');
     document.querySelectorAll('#settings .seg').forEach(seg => {
       seg.querySelectorAll('button').forEach(b => b.onclick = () => {
         const key = seg.dataset.key; let v = b.dataset.v;
         if (key === 'lang') { I18N.set(v); this.syncSettings(); this.langLabel(); return; }
-        if (key === 'walkMusic' || key === 'lefty' || key === 'tipsOn') v = v === '1';
+        if (key === 'walkMusic' || key === 'lefty' || key === 'tipsOn' || key === 'bigText') v = v === '1';
         else if (key === 'joy') v = parseFloat(v);
         SETTINGS[key] = v; SETTINGS.apply(); SETTINGS.save(); AUD.click(); this.syncSettings();
       });
@@ -331,7 +337,7 @@ const UI = {
   },
   openSettings() { this.syncSettings(); this.show('settings'); },
   syncSettings() {
-    $('set-music').value = Math.round(SETTINGS.music * 100); $('set-sfx').value = Math.round(SETTINGS.sfx * 100);
+    $('set-music').value = Math.round(SETTINGS.music * 100); $('set-sfx').value = Math.round(SETTINGS.sfx * 100); $('set-voice').value = Math.round((SETTINGS.voice ?? 0.8) * 100);
     document.querySelectorAll('#settings .seg').forEach(seg => {
       const cur = SETTINGS[seg.dataset.key];
       seg.querySelectorAll('button').forEach(b => {
@@ -379,14 +385,20 @@ const UI = {
     else { el.style.top = Math.round(innerHeight * 0.2) + 'px'; el.style.bottom = 'auto'; }
   },
   nextLine() { if (!this.talking) return; this.lines.shift(); AUD.click(); this.showLine(); },
+  // at most 2 toasts on screen; the rest wait in a short line (duplicates are dropped)
   toast(t) {
-    if (this.toasts.some(x => x.t === t && x.life > 1)) return;
+    if (this.toasts.some(x => x.t === t && x.life > 1) || (this.tq || []).includes(t)) return;
+    this.tq = this.tq || [];
+    if (this.toasts.filter(x => x.life > 0.6).length >= 2) { this.tq.push(t); if (this.tq.length > 4) this.tq.shift(); return; }
     const d = document.createElement('div'); d.className = 'toast'; d.textContent = t;
     this.el.toasts.appendChild(d);
     this.toasts.push({ el: d, life: 3.2, t });
     if (this.toasts.length > 3) { const o = this.toasts.shift(); o.el.remove(); }
   },
+  // big centre messages queue up instead of covering each other (countdowns replace instantly)
   big(title, sub, dur = 2, cls) {
+    if (this.bigT > 0.5 && dur >= 1 && this.bigCur && this.bigCur !== title) { this.bq = this.bq || []; if (this.bq.length < 3) this.bq.push([title, sub, dur, cls]); return; }
+    this.bigCur = title;
     const b = this.el.bigmsg;
     b.className = cls || (/BIGO|HULI|NAHIMATAY/.test(title) ? 'bad' : /TAPOS|NAKATAKAS/.test(title) ? 'good' : '');
     this.el['big-title'].textContent = title; this.el['big-sub'].textContent = sub || '';
@@ -402,6 +414,8 @@ const UI = {
     if (this.talking) { this.lineT -= dt; if (this.lineT <= 0) this.nextLine(); }
     // toasts
     for (const t of this.toasts) { t.life -= dt; if (t.life < 0.4) t.el.classList.add('out'); }
+    if (this.tq && this.tq.length && this.toasts.filter(x => x.life > 0.6).length < 2) this.toast(this.tq.shift());
+    if (this.bq && this.bq.length && !(this.bigT > 0)) { const [a, b, c, d] = this.bq.shift(); this.bigCur = null; this.big(a, b, c, d); }
     this.toasts = this.toasts.filter(t => { if (t.life <= 0) { t.el.remove(); return false; } return true; });
     if (this.radioT > 0) { this.radioT -= dt; if (this.radioT <= 0) this.el.radio.classList.add('hidden'); }
     if (this.bigT > 0) { this.bigT -= dt; if (this.bigT <= 0) this.el.bigmsg.classList.add('hidden'); }

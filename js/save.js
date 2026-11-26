@@ -13,7 +13,10 @@ const SAVE = {
       }
     } catch (e) { }
   },
-  read(slot) { try { return JSON.parse(localStorage.getItem(this.key(slot))); } catch (e) { return null; } },
+  read(slot) {
+    try { const d = JSON.parse(localStorage.getItem(this.key(slot))); if (d || slot !== 'auto') return d; } catch (e) { if (slot !== 'auto') return null; }
+    try { return JSON.parse(localStorage.getItem(this.key('backup'))); } catch (e) { return null; }   // a broken auto-save falls back to the backup copy
+  },
   list() { return this.slots.map(s => ({ slot: s, data: this.read(s) })); },
   latest() {
     let best = null;
@@ -44,6 +47,8 @@ const SAVE = {
   },
   write(slot, silent) {
     try {
+      // keep a second copy of the auto-save (refreshed every 10 minutes) in case the main one ever gets damaged
+      if (slot === 'auto' && Date.now() - (this.bkT || 0) > 600000) { const old = localStorage.getItem(this.key('auto')); if (old && old.length > 50) { localStorage.setItem(this.key('backup'), old); this.bkT = Date.now(); } }
       localStorage.setItem(this.key(slot), JSON.stringify(this.snapshot()));
       if (!silent) { UI.toast(`💾 Na-save sa ${slot === 'auto' ? 'Auto-save' : 'Slot ' + slot}!`); AUD.success(); }
       return true;

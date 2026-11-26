@@ -364,7 +364,7 @@ const NEWS = {
       const t = I18N.t(text).replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu, ''), u = new SpeechSynthesisUtterance(t), vs = speechSynthesis.getVoices();
       const want = SETTINGS.lang === 'en' ? ['en-PH', 'en-US', 'en'] : ['fil', 'tl', 'id', 'en-PH'];
       for (const w of want) { const v = vs.find(v => v.lang && v.lang.toLowerCase().startsWith(w.toLowerCase())); if (v) { u.voice = v; u.lang = v.lang; break; } }
-      u.rate = 1.05; u.pitch = 1; u.volume = Math.min(1, SETTINGS.music + 0.2);
+      u.rate = 1.05; u.pitch = 1; u.volume = Math.min(1, SETTINGS.voice ?? 0.8);
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     } catch (e) { }
   },

@@ -165,7 +165,7 @@ const AUD = {
   // a short cartoon scream (rate-limited)
   scream(x, y) {
     if (!this.ctx) return; const now = performance.now(); if (now - (this.lastScream || 0) < 450) return; this.lastScream = now;
-    let v = 0.09; if (x != null && G.player) { const d = U.dist(x, y, G.player.x, G.player.y); if (d > 900) return; v *= 1 - d / 1000; }
+    let v = 0.09 * (SETTINGS.voice ?? 0.8) / 0.8; if (v <= 0.002) return; if (x != null && G.player) { const d = U.dist(x, y, G.player.x, G.player.y); if (d > 900) return; v *= 1 - d / 1000; }
     const c = this.ctx, t = c.currentTime, hi = Math.random() < 0.55, f0 = hi ? U.rand(950, 1250) : U.rand(520, 700), dur = U.rand(0.45, 0.75);
     const o = c.createOscillator(), g = c.createGain(), vib = c.createOscillator(), vg = c.createGain(), bp = c.createBiquadFilter();
     o.type = 'sawtooth'; o.frequency.setValueAtTime(f0 * 0.8, t); o.frequency.linearRampToValueAtTime(f0, t + 0.08); o.frequency.exponentialRampToValueAtTime(f0 * 0.6, t + dur);
