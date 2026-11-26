@@ -1,4 +1,4 @@
-# 👑 HARI NG KALSADA: Manila — v3.1
+# 👑 HARI NG KALSADA: Manila — v3.2
 
 An original top-down open-world action/driving game set in a Manila-inspired city. Steal jeepneys,
 escape a **6-star wanted system**, change your look so cops can't recognise you, and take down the
@@ -18,6 +18,9 @@ Runs in any modern browser on **phone or PC**. There's no install and no build s
 
 ## 📲 Install it like an app
 Open the game link on your phone and tap **📲 I-INSTALL ANG APP** on the home page (Android/Chrome), or **Share → Add to Home Screen** (iPhone). It opens fullscreen and works without internet. Back up your saves anytime: ☰ → I-SAVE → **📤 I-EXPORT**. Publishing kits: `ITCH.md` (itch.io) and `STORE.md` (Google Play).
+
+## 🌴 Chapters 6–7: Boracay & Palawan (v3.2)
+**Chapter 6 — Boracay:** help boatman Mang Tomas stop Señora Coral's resorts from dumping sewage into the sea (island hopping, secret pipes, a speedboat chase, her resort). **Chapter 7 — Palawan:** a new island with Puerto Princesa, the Underground River and El Nido; stop Don Facundo's poachers and dynamite fishers with forest guide Mang Kanor. **43 missions in all.** The big map is now laid out like the real Philippines, and the phone has a 🛵 Pa-angkas ride app.
 
 ## 🌲 Chapter 5: Baguio (v2.1)
 Fly to **Baguio**, a cold, foggy pine-mountain city: Sesyon Street, a lake park, a strawberry farm, Mines View and a winding road down to the airport. 5 missions against **Don Magno**, the "Ninong of Ninongs" — a downhill bike race, a fog stealth break-in, a helicopter photo flight and a final armored-SUV chase. **33 missions in all.**
@@ -114,7 +117,9 @@ See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version, and **[DE
 | `js/missions.js` | Story missions (chapters 1–2), shops, pasada |
 | `js/chapter3.js` | Chapter 3 missions and the final endings |
 | `js/chapter4.js` | Chapter 4 missions and the epilogue |
-| `js/chapter5.js` | Chapter 5 (Baguio) missions and the series finale |
+| `js/chapter5.js` | Chapter 5 (Baguio) missions |
+| `js/chapter67.js` | Chapter 6 (Boracay) and Chapter 7 (Palawan) missions |
+| `js/angkas.js` | Pa-angkas motorbike ride booking |
 | `js/share.js` | Ghost time trial, share links, photo sharing |
 | `js/life.js` | Interiors, street events, pet dog, collectibles |
 | `js/progression.js` | Levels/skills, daily challenges, replays, New Game+ |

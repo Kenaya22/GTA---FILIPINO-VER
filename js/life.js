@@ -221,7 +221,7 @@ const COLL = {
     pick('kabibe', SX0 + 1, SUGBO_END - 2, 10);
     pick('balahibo', DX0 + 1, DABAW_END - 2, 10);
     pick('presa', BX0 + 1, BAGIW_END - 2, 10);
-    pick('perlas', BRX0 + 1, MW - 2, 10, 11);
+    pick('perlas', BRX0 + 1, BRX0 + BORA_W - 2, 10, 11);
     return (this.list = out);
   },
   all() { return this.list || this.make(); },

@@ -229,6 +229,6 @@ const GRAND = {
   },
   text() {
     const st = G.stats, P = G.player;
-    return `Natapos mo ang lahat ng 5 kabanata at 33 misyon! Level ${P.level || 1} · ${st.escapes || 0} beses nakatakas · ${(st.rescued || 0)} nailigtas. Maraming salamat sa paglalaro ng HARI NG KALSADA. Subukan ang ✨ New Game+ at ang 🔁 Replay para sa mga gintong medalya!`;
+    return `Natalo mo si Don Magno at naipasa ang Pambansang Ledger! Level ${P.level || 1} · ${st.escapes || 0} beses nakatakas · ${(st.rescued || 0)} nailigtas. Pero oras na para magbakasyon... BUKAS NA ANG KABANATA 6: BORACAY — kausapin si Ate Maya!`;
   },
 };

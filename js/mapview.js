@@ -15,20 +15,52 @@ const PLACE_INFO = {
   carshow: 'Car Show tuwing gabi — ipakita ang kotse mo para sa premyo', famhome: 'Bahay ng pamilya mo — bilhin, i-upgrade, bisitahin ang asawa at mga anak', police: 'Presinto ng pulis — iwasan kung wanted ka!', evac: 'Dalhin dito ang mga nasagip sa bagyo', rider: 'Food delivery na side job', tow: 'Tow truck na side job', depot: 'Ambulansya, fire truck at trak ng basura',
   kainan: 'Kumain — buhay at SIGLA', mall: 'Mamili, maglaro o magtago sa pulis', church: 'Magdasal (libreng full heal araw-araw)', race: 'Underground race sa gabi', videoke: 'Kumanta para sa premyo', court: '3-Point Shootout', property: 'Ari-arian na may araw-araw na kita', ferry: 'Sakay ng barko', airport: 'Lumipad sa ibang lungsod', landmark: 'Magandang lugar para sa litrato (Photo Mode)',
 };
+// The big map arranges the regions like the real Philippines (Baguio north of Manila, Boracay & Cebu south,
+// Palawan south-west, Davao far south-east). The game world itself is a row of regions; each slice of it is
+// drawn at its own display offset. World ↔ display conversion happens here.
+const MAPLAYOUT = {
+  build() {
+    if (this.slices) return this.slices;
+    const S = (x0, x1, X, Y) => ({ x0, x1, dx: X - x0, dy: Y });                       // display left edge X, top Y (tiles)
+    const off = 140;
+    this.slices = [
+      S(0, PROV_END + 10, off + 0, 210),                                  // Manila + Isla + San Isidro
+      S(PROV_END + 10, SUGBO_END + 13, off + 330, 440),                   // Cebu
+      S(SUGBO_END + 13, DABAW_END + 3, off + 420, 680),                   // Davao
+      S(DABAW_END + 3, BAGIW_END + 12, off + 110, 0),                     // Baguio
+      S(BAGIW_END + 12, BRX0 + BORA_W + 10, off + 200, 430),              // Boracay
+      S(BRX0 + BORA_W + 10, MW, off - 120, 520),                          // Palawan
+    ];
+    let w = 0, h = 0; for (const s of this.slices) { w = Math.max(w, s.x1 + s.dx); h = Math.max(h, s.dy + MH); }
+    this.W = (w + 20) * T; this.H = (h + 20) * T;
+    return this.slices;
+  },
+  slice(x) { const tx = x / T; for (const s of this.build()) if (tx >= s.x0 && tx < s.x1) return s; return this.slices[tx < 0 ? 0 : this.slices.length - 1]; },
+  w2d(x, y) { const s = this.slice(x); return [x + s.dx * T, y + s.dy * T]; },
+  d2w(X, Y) {
+    let best = null, bd = 1e18;
+    for (const s of this.build()) {
+      const x0 = (s.x0 + s.dx) * T, x1 = (s.x1 + s.dx) * T, y0 = s.dy * T, y1 = (s.dy + MH) * T;
+      if (X >= x0 && X < x1 && Y >= y0 && Y < y1) return [X - s.dx * T, Y - s.dy * T];
+      const cx = U.clamp(X, x0, x1), cy = U.clamp(Y, y0, y1), d = (cx - X) ** 2 + (cy - Y) ** 2; if (d < bd) { bd = d; best = [cx - s.dx * T, cy - s.dy * T]; }
+    }
+    return best;
+  },
+};
 const MAPVIEW = {
   s: 0.1, cx: 0, cy: 0, cat: null, pop: null, ptrs: new Map(),
   open() {
     G.paused = true; UI.show('mapscreen');
     const P = G.player;
-    this.cx = P.x; this.cy = P.y; this.pop = null;
+    [this.cx, this.cy] = MAPLAYOUT.w2d(P.x, P.y); this.pop = null;
     this.resize(); this.s = this.s0(); this.setS(this.s);
     this.renderChips(); this.hidePop();
     if (!this.bound) this.bind();
     this.draw();
   },
   close() { if (PHMAP.on) PHMAP.close(); UI.hide('mapscreen'); this.hidePop(); if (document.getElementById('pause').classList.contains('hidden')) G.paused = false; },
-  s0() { return Math.max(Math.min(this.W, this.H) / (150 * T), this.H / (MH * T), this.W / (MW * T)); },            // ~150 tiles across the short side
-  sMin() { return Math.min(this.W / (MW * T), this.H / (MH * T)) * 0.95; },
+  s0() { MAPLAYOUT.build(); return Math.max(Math.min(this.W, this.H) / (150 * T), this.sMin()); },            // ~150 tiles across the short side
+  sMin() { MAPLAYOUT.build(); return Math.min(this.W / MAPLAYOUT.W, this.H / MAPLAYOUT.H) * 0.95; },
   sMax() { return 14 / T; },
   resize() {
     const c = document.getElementById('bigmap'), r = c.getBoundingClientRect(), pr = Math.min(2, devicePixelRatio || 1);
@@ -37,13 +69,16 @@ const MAPVIEW = {
   setS(s) { this.s = U.clamp(s, this.sMin(), this.sMax()); this.clampPan(); },
   clampPan() {
     const hw = this.W / 2 / this.s, hh = this.H / 2 / this.s;
-    this.cx = MW * T < hw * 2 ? MW * T / 2 : U.clamp(this.cx, hw, MW * T - hw);
-    this.cy = MH * T < hh * 2 ? MH * T / 2 : U.clamp(this.cy, hh, MH * T - hh);
+    const DW = MAPLAYOUT.W, DH = MAPLAYOUT.H;
+    this.cx = DW < hw * 2 ? DW / 2 : U.clamp(this.cx, hw, DW - hw);
+    this.cy = DH < hh * 2 ? DH / 2 : U.clamp(this.cy, hh, DH - hh);
   },
-  toScreen(x, y) { return [(x - this.cx) * this.s + this.W / 2, (y - this.cy) * this.s + this.H / 2]; },
-  toWorld(sx, sy) { return [(sx - this.W / 2) / this.s + this.cx, (sy - this.H / 2) / this.s + this.cy]; },
+  toScreenD(X, Y) { return [(X - this.cx) * this.s + this.W / 2, (Y - this.cy) * this.s + this.H / 2]; },
+  toDisp(sx, sy) { return [(sx - this.W / 2) / this.s + this.cx, (sy - this.H / 2) / this.s + this.cy]; },
+  toScreen(x, y) { const [X, Y] = MAPLAYOUT.w2d(x, y); return this.toScreenD(X, Y); },
+  toWorld(sx, sy) { const [X, Y] = this.toDisp(sx, sy); return MAPLAYOUT.d2w(X, Y); },
   zoomAt(f, sx, sy) {
-    const [wx, wy] = this.toWorld(sx, sy);
+    const [wx, wy] = this.toDisp(sx, sy);
     this.setS(this.s * f);
     this.cx = wx - (sx - this.W / 2) / this.s; this.cy = wy - (sy - this.H / 2) / this.s; this.clampPan();
     this.dirty();
@@ -73,7 +108,7 @@ const MAPVIEW = {
     c.onwheel = (e) => { e.preventDefault(); if (e.deltaY > 0 && this.s <= this.sMin() * 1.01) { PHMAP.open(); return; } const r = c.getBoundingClientRect(); this.zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top); };
     document.getElementById('mz-in').onclick = () => { if (PHMAP.on) { PHMAP.close(); this.dirty(); return; } this.zoomAt(1.4, this.W / 2, this.H / 2); };
     document.getElementById('mz-out').onclick = () => { if (PHMAP.on) return; if (this.s <= this.sMin() * 1.01) { PHMAP.open(); return; } this.zoomAt(1 / 1.4, this.W / 2, this.H / 2); };
-    document.getElementById('mz-me').onclick = () => { if (PHMAP.on) PHMAP.close(); const P = G.player; this.cx = P.x; this.cy = P.y; this.setS(Math.max(this.s, this.s0())); this.dirty(); };
+    document.getElementById('mz-me').onclick = () => { if (PHMAP.on) PHMAP.close(); const P = G.player; [this.cx, this.cy] = MAPLAYOUT.w2d(P.x, P.y); this.setS(Math.max(this.s, this.s0())); this.dirty(); };
     document.getElementById('mz-all').onclick = () => { AUD.click(); PHMAP.on ? PHMAP.close() : PHMAP.open(); };
     document.getElementById('btn-mapclose').onclick = () => this.close();
     addEventListener('resize', () => { if (!document.getElementById('mapscreen').classList.contains('hidden')) { this.resize(); this.setS(this.s); this.dirty(); } });
@@ -98,7 +133,7 @@ const MAPVIEW = {
     sub.querySelectorAll('button').forEach(b => b.onclick = () => {
       AUD.click(); const P = G.player; let best = null, bd = 1e18;
       for (const p of this.places()) { if (p.type !== b.dataset.t) continue; const d = U.d2(p.x, p.y, P.x, P.y); if (d < bd) { bd = d; best = p; } }
-      if (best) { this.cx = best.x; this.cy = best.y; this.setS(Math.max(this.s, 3 / T)); this.showPop(best); this.dirty(); }
+      if (best) { [this.cx, this.cy] = MAPLAYOUT.w2d(best.x, best.y); this.setS(Math.max(this.s, 3 / T)); this.showPop(best); this.dirty(); }
     });
   },
   visible(p) {
@@ -133,9 +168,12 @@ const MAPVIEW = {
     g.setTransform(pr, 0, 0, pr, 0, 0);
     g.fillStyle = '#163454'; g.fillRect(0, 0, W, H);
     // the map image (1 px per tile)
-    const [x0, y0] = this.toWorld(0, 0);
     g.imageSmoothingEnabled = tile < 2;
-    g.drawImage(MAP.mini, x0 / T, y0 / T, W / tile, H / tile, 0, 0, W, H);
+    for (const sl of MAPLAYOUT.build()) {
+      const [sx, sy] = this.toScreenD((sl.x0 + sl.dx) * T, sl.dy * T), sw = (sl.x1 - sl.x0) * tile, sh = MH * tile;
+      if (sx > W || sy > H || sx + sw < 0 || sy + sh < 0) continue;
+      g.drawImage(MAP.mini, sl.x0, 0, sl.x1 - sl.x0, MH, sx, sy, sw, sh);
+    }
     g.imageSmoothingEnabled = true;
     // gentle vignette
     const vg = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);

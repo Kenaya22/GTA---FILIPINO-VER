@@ -1,5 +1,12 @@
 # Changelog — Hari ng Kalsada
 
+## v3.2: Boracay at Palawan / Boracay and Palawan (2026-11-26)
+- 🏖 **Chapter 6: Boracay — "Paraiso"** (5 missions, from Ate Maya after Chapter 5): fly to Boracay and meet Mang Tomas; **Island Hopping** (circle the island by bangka through buoys against the clock); **Maruming Tubo** (photograph 3 hidden sewage pipes at night, then escape the guards); **Habulan sa Dagat** (speedboat chase of Señora Coral with her goon boats); **Paraiso ng Bayan** (storm her Station 3 resort and defeat her)
+- 🌴 **Chapter 7: Palawan — "Ang Huling Paraiso"** (5 missions) on a **new island**: Puerto Princesa city, the **Underground River** (a winding channel into a limestone cave), **El Nido** lagoon and cliffs, Sabang pier, a southern forest with a poachers' camp and an offshore reef. Missions: fly in and meet Mang Kanor; ride through the Underground River; chase the poachers' van to save pangolins; stop 3 dynamite-fishing boats; storm Don Facundo's camp. New chapter endings; Chapter 5's ending now leads into Chapter 6. **43 missions in all**
+- 🗺 **Map arranged like the Philippines**: the big map now places each region geographically — Baguio north of Manila, Boracay and Cebu in the Visayas, Palawan to the south-west and Davao in the far south-east (the 🇵🇭 overview also shows Boracay and Palawan as playable)
+- 🛵 **Pa-angkas** phone app: pick a destination (GPS pin, home, food, mall, hospital, airport, landmarks); a rider comes to you, you ride pillion along the roads, and pay on arrival (cancelled if the police are after you)
+- 🏆 3 new achievements (Chapter 6, Chapter 7, 5 bike rides)
+
 ## v3.1: Boracay (2026-11-26)
 - 🏖 **Boracay**, a new island east of Baguio across a strait: a long, narrow island with **White Beach** (sand, palms and beach resorts on the west), Stations 1–3, D'Mall, Bulabog, **Puka Beach** at the north tip, **Mt. Luho** viewpoint, **Willy's Rock**, a chapel, clinic, police, beachwear shop, halo-halo stand and an airport in the south. Traffic is mostly tricycles, e-bikes, multicabs and bicycles
 - ✈️ Every airport can now fly to Boracay; the 🇵🇭 Philippines map shows Boracay as playable

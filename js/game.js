@@ -75,7 +75,7 @@ const G = {
   resetWorld() {
     this.vehicles = []; this.peds = []; this.pickups = []; this.particles = []; this.skids = []; this.projectiles = []; this.blood = [];
     if (JOBS.active) { JOBS.active = null; JOBS.c = null; }
-    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); BORA.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; FAMILY.reset(); ANIMALS.reset(); REPLAY.on = false;
+    PROV.reset(); SUGBO.reset(); DABAW.reset(); BAGIW.reset(); BORA.reset(); PALW.reset(); G.flags = {}; this.waypoint = null; KUTA.list = null; GUNS.tracers = []; GUNS.grenades = []; TYPHOON.s = null; TYPHOON.debris = []; FIESTA.floats = FIESTA.marchers = FIESTA.crowd = null; STREET.ev = null; STREET.dog = null; FAMILY.reset(); ANIMALS.reset(); if (ANGKAS.ride) { ANGKAS.ride = null; } this.player && (this.player.hidden = false); REPLAY.on = false;
     WANTED.reset(); WANTED.helis = []; MS.reset(); PASADA.reset(); WORLD.reset();
     this.player = new Player(0, 0);
     ECON.owned = new Set(); ECON.garage = []; ECON.refreshIcons(); ACH.got = new Set(); ACH.visited = new Set(); ACH.drove = new Set();
@@ -416,7 +416,7 @@ const G = {
     const P = this.player;
     const inp = (this.cutscene || UI.talking && MS.active && !P.vehicle) ? { mx: 0, my: 0, throttle: 0, steer: 0, hand: !!P.vehicle, joy: { x: 0, y: 0, mag: 0 }, touchDrive: false } : INPUT.state();
     if (this.cutscene && P.vehicle) { inp.hand = true; }
-    P.update(dt, inp);
+    if (!ANGKAS.update(dt)) P.update(dt, inp);
     const cx = this.cam.x, cy = this.cam.y;
     // vehicles
     for (const v of this.vehicles) {
@@ -475,6 +475,7 @@ const G = {
     DABAW.update(dt);
     BAGIW.update(dt);
     BORA.update(dt);
+    PALW.update(dt);
     ARMS.update(dt);
     GUNS.update(dt);
     ACH.update(dt);
@@ -751,7 +752,7 @@ const G = {
     if (JOBS.active === 'trial' && JOBS.c.ghost) { g.save(); g.globalAlpha = 0.45; drawVehicle(g, JOBS.c.ghost, now); g.restore(); }
     for (const p of this.peds) if (p.state !== 'down' && inV(p.x, p.y, 30)) drawPerson(g, p, now);
     const P = this.player;
-    if (!P.vehicle) drawPerson(g, P, now);
+    if (!P.vehicle && !P.hidden) drawPerson(g, P, now);
     else if (P.turnQueued !== false && P.turnQueued !== undefined) {
       // easy-drive: show the queued turn as an arrow ahead of the car
       const v = P.vehicle, Q = Math.PI / 2, cur = Math.round(v.a / Q) * Q, des = P.turnDes;

@@ -24,8 +24,8 @@ const PH_PLACES = [
   { id: 'cebu', name: 'Cebu', lon: 123.9, lat: 10.3, icon: '⛵', ch: 'Kabanata 3' },
   { id: 'davao', name: 'Davao', lon: 125.6, lat: 7.1, icon: '🦅', ch: 'Kabanata 4' },
   { name: 'Vigan', lon: 120.35, lat: 17.45, soon: 1 }, { name: 'Tuguegarao', lon: 121.85, lat: 18.0, soon: 1 }, { name: 'Batanes', lon: 121.95, lat: 20.4, soon: 1 },
-  { name: 'Legazpi', lon: 123.7, lat: 13.15, soon: 1 }, { name: 'Puerto Galera', lon: 120.95, lat: 13.0, soon: 1 }, { name: 'Palawan', lon: 118.7, lat: 9.8, soon: 1 },
-  { id: 'bora', name: 'Boracay', lon: 121.95, lat: 11.95, icon: '🏖', ch: 'Bakasyon' }, { name: 'Iloilo', lon: 122.55, lat: 10.8, soon: 1 }, { name: 'Bacolod', lon: 122.95, lat: 10.2, soon: 1 },
+  { name: 'Legazpi', lon: 123.7, lat: 13.15, soon: 1 }, { name: 'Puerto Galera', lon: 120.95, lat: 13.0, soon: 1 }, { id: 'pal', name: 'Palawan', lon: 118.7, lat: 9.8, icon: '🏝', ch: 'Kabanata 7' },
+  { id: 'bora', name: 'Boracay', lon: 121.95, lat: 11.95, icon: '🏖', ch: 'Kabanata 6' }, { name: 'Iloilo', lon: 122.55, lat: 10.8, soon: 1 }, { name: 'Bacolod', lon: 122.95, lat: 10.2, soon: 1 },
   { name: 'Bohol', lon: 124.35, lat: 9.7, soon: 1 }, { name: 'Tacloban', lon: 124.9, lat: 11.0, soon: 1 }, { name: 'Samar', lon: 125.1, lat: 12.0, soon: 1 },
   { name: 'Cagayan de Oro', lon: 124.6, lat: 8.4, soon: 1 }, { name: 'Zamboanga', lon: 122.5, lat: 7.4, soon: 1 }, { name: 'Siargao', lon: 126.05, lat: 9.85, soon: 1 },
   { name: 'Sulu', lon: 121.1, lat: 6.0, soon: 1 },
@@ -34,9 +34,9 @@ const PHMAP = {
   on: false,
   regionPos(id) {
     const mid = (a, b) => (a + b) / 2 * T, my = MH * T / 2;
-    return { manila: { x: MAP.cx(4), y: MAP.cy(4) }, prov: { x: mid(CITY_W, PROV_END), y: my }, cebu: { x: mid(SX0, SUGBO_END), y: my }, davao: { x: mid(DX0, DABAW_END), y: my }, baguio: { x: mid(BX0, BAGIW_END), y: my }, bora: { x: mid(BRX0, MW), y: my } }[id];
+    return { manila: { x: MAP.cx(4), y: MAP.cy(4) }, prov: { x: mid(CITY_W, PROV_END), y: my }, cebu: { x: mid(SX0, SUGBO_END), y: my }, davao: { x: mid(DX0, DABAW_END), y: my }, baguio: { x: mid(BX0, BAGIW_END), y: my }, bora: { x: mid(BRX0, BRX0 + BORA_W), y: my }, pal: { x: mid(PX0, MW), y: my } }[id];
   },
-  here() { const x = G.player.x / T; return x >= BRX0 - 6 ? 'bora' : x >= BX0 ? 'baguio' : x >= DX0 - 12 ? 'davao' : x >= SX0 - 12 ? 'cebu' : x >= CITY_W ? 'prov' : 'manila'; },
+  here() { const x = G.player.x / T; return x >= PX0 - 6 ? 'pal' : x >= BRX0 - 6 ? 'bora' : x >= BX0 ? 'baguio' : x >= DX0 - 12 ? 'davao' : x >= SX0 - 12 ? 'cebu' : x >= CITY_W ? 'prov' : 'manila'; },
   open() {
     this.on = true; MAPVIEW.hidePop();
     let c = document.getElementById('phmap');
@@ -104,6 +104,6 @@ const PHMAP = {
     AUD.click();
     if (best.soon) { UI.toast(I18N.t(`☁️ ${best.name} — malapit na! Darating sa susunod na update.`)); return; }
     const pos = this.regionPos(best.id); this.close();
-    MAPVIEW.cx = pos.x; MAPVIEW.cy = pos.y; MAPVIEW.setS(MAPVIEW.s0()); MAPVIEW.dirty();
+    [MAPVIEW.cx, MAPVIEW.cy] = MAPLAYOUT.w2d(pos.x, pos.y); MAPVIEW.setS(MAPVIEW.s0()); MAPVIEW.dirty();
   },
 };

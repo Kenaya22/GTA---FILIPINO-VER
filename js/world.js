@@ -433,10 +433,11 @@ function cityLife(region, x0, x1, carTypes) { return {
 const SUGBO = cityLife(() => MAP.sugbo, () => SX0 - 12, () => SUGBO_END + 4, ['multicab', 'multicab', 'multicab', 'jeepney', 'taxi', 'taxi', 'motor', 'motor', 'sedan', 'suv', 'pickup', 'van', 'bus']);
 const DABAW = cityLife(() => MAP.dabaw, () => DX0 - 12, () => DABAW_END + 3, ['jeepney', 'jeepney', 'taxi', 'taxi', 'motor', 'tricycle', 'sedan', 'suv', 'pickup', 'pickup', 'van', 'multicab']);
 const BAGIW = cityLife(() => MAP.bagiw, () => BX0 - 4, () => BAGIW_END + 1, ['jeepney', 'jeepney', 'taxi', 'sedan', 'suv', 'pickup', 'pickup', 'van', 'motor']);
-const BORA = cityLife(() => MAP.bora, () => BRX0 - 6, () => MW + 1, ['tricycle', 'tricycle', 'ebike', 'ebike', 'motor', 'multicab', 'van', 'padyak', 'bisikleta']);
+const PALW = cityLife(() => MAP.pal, () => PX0 - 6, () => MW + 1, ['tricycle', 'tricycle', 'jeepney', 'multicab', 'van', 'motor', 'pickup', 'ebike']);
+const BORA = cityLife(() => MAP.bora, () => BRX0 - 6, () => BRX0 + BORA_W + 1, ['tricycle', 'tricycle', 'ebike', 'ebike', 'motor', 'multicab', 'van', 'padyak', 'bisikleta']);
 // road points used by police in the outer regions
-function regionPts(x) { return BORA.in(x) ? MAP.bora.pts : BAGIW.in(x) ? MAP.bagiw.pts : DABAW.in(x) ? MAP.dabaw.pts : SUGBO.in(x) ? MAP.sugbo.pts : MAP.prov.pts; }
-function regionName(x) { return BORA.in(x) ? 'BORACAY' : BAGIW.in(x) ? 'BAGUIO' : DABAW.in(x) ? 'DAVAO' : SUGBO.in(x) ? 'CEBU' : MAP.inProvince(x) ? 'SAN ISIDRO' : 'MANILA'; }
+function regionPts(x) { return PALW.in(x) ? MAP.pal.pts : BORA.in(x) ? MAP.bora.pts : BAGIW.in(x) ? MAP.bagiw.pts : DABAW.in(x) ? MAP.dabaw.pts : SUGBO.in(x) ? MAP.sugbo.pts : MAP.prov.pts; }
+function regionName(x) { return PALW.in(x) ? 'PALAWAN' : BORA.in(x) ? 'BORACAY' : BAGIW.in(x) ? 'BAGUIO' : DABAW.in(x) ? 'DAVAO' : SUGBO.in(x) ? 'CEBU' : MAP.inProvince(x) ? 'SAN ISIDRO' : 'MANILA'; }
 
 // ===== Flights between Manila and Cebu (short animated transition) =====
 const FLY = {
@@ -444,7 +445,7 @@ const FLY = {
     const P = G.player, el = document.getElementById('flight');
     if (P.vehicle) G.exitVehicle(true);
     G.cutscene = true; AUD.whoosh(); AUD.tone(180, 2.4, 'sawtooth', 0.04, 120);
-    const toSugbo = dest.key === 'airport_s', nm = { airport_m: 'MANILA', airport_s: 'CEBU', airport_d: 'DAVAO', airport_b: 'BAGUIO', airport_bo: 'BORACAY' }, from = regionName(P.x);
+    const toSugbo = dest.key === 'airport_s', nm = { airport_m: 'MANILA', airport_s: 'CEBU', airport_d: 'DAVAO', airport_b: 'BAGUIO', airport_bo: 'BORACAY', airport_p: 'PALAWAN' }, from = regionName(P.x);
     document.getElementById('fl-to').textContent = `${from} ✈️ ${nm[dest.key]}`;
     el.classList.remove('hidden'); el.classList.add('on');
     const arr = MAP.safeNear(dest.x, dest.y + (dest.key === 'airport_m' ? -50 : 30));
@@ -455,7 +456,7 @@ const FLY = {
     }, 1600);
     setTimeout(() => {
       el.classList.remove('on'); el.classList.add('hidden'); G.cutscene = false;
-      UI.big(nm[dest.key], dest.key === 'airport_m' ? 'Balik sa Manila' : dest.key === 'airport_d' ? 'Madayaw nga pag-abot! (Maligayang pagdating!)' : dest.key === 'airport_bo' ? 'Mabuhay sa Boracay! Puting buhangin at paglubog ng araw 🏖' : dest.key === 'airport_b' ? 'Malamig dito! Brrr... 🌲' : 'Maayong pag-abot! (Maligayang pagdating!)', 2.2);
+      UI.big(nm[dest.key], dest.key === 'airport_m' ? 'Balik sa Manila' : dest.key === 'airport_d' ? 'Madayaw nga pag-abot! (Maligayang pagdating!)' : dest.key === 'airport_p' ? 'Maligayang pagdating sa Palawan — ang huling paraiso! 🏝' : dest.key === 'airport_bo' ? 'Mabuhay sa Boracay! Puting buhangin at paglubog ng araw 🏖' : dest.key === 'airport_b' ? 'Malamig dito! Brrr... 🌲' : 'Maayong pag-abot! (Maligayang pagdating!)', 2.2);
       if (toSugbo) TIP.show('sugbo'); if (dest.key === 'airport_d') TIP.show('dabaw'); if (dest.key === 'airport_b') TIP.show('bagiw'); if (dest.key === 'airport_bo') TIP.show('bora');
       G.stats.flights = (G.stats.flights || 0) + 1; ACH.check();
       if (done) done();

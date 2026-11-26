@@ -17,6 +17,12 @@ const PLACES = [
   ['race', '🏁', 'Karera'], ['ferry', '⛴', 'Ferry'], ['airport', '✈️', 'Paliparan'], ['depot', '🚑', 'Ambulansya / Bumbero'], ['evac', '⛺', 'Evacuation'], ['police', '🚓', 'Presinto'],
 ];
 const CHANGES = [
+  { v: '3.2', title: 'Boracay at Palawan', date: 'Nobyembre 2026', items: [
+    '🏖 <b>KABANATA 6: BORACAY</b> — 5 bagong misyon laban kay <b>Señora Coral</b>: island hopping, mga lihim na tubo ng dumi, habulan sa dagat at ang resort niya',
+    '🌴 <b>KABANATA 7: PALAWAN</b> — bagong isla! Puerto Princesa, Underground River, El Nido at gubat; 5 misyon laban kay <b>Don Facundo</b> (43 misyon lahat)',
+    '🗺 <b>Bagong ayos ng mapa</b> — nakaayos na parang tunay na Pilipinas: Baguio sa hilaga, Boracay at Cebu sa gitna, Palawan sa timog-kanluran, Davao sa timog',
+    '🛵 <b>Pa-angkas</b> sa phone — mag-book ng motor, darating ang rider at ihahatid ka!',
+  ] },
   { v: '3.1', title: 'Boracay', date: 'Nobyembre 2026', items: [
     '🏖 <b>BORACAY</b> — bagong isla! White Beach, D\'Mall, Puka Beach, Mt. Luho, Willy\'s Rock at mga e-trike · lumipad mula sa kahit anong paliparan',
     '🦪 10 <b>perlas</b> na makokolekta · 💗 bagong makikilala: <b>Marisol</b>, diving instructor · 🇵🇭 Bukas na ang Boracay sa mapa ng Pilipinas',
@@ -686,7 +692,7 @@ const UI = {
     let ch = 0;
     $('mission-list').innerHTML = MISSIONS.map((m, i) => {
       let head = '';
-      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MANILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'CEBU' : ch === 4 ? 'DAVAO' : 'BAGUIO'}</div>`; }
+      if (m.chapter !== ch) { ch = m.chapter; head = `<div class="dev-ch">KABANATA ${ch}: ${ch === 1 ? 'MANILA' : ch === 2 ? 'PROBINSYA (SAN ISIDRO)' : ch === 3 ? 'CEBU' : ch === 4 ? 'DAVAO' : ch === 5 ? 'BAGUIO' : ch === 6 ? 'BORACAY' : 'PALAWAN'}</div>`; }
       const st = i < MS.idx ? 'done' : i === MS.idx ? 'next' : 'locked';
       const label = st === 'done' ? '✓ TAPOS' : st === 'next' ? (MS.active === m ? 'GINAGAWA' : 'SUSUNOD') : '🔒';
       return head + `<div class="mrow ${st}"><div class="num">${i + 1}</div><div class="info"><b>${m.title} ${REPLAY.gradeIcon(m)}</b><small>${st === 'locked' ? '???' : m.desc + ' · ' + CHARS[m.giver].name + ' · ' + U.money(m.reward)}</small></div><div class="st">${label}${st === 'done' && !MS.active ? `<button class="rep" data-r="${i}">🔁 REPLAY</button>` : ''}</div></div>`;
@@ -702,10 +708,11 @@ const UI = {
       ch2b: ['💰 ANG PRESYO', 'Mayaman ka na, pero nawalan ng lupa ang San Isidro (Ending B). May pagkakataon ka pang ituwid ito... BUKAS NA ANG KABANATA 3 — puntahan si Tito Boy!'],
       final: FINAL.ending(),
       epilogue: ['🦅 TAPOS ANG KABANATA 4!', EPILOGUE.text()],
-      grand: ['👑 WAKAS NG SERYE!', GRAND.text()],
+      grand: ['👑 WAKAS NG KABANATA 5!', GRAND.text()],
+      ...(typeof EXTRA_ENDINGS !== 'undefined' ? { ch6: EXTRA_ENDINGS.ch6, ch7: EXTRA_ENDINGS.ch7 } : {}),
     }[kind] || [];
     $('end-title').textContent = E[0]; $('end-text').textContent = E[1];
-    $('end-choices').innerHTML = kind === 'final' || kind === 'epilogue' || kind === 'grand' ? FINAL.summary() : '';
+    $('end-choices').innerHTML = kind === 'final' || kind === 'epilogue' || kind === 'grand' || kind === 'ch7' ? FINAL.summary() : '';
     $('end-stats').innerHTML = [
       ['PERA', U.money(G.player.money)], ['TSINELAS', `${G.tsinelas.size}/${MAP.tsinelas.length}`], ['NAKATAKAS', G.stats.escapes], ['NABENTA', G.stats.sold],
     ].map(([a, b]) => `<div><span>${a}</span>${b}</div>`).join('');
