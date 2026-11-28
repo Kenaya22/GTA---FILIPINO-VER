@@ -1,0 +1,196 @@
+{
+ "fps": 30,
+ "bpm": 128,
+ "beat": 0.46875,
+ "end": 20.625,
+ "segs": [
+  {
+   "name": "chase",
+   "t0": 0.0,
+   "t1": 1.875,
+   "f0": 0,
+   "words": [
+    "THIS",
+    "FILIPINO",
+    "GAME",
+    "IS",
+    "*100%",
+    "*FREE?!"
+   ],
+   "emoji": "\ud83e\udd2f",
+   "col": "#ffffff",
+   "fx": "speed",
+   "sfx": "hook"
+  },
+  {
+   "name": "chase",
+   "t0": 1.875,
+   "t1": 3.28125,
+   "f0": 48,
+   "words": [
+    "ESCAPE",
+    "*6-STAR",
+    "POLICE"
+   ],
+   "emoji": "\ud83d\udea8",
+   "col": "#ff2b4a",
+   "fx": "speed",
+   "sfx": "siren"
+  },
+  {
+   "name": "jeep",
+   "t0": 3.28125,
+   "t1": 4.6875,
+   "f0": 98,
+   "words": [
+    "DRIVE",
+    "A",
+    "*JEEPNEY"
+   ],
+   "emoji": "\ud83d\ude8c",
+   "col": "#ffd23f",
+   "fx": "glitch",
+   "sfx": "horn"
+  },
+  {
+   "name": "fight",
+   "t0": 4.6875,
+   "t1": 6.09375,
+   "f0": 20,
+   "words": [
+    "TAKE",
+    "DOWN",
+    "*GANGS"
+   ],
+   "emoji": "\ud83d\udd2b",
+   "col": "#ff2b4a",
+   "fx": "shake",
+   "sfx": "guns"
+  },
+  {
+   "name": "heli",
+   "t0": 6.09375,
+   "t1": 7.5,
+   "f0": 30,
+   "words": [
+    "FLY",
+    "A",
+    "*HELICOPTER"
+   ],
+   "emoji": "\ud83d\ude81",
+   "col": "#2fa8ff",
+   "fx": "zoom",
+   "sfx": "heli"
+  },
+  {
+   "name": "LOGO",
+   "t0": 7.5,
+   "t1": 8.4375,
+   "f0": 0,
+   "words": [],
+   "emoji": "",
+   "col": "#ffffff",
+   "fx": "",
+   "sfx": "drop"
+  },
+  {
+   "name": "boracay",
+   "t0": 8.4375,
+   "t1": 9.84375,
+   "f0": 30,
+   "words": [
+    "SAIL",
+    "*BORACAY"
+   ],
+   "emoji": "\ud83c\udfdd\ufe0f",
+   "col": "#12b3a8",
+   "fx": "zoom",
+   "sfx": "waves"
+  },
+  {
+   "name": "wedding",
+   "t0": 9.84375,
+   "t1": 11.25,
+   "f0": 66,
+   "words": [
+    "GET",
+    "*MARRIED"
+   ],
+   "emoji": "\ud83d\udc8d",
+   "col": "#ff4fa3",
+   "fx": "glitch",
+   "sfx": "bells"
+  },
+  {
+   "name": "carshow",
+   "t0": 11.25,
+   "t1": 12.65625,
+   "f0": 52,
+   "words": [
+    "WIN",
+    "*CAR",
+    "*SHOWS"
+   ],
+   "emoji": "\ud83c\udfc6",
+   "col": "#00e5ff",
+   "fx": "shake",
+   "sfx": "crowd"
+  },
+  {
+   "name": "angkas",
+   "t0": 12.65625,
+   "t1": 14.0625,
+   "f0": 8,
+   "words": [
+    "YOUR",
+    "OWN",
+    "*PHONE"
+   ],
+   "emoji": "\ud83d\udcf1",
+   "col": "#19c37d",
+   "fx": "zoom",
+   "sfx": "phone"
+  },
+  {
+   "name": "story",
+   "t0": 14.0625,
+   "t1": 15.46875,
+   "f0": 2,
+   "words": [
+    "*43",
+    "STORY",
+    "MISSIONS"
+   ],
+   "emoji": "\ud83d\udcd6",
+   "col": "#f39c2b",
+   "fx": "glitch",
+   "sfx": "story"
+  },
+  {
+   "name": "map",
+   "t0": 15.46875,
+   "t1": 16.875,
+   "f0": 56,
+   "words": [
+    "MANILA",
+    "TO",
+    "*PALAWAN"
+   ],
+   "emoji": "\ud83c\uddf5\ud83c\udded",
+   "col": "#e8344f",
+   "fx": "zoom",
+   "sfx": "map"
+  },
+  {
+   "name": "CTA",
+   "t0": 16.875,
+   "t1": 20.625,
+   "f0": 0,
+   "words": [],
+   "emoji": "",
+   "col": "#ffffff",
+   "fx": "",
+   "sfx": "cta"
+  }
+ ]
+}

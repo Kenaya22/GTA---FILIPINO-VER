@@ -1,0 +1,97 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@800;900&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000;font-family:Inter,sans-serif}
+#stage{position:absolute;inset:0;overflow:hidden;background:#000}
+.L{position:absolute;inset:0}
+#game{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;transform-origin:50% 48%}
+.gl{position:absolute;left:0;width:1080px;background-size:1080px 1920px;mix-blend-mode:screen}
+#speed{background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,255,255,.55) 0 .6deg,rgba(255,255,255,0) .6deg 7deg);-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent 32%,#000 70%);mask-image:radial-gradient(circle at 50% 50%,transparent 32%,#000 70%)}
+#vig{background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 100%)}
+#cap{position:absolute;left:50px;right:50px;top:330px;text-align:center;line-height:1.02}
+#cap span{display:inline-block;margin:0 24px 10px;font:900 128px Inter;color:#fff;-webkit-text-stroke:16px #000;paint-order:stroke fill;letter-spacing:-2px;text-shadow:0 10px 0 rgba(0,0,0,.35)}
+#cap span.y{color:#ffe14a}
+#emo{position:absolute;font-size:230px;line-height:1;filter:drop-shadow(0 12px 0 rgba(0,0,0,.35))}
+#bar{position:absolute;left:0;top:0;height:14px;background:linear-gradient(90deg,#ffe14a,#ff4fa3);box-shadow:0 0 12px #ff4fa3}
+#wm{position:absolute;left:50%;top:1730px;width:300px;transform:translateX(-50%);filter:drop-shadow(0 6px 10px rgba(0,0,0,.7))}
+#cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+#shade{background:linear-gradient(180deg,rgba(10,6,24,.15),rgba(10,6,24,.85))}
+#logo{position:absolute;left:50%;width:860px;transform-origin:center}
+#rib{position:absolute;left:50%;white-space:nowrap;background:linear-gradient(180deg,#e8344f,#b3122f);color:#fff;font:900 46px Inter;letter-spacing:3px;padding:22px 54px;border:6px solid #ffd23f;border-radius:14px;box-shadow:0 12px 0 #5c0718}
+#sparks i{position:absolute;width:18px;height:18px;border-radius:50%}
+#btn{position:absolute;left:50%;top:930px;white-space:nowrap;background:linear-gradient(180deg,#3df58d,#13b860);color:#06331a;font:900 92px 'Lilita One';padding:34px 70px;border-radius:120px;border:8px solid #fff;box-shadow:0 16px 0 #0b6b37,0 30px 60px rgba(0,0,0,.5)}
+#ticks{position:absolute;left:0;right:0;top:1200px;text-align:center}
+#ticks div{font:900 56px Inter;color:#fff;margin:14px 0;-webkit-text-stroke:8px #000;paint-order:stroke fill}
+#bio{position:absolute;left:0;right:0;top:1520px;text-align:center;font:900 84px 'Lilita One';color:#ffe14a;-webkit-text-stroke:10px #000;paint-order:stroke fill}
+#flash{pointer-events:none}
+</style></head><body><div id="stage">
+<div class="L" id="cover"><img src="file:///home/user/GTA---FILIPINO-VER/media/cover-portrait.jpg"><div class="L" id="shade"></div></div>
+<img id="game"><div id="g1" class="gl"></div><div id="g2" class="gl"></div><div id="g3" class="gl"></div>
+<div class="L" id="speed"></div><div class="L" id="vig"></div>
+<div id="cap"></div><div id="emo"></div>
+<img id="wm" src="file:///home/user/GTA---FILIPINO-VER/media/logo.png">
+<div class="L" id="sparks"></div>
+<img id="logo" src="file:///home/user/GTA---FILIPINO-VER/media/logo.png">
+<div id="rib">THE FILIPINO OPEN-WORLD GAME</div>
+<div id="btn">▶ PLAY FREE NOW</div>
+<div id="ticks"><div>✅ No download needed</div><div>✅ Plays in your phone browser</div><div>✅ Works offline</div></div>
+<div id="bio">🔗 LINK IN BIO 👆</div>
+<div class="L" id="flash"></div><div id="bar"></div>
+</div>
+<script>
+const TL = __TL__, CLIPDIR = '__CLIPS__', COUNTS = __COUNTS__;
+const $ = (id) => document.getElementById(id);
+const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const eo = (x) => 1 - Math.pow(1 - cl(x), 3);
+const eb = (x) => { x = cl(x); const c = 2.2; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const show = (id, on) => { $(id).style.display = on ? '' : 'none'; };
+const rnd = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
+const SP = Array.from({ length: 40 }, (_, i) => ({ a: i / 40 * 6.283 + rnd(i) * 0.3, v: 600 + rnd(i + 9) * 700, c: ['#ffe14a', '#ff4fa3', '#7fdcff', '#fff', '#3df58d'][i % 5] }));
+$('sparks').innerHTML = SP.map(() => '<i></i>').join('');
+async function render(t) {
+  for (const id of ['cover', 'game', 'g1', 'g2', 'g3', 'speed', 'vig', 'cap', 'emo', 'wm', 'sparks', 'logo', 'rib', 'btn', 'ticks', 'bio']) show(id, false);
+  const st = $('stage').style; st.transform = ''; let flash = 0, fcol = '#fff';
+  let si = 0; TL.segs.forEach((s, i) => { if (t >= s.t0) si = i; });
+  const S = TL.segs[si], k = t - S.t0, beat = TL.beat;
+  $('bar').style.width = (t / TL.end * 1080) + 'px';
+  if (S.name === 'LOGO') {
+    show('cover', 1); show('logo', 1); show('sparks', 1); show('rib', 1);
+    $('cover').querySelector('img').style.transform = `scale(${1.3 - eo(k / 0.9) * 0.22})`;
+    const lb = eb(k / 0.3); $('logo').style.top = '90px'; $('logo').style.transform = `translateX(-50%) scale(${3 - 2 * lb}) rotate(${(1 - lb) * -8}deg)`; $('logo').style.opacity = cl(k / 0.05);
+    $('rib').style.top = '1560px'; $('rib').style.transform = `translateX(-50%) scale(${eb((k - 0.25) / 0.25)})`;
+    [...$('sparks').children].forEach((e, i) => { const s = SP[i], d = eo(k / 0.8) * s.v; e.style.left = (540 + Math.cos(s.a) * d) + 'px'; e.style.top = (330 + Math.sin(s.a) * d) + 'px'; e.style.background = s.c; e.style.opacity = cl(1 - k / 0.9); e.style.transform = `scale(${1.8 - k})`; });
+    flash = cl(1 - k / 0.18); if (k < 0.35) st.transform = `translate(${(rnd(Math.floor(k * 60)) - 0.5) * 40 * (1 - k / 0.35)}px,${(rnd(Math.floor(k * 60) + 3) - 0.5) * 40 * (1 - k / 0.35)}px)`;
+  } else if (S.name === 'CTA') {
+    show('cover', 1); show('logo', 1); show('btn', 1); show('ticks', 1); show('bio', 1); show('sparks', 1);
+    $('cover').querySelector('img').style.transform = `scale(${1.12 + Math.sin(k * 1.5) * 0.02})`; $('shade').style.background = 'rgba(10,6,24,.62)';
+    $('logo').style.top = '170px'; $('logo').style.transform = `translateX(-50%) scale(${eb(k / 0.3) * (1 + Math.sin(k * 6.7) * 0.02)})`; $('logo').style.opacity = 1;
+    const pulse = 1 + Math.max(0, Math.sin((k / beat) * Math.PI)) * 0.05;
+    $('btn').style.transform = `translateX(-50%) scale(${eb((k - 0.2) / 0.3) * pulse})`;
+    [...$('ticks').children].forEach((e, i) => { const q = eo((k - 0.5 - i * 0.18) / 0.2); e.style.opacity = q; e.style.transform = `translateX(${(1 - q) * -200}px)`; });
+    $('bio').style.opacity = cl((k - 1.1) / 0.1); $('bio').style.transform = `translateY(${Math.abs(Math.sin(k * 5)) * -26}px) scale(${eb((k - 1.1) / 0.25)})`;
+    [...$('sparks').children].forEach((e, i) => { const s = SP[i], ph = ((k * 0.6 + rnd(i)) % 1); e.style.left = (rnd(i + 2) * 1080) + 'px'; e.style.top = (1920 - ph * 1920) + 'px'; e.style.background = s.c; e.style.opacity = 0.7; e.style.transform = 'scale(.7)'; });
+    flash = cl(1 - k / 0.15); if (TL.end - t < 0.12) flash = 1 - (TL.end - t) / 0.12;     // white flash into the loop
+  } else {
+    const fr = Math.min(S.f0 + Math.floor(k * TL.fps), COUNTS[S.name] - 1);
+    const src = `${CLIPDIR}${S.name}/${String(fr).padStart(4, '0')}.jpg`;
+    const img = $('game'); if (img.getAttribute('src') !== src) { img.src = src; await img.decode().catch(() => { }); }
+    show('game', 1); show('vig', 1); show('cap', 1); show('emo', 1); show('wm', 1);
+    let z = 1 + 0.16 * (1 - eo(k / 0.22)) + k * 0.025;
+    if (S.fx === 'zoom') z = 1 + 0.3 * (1 - eo(k / 0.3)) + k * 0.03;
+    img.style.transform = `scale(${z})`;
+    if (S.fx === 'speed') { show('speed', 1); $('speed').style.opacity = 0.35 + 0.25 * Math.sin(k * 30); $('speed').style.transform = `rotate(${k * 4}deg) scale(1.4)`; }
+    if (S.fx === 'shake' && k < 0.4) st.transform = `translate(${(rnd(Math.floor(k * 90)) - 0.5) * 36 * (1 - k / 0.4)}px,${(rnd(Math.floor(k * 90) + 7) - 0.5) * 36 * (1 - k / 0.4)}px) rotate(${(rnd(Math.floor(k * 90) + 2) - 0.5) * 2 * (1 - k / 0.4)}deg)`;
+    if (S.fx === 'glitch' && k < 0.2) {
+      [['g1', 0, 360, '#ff0050'], ['g2', 820, 300, '#00e5ff'], ['g3', 1450, 260, '#ffe14a']].forEach(([id, y, h, c], i) => { show(id, 1); const e = $(id); e.style.top = y + 'px'; e.style.height = h + 'px'; e.style.backgroundImage = `linear-gradient(${c}55,${c}55),url(${src})`; e.style.backgroundPosition = `0 0,${(rnd(Math.floor(k * 60) + i) - 0.5) * 140}px ${-y}px`; });
+    }
+    // caption words pop one by one (synced to the tick sounds)
+    $('cap').innerHTML = S.words.map((w, i) => { const q = (k - 0.04 - i * 0.09) / 0.18; if (q <= 0) return ''; const y = w[0] === '*'; return `<span class="${y ? 'y' : ''}" style="transform:scale(${eb(q)}) rotate(${(i % 2 ? 1 : -1) * 2}deg)">${y ? w.slice(1) : w}</span>`; }).join(' ');
+    const eq = eb((k - 0.05 - S.words.length * 0.09) / 0.25); const e = $('emo'); e.textContent = S.emoji;
+    e.style.left = (si % 2 ? 90 : 790) + 'px'; e.style.top = '900px'; e.style.transform = `scale(${eq}) rotate(${Math.sin(k * 7) * 10}deg)`;
+    flash = cl(1 - k / 0.1) * (si === 0 ? 0 : 0.8); fcol = S.col;
+  }
+  $('flash').style.background = fcol; $('flash').style.opacity = flash;
+  return true;
+}
+</script></body></html>
