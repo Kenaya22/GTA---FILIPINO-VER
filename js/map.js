@@ -1056,6 +1056,8 @@ const MAP = {
     const nearRoad = (x, y) => { for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) if (this.get(x + dx, y + dy) === TL.ROAD) return true; return false; };
     for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) { const v = t[y * MW + x]; if (KEEP.has(v) && (v !== TL.SIDE || nearRoad(x, y))) mark(x, y, v === TL.SIDE ? 1 : 2); }
     const pt = (o, r) => mark(Math.floor(o.x / T), Math.floor(o.y / T), r);
+    // gang hideout blocks (Tondo, Pantalan, Pasay) stay on land
+    for (const [bi, bj] of [[1, -1], [0, 0], [2, 8]]) { const [x0, y0, w, h] = this.blockRect(bi, bj); for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) if (x >= 0 && y >= 0 && x < MW && y < MH) prot[y * MW + x] = 1; }
     for (const k in this.pois) pt(this.pois[k], 5);
     for (const a of [this.spots, this.tsinelas, this.lamps, this.courts, this.boatSpots]) for (const o of a) if (o && o.x != null) pt(o, 3);
     for (const d of this.decor) if (d.x != null) pt(d, 3);
