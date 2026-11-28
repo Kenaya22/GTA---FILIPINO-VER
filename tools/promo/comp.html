@@ -1,0 +1,144 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@500;800;900&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#fff;font-family:Inter,sans-serif}
+#stage{position:absolute;inset:0;overflow:hidden;background:#fff}
+.L{position:absolute;inset:0}
+#white{background:#fff}
+.tx{position:absolute;left:0;right:0;text-align:center;font-weight:900;color:#111;letter-spacing:-1px;white-space:nowrap}
+.w{display:inline-block;margin:0 .14em;will-change:transform}
+.hl{position:relative;display:inline-block;padding:0 .22em;color:#fff;z-index:0}
+.hl i{position:absolute;inset:.06em 0;border-radius:.12em;z-index:-1;transform-origin:left center}
+#panel{top:auto;height:1000px;bottom:0;overflow:hidden}
+.pn{position:absolute;inset:0;display:grid;place-items:center}
+.ic{width:380px;height:380px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:200px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.dots{position:absolute;bottom:120px;left:0;right:0;display:flex;justify-content:center;gap:18px}
+.dots b{width:18px;height:18px;border-radius:9px;background:rgba(255,255,255,.45)}.dots b.on{background:#fff;width:46px}
+#cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+#coverShade{background:radial-gradient(ellipse at 50% 42%,rgba(0,0,0,0) 30%,rgba(10,6,24,.55) 100%)}
+#logo{position:absolute;left:50%;top:560px;width:920px;transform-origin:center}
+#rib{position:absolute;left:50%;top:1120px;white-space:nowrap;background:linear-gradient(180deg,#e8344f,#b3122f);color:#fff;font:900 46px Inter;letter-spacing:3px;padding:22px 54px;border:6px solid #ffd23f;border-radius:14px;box-shadow:0 12px 0 #5c0718,0 24px 40px rgba(0,0,0,.45)}
+#sparks i{position:absolute;width:16px;height:16px;border-radius:50%;background:#ffd23f;box-shadow:0 0 14px #ffb300}
+#game{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;transform-origin:50% 45%}
+#vig{background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%)}
+#band{position:absolute;left:-200px;width:1480px;top:1390px;height:260px;transform:skewY(-6deg);box-shadow:0 18px 0 rgba(0,0,0,.25)}
+#word{position:absolute;top:1395px;white-space:nowrap;font-family:Bungee;color:#fff;transform:skewY(-6deg) skewX(-10deg);text-shadow:0 10px 0 rgba(0,0,0,.28);line-height:1}
+#kick{position:absolute;left:70px;top:1300px;background:#111;color:#fff;font:900 38px Inter;letter-spacing:2px;padding:14px 26px;border-radius:12px;transform:skewY(-6deg)}
+#wm{position:absolute;left:50%;top:1745px;width:330px;transform:translateX(-50%)}
+#num{position:absolute;right:56px;top:1755px;color:#fff;font:900 44px Inter;text-shadow:0 3px 10px rgba(0,0,0,.6)}
+#pills{position:absolute;left:0;right:0;top:1180px;display:flex;justify-content:center;gap:22px}
+#pills span{background:#fff;color:#111;font:900 44px Inter;padding:20px 34px;border-radius:60px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+#flash{background:#fff;pointer-events:none}
+</style></head><body><div id="stage">
+<div class="L" id="white"></div>
+<div class="L" id="cover"><img src="file:///home/user/GTA---FILIPINO-VER/media/cover-portrait.jpg"><div class="L" id="coverShade"></div></div>
+<img id="game">
+<div class="L" id="vig"></div>
+<div id="band"></div><div id="word"></div><div id="kick"></div>
+<img id="wm" src="file:///home/user/GTA---FILIPINO-VER/media/logo.png"><div id="num"></div>
+<div class="L" id="panel"></div>
+<div id="txtA" class="tx"></div><div id="txtB" class="tx"></div><div id="txtC" class="tx"></div>
+<div class="L" id="sparks"></div>
+<img id="logo" src="file:///home/user/GTA---FILIPINO-VER/media/logo.png">
+<div id="rib">THE FILIPINO OPEN-WORLD GAME</div>
+<div id="pills"><span>100% FREE</span><span>NO ADS</span><span>OFFLINE</span></div>
+<div class="L" id="flash"></div>
+</div>
+<script>
+const TL = __TL__, CLIPDIR = '__CLIPS__';
+const $ = (id) => document.getElementById(id);
+const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const eo = (x) => 1 - Math.pow(1 - cl(x), 3);                  // ease out cubic
+const eb = (x) => { x = cl(x); const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };   // ease out back
+const show = (id, on) => { $(id).style.display = on ? '' : 'none'; };
+const word = (s, t0, t, extra = '') => { const k = eo((t - t0) / 0.22); return `<span class="w" style="opacity:${k};transform:translateY(${(1 - k) * 60}px) ${extra}">${s}</span>`; };
+const hl = (s, col, t0, t) => { const k = eo((t - t0) / 0.25); return `<span class="w hl" style="opacity:${cl((t - t0) / 0.08)}"><i style="background:${col};transform:scaleX(${k})"></i>${s}</span>`; };
+const SPARK = Array.from({ length: 34 }, (_, i) => ({ a: i / 34 * Math.PI * 2 + (i % 3) * 0.2, v: 700 + (i * 137) % 600, s: 0.6 + (i * 53 % 10) / 10, c: ['#ffd23f', '#ff4fa3', '#7fdcff', '#ffffff'][i % 4] }));
+$('sparks').innerHTML = SPARK.map(() => '<i></i>').join('');
+let lastSrc = '';
+async function render(t) {
+  for (const id of ['white', 'cover', 'game', 'vig', 'band', 'word', 'kick', 'wm', 'num', 'panel', 'txtA', 'txtB', 'txtC', 'sparks', 'logo', 'rib', 'pills']) show(id, false);
+  let flash = 0; const st = $('stage').style; st.transform = '';
+  const A = $('txtA'), B = $('txtB'), C = $('txtC');
+  if (t < TL.introducing) {                         // ---- typed questions ----
+    show('white', 1); show('txtA', 1);
+    const up = eo((t - TL.line2) / 0.35);
+    A.style.top = (800 - up * 180) + 'px'; A.style.fontSize = (92 - up * 26) + 'px'; A.style.color = up > 0 ? `rgb(${17 + up * 120},${17 + up * 120},${17 + up * 120})` : '#111';
+    A.innerHTML = TL.words1.map(([w, tt]) => t >= tt ? word(w, tt, t) : '').join('');
+    if (t >= TL.line2) {
+      show('txtB', 1); show('txtC', 1);
+      B.style.top = '820px'; B.style.fontSize = '96px'; B.innerHTML = word("A game that's", TL.line2, t);
+      let cur = null; for (const s of TL.swaps) if (t >= s[1]) cur = s;
+      C.style.top = '960px'; C.style.fontSize = '150px';
+      if (cur) { const k = eo((t - cur[1]) / 0.2); C.innerHTML = `<span style="display:inline-block;transform:translateY(${(1 - k) * 80}px) rotate(${(1 - k) * -4}deg);opacity:${k}">${hl(cur[0], cur[2], cur[1], t)}</span>`; } else C.innerHTML = '';
+      const out = eo((t - (TL.introducing - 0.18)) / 0.18); if (out > 0) { for (const e of [A, B, C]) e.style.opacity = 1 - out; } else for (const e of [A, B, C]) e.style.opacity = 1;
+    }
+  } else if (t < TL.drop) {                         // ---- "introducing" ----
+    show('white', 1); show('txtA', 1); A.style.opacity = 1; A.style.color = '#111';
+    const k = (t - TL.introducing) / (TL.drop - TL.introducing);
+    A.style.top = '880px'; A.style.fontSize = (60 + k * 70) + 'px'; A.style.letterSpacing = (2 + k * 18) + 'px'; A.innerHTML = 'introducing';
+  } else if (t < TL.panels[0][0]) {                 // ---- logo reveal ----
+    const k = t - TL.drop;
+    show('cover', 1); show('logo', 1); show('sparks', 1); show('rib', 1); $('logo').style.top = '70px'; $('logo').style.width = '780px'; $('rib').style.top = '1560px'; $('coverShade').style.background = '';
+    $('cover').querySelector('img').style.transform = `scale(${1.28 - eo(k / 1.6) * 0.2})`;
+    const lk = eo(k / 0.35), lb = eb(k / 0.45);
+    $('logo').style.transform = `translateX(-50%) scale(${2.3 - 1.3 * lb + Math.sin(k * 3) * 0.012}) rotate(${Math.sin(k * 2.2) * 1.2}deg)`; $('logo').style.filter = `blur(${(1 - lk) * 18}px) drop-shadow(0 14px 24px rgba(0,0,0,.6))`; $('logo').style.opacity = lk;
+    const rk = eb((k - 0.55) / 0.35); $('rib').style.transform = `translateX(-50%) scale(${rk})`; $('rib').style.opacity = cl((k - 0.55) / 0.1);
+    [...$('sparks').children].forEach((e, i) => { const s = SPARK[i], d = eo(k / 1.2) * s.v; e.style.left = (540 + Math.cos(s.a) * d) + 'px'; e.style.top = (280 + Math.sin(s.a) * d) + 'px'; e.style.opacity = cl(1 - k / 1.3); e.style.transform = `scale(${s.s * (1.6 - k)})`; e.style.background = s.c; });
+    flash = cl(1 - k / 0.22); if (k < 0.3) st.transform = `translate(${Math.sin(k * 90) * 14 * (1 - k / 0.3)}px,${Math.cos(k * 70) * 14 * (1 - k / 0.3)}px)`;
+  } else if (t < TL.give) {                         // ---- feature panels ----
+    show('white', 1); show('txtA', 1); show('txtB', 1); show('panel', 1);
+    let pi = 0; TL.panels.forEach((p, i) => { if (t >= p[0]) pi = i; });
+    const P = TL.panels[pi], k = t - P[0];
+    A.style.opacity = 1; A.style.color = '#111'; A.style.top = '470px'; A.style.fontSize = '110px'; A.style.letterSpacing = '-1px'; A.innerHTML = word(P[1], P[0] + 0.05, t);
+    B.style.opacity = 1; B.style.top = '620px'; B.style.fontSize = '140px'; B.innerHTML = hl(P[2], P[4], P[0] + 0.25, t);
+    const slide = pi === 0 ? eo(k / 0.35) : 1, inK = pi === 0 ? 1 : eo(k / 0.3);
+    const prev = TL.panels[pi - 1];
+    const mk = (Q, x, active, ik) => `<div class="pn" style="background:linear-gradient(180deg,${Q[4]},${Q[5]});transform:translateX(${x}px)"><div class="ic" style="transform:scale(${ik}) rotate(${(1 - ik) * -20}deg)">${Q[3]}</div><div class="dots">${TL.panels.map((_, j) => `<b class="${j === active ? 'on' : ''}"></b>`).join('')}</div></div>`;
+    $('panel').style.transform = `translateY(${(1 - slide) * 1000}px)`;
+    $('panel').innerHTML = (prev && inK < 1 ? mk(prev, -inK * 1080, pi - 1, 1) : '') + mk(P, (1 - inK) * 1080, pi, eb((k - 0.12) / 0.4));
+  } else if (t < TL.drop2) {                        // ---- "We give you the whole Philippines." ----
+    show('white', 1); show('txtA', 1); show('txtB', 1);
+    A.style.opacity = 1; A.style.color = '#111'; A.style.top = '780px'; A.style.fontSize = '100px'; A.innerHTML = word('We give you', TL.give, t);
+    B.style.opacity = 1; B.style.top = '920px'; B.style.fontSize = '104px';
+    B.innerHTML = t >= TL.give2 ? word('the whole', TL.give2, t) + '<br>' + hl('PHILIPPINES.', 'linear-gradient(90deg,#0038a8 0 50%,#ce1126 50%)', TL.give2 + 0.15, t) : '';
+  } else if (t < TL.slogan[0][1] - 0.15) {          // ---- gameplay showcase ----
+    let ci = 0; TL.clips.forEach((c, i) => { if (t >= c[1]) ci = i; });
+    const [name, t0, t1, f0, label, kick, col] = TL.clips[ci], k = t - t0;
+    const fr = Math.min(f0 + Math.floor(k * TL.fps), __COUNTS__[name] - 1);
+    const src = `${CLIPDIR}${name}/${String(fr).padStart(4, '0')}.jpg`;
+    const img = $('game'); if (img.getAttribute('src') !== src) { img.src = src; await img.decode().catch(() => { }); }
+    show('game', 1); show('vig', 1); show('band', 1); show('word', 1); show('kick', 1); show('wm', 1); show('num', 1);
+    img.style.transform = `scale(${1 + 0.12 * (1 - eo(k / 0.3)) + k * 0.012})`;
+    const bk = eo(k / 0.22); $('band').style.background = col; $('band').style.transform = `skewY(-6deg) translateX(${(bk - 1) * 1500}px)`;
+    const fs = Math.min(250, 1500 / label.length); const w = $('word'); w.style.fontSize = fs + 'px'; w.textContent = label;
+    w.style.top = (1520 - fs * 0.55) + 'px'; w.style.left = (60 + (1 - eo(k / 0.3)) * 900 - k * 60) + 'px'; w.style.opacity = cl(k / 0.1);
+    const kk = eb((k - 0.12) / 0.3); $('kick').textContent = '★ ' + kick; $('kick').style.transform = `skewY(-6deg) scale(${kk})`; $('kick').style.transformOrigin = 'left center';
+    $('num').textContent = String(ci + 1).padStart(2, '0') + '/' + TL.clips.length;
+    flash = cl(1 - k / 0.12) * (ci === 0 ? 1 : 0.55);
+    if (k < 0.18) st.transform = `translate(${Math.sin(k * 120) * 10 * (1 - k / 0.18)}px,0)`;
+  } else if (t < TL.logo2) {                        // ---- slogan ----
+    show('white', 1); show('txtA', 1); show('txtB', 1);
+    const [[s1, a1], [s2, a2]] = TL.slogan;
+    A.style.opacity = 1; A.style.color = '#111'; A.style.top = '780px'; A.style.fontSize = '120px'; A.innerHTML = s1.split(' ').map((w, i) => word(w, a1 + i * 0.12, t)).join('');
+    B.style.opacity = 1; B.style.top = '940px'; B.style.fontSize = '120px'; B.innerHTML = t >= a2 ? hl(s2, '#f39c2b', a2, t) : '';
+  } else if (t < TL.cta) {                          // ---- logo + free pills ----
+    const k = t - TL.logo2; show('cover', 1); show('logo', 1); show('pills', 1); $('logo').style.top = '560px'; $('logo').style.width = '920px';
+    $('cover').querySelector('img').style.transform = `scale(${1.15 - k * 0.03})`; $('coverShade').style.background = 'rgba(10,6,24,.55)';
+    $('logo').style.transform = `translateX(-50%) scale(${eb(k / 0.4)})`; $('logo').style.filter = 'drop-shadow(0 14px 24px rgba(0,0,0,.6))'; $('logo').style.opacity = 1;
+    [...$('pills').children].forEach((e, i) => { const q = eb((k - 0.35 - i * 0.18) / 0.3); e.style.transform = `scale(${q})`; e.style.opacity = cl((k - 0.35 - i * 0.18) / 0.06); });
+    flash = cl(1 - k / 0.15) * 0.6;
+  } else {                                          // ---- call to action ----
+    const k = t - TL.cta; show('white', 1); show('txtA', 1); show('txtB', 1); show('txtC', 1);
+    A.style.opacity = 1; A.style.top = '760px'; A.style.fontSize = '190px'; A.style.color = '#e8344f'; A.style.fontFamily = 'Lilita One';
+    A.innerHTML = `<span class="w" style="transform:scale(${eb(k / 0.35) * (1 + Math.sin(k * 6) * 0.03)})">Play Now!</span>`;
+    B.style.opacity = cl((k - 0.4) / 0.2); B.style.top = '1010px'; B.style.fontSize = '64px'; B.style.color = '#111'; B.innerHTML = 'Link in bio 👑';
+    C.style.opacity = cl((k - 0.7) / 0.2); C.style.top = '1140px'; C.style.fontSize = '40px'; C.style.color = '#888'; C.innerHTML = 'HARI NG KALSADA · K&amp;A Studios';
+    flash = cl(1 - k / 0.15) * 0.7;
+  }
+  if (!(t >= TL.cta)) { A.style.fontFamily = ''; }
+  $('flash').style.opacity = flash;
+  return true;
+}
+</script></body></html>

@@ -504,7 +504,7 @@ const G = {
     const minSide = Math.min(innerWidth, innerHeight);
     const fit = U.clamp(minSide / 760, 0.66, 1);
     const visible = (P.vehicle ? 820 + Math.min(1, sp / 650) * 380 : 680) * fit;
-    const zt = minSide / visible;
+    const zt = minSide / visible * (window.__zoomMul || 1);   // __zoomMul: used only by the promo-video capture
     this.cam.zoom = U.lerp(this.cam.zoom || zt, zt, Math.min(1, dt * 1.6));
     this.cam.vw = innerWidth / this.cam.zoom; this.cam.vh = innerHeight / this.cam.zoom;
     if (this.cam.shake > 0) { this.cam.shake *= Math.pow(0.02, dt); if (this.cam.shake < 0.3) this.cam.shake = 0; }

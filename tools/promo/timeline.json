@@ -1,0 +1,22 @@
+{
+  "fps": 30, "end": 37.5,
+  "words1": [["Looking", 0.15], ["for", 0.4], ["a", 0.6], ["game?", 0.85]],
+  "line2": 1.85, "swaps": [["FILIPINO", 2.35, "#ff2b6d"], ["WILD", 3.05, "#f39c2b"], ["FREE", 3.75, "#19c37d"]],
+  "introducing": 4.35, "drop": 5.0,
+  "panels": [[7.0, "Drive", "ANYTHING.", "🚗", "#f7b32b", "#e08a00"], [8.5, "Escape the", "COPS.", "🚨", "#ff3d5a", "#b3122f"], [10.0, "Start a", "FAMILY.", "💍", "#ff4fa3", "#b0127a"]],
+  "give": 11.5, "give2": 12.0, "drop2": 12.5,
+  "clips": [
+    ["chase", 12.5, 14.5, 18, "POLICE CHASE", "6-STAR WANTED LEVEL", "#e8344f"],
+    ["jeep", 14.5, 16.5, 88, "JEEPNEY", "DRIVE PASSENGER ROUTES", "#f7b32b"],
+    ["heli", 16.5, 18.5, 30, "HELICOPTER", "FLY OVER BAGUIO", "#2fa8ff"],
+    ["boracay", 18.5, 20.5, 35, "BORACAY", "SAIL AT SUNSET", "#12b3a8"],
+    ["fight", 20.5, 22.5, 25, "SHOOTOUT", "TAKE DOWN THE GANGS", "#7d3cff"],
+    ["wedding", 22.5, 24.5, 50, "WEDDING", "FALL IN LOVE", "#ff4fa3"],
+    ["carshow", 24.5, 26.5, 38, "CAR SHOW", "PIMP YOUR RIDE", "#00b7e0"],
+    ["story", 26.5, 28.0, 2, "STORY", "7 CHAPTERS · 43 MISSIONS", "#f39c2b"],
+    ["angkas", 28.0, 29.5, 8, "PHONE", "MESSAGES · BANK · BOOK A RIDE", "#19c37d"],
+    ["map", 29.5, 31.0, 40, "PHILIPPINES", "MANILA TO PALAWAN", "#e8344f"]
+  ],
+  "slogan": [["Drive Wild.", 31.15], ["Rule the Road.", 31.85]],
+  "logo2": 33.0, "cta": 35.0
+}
